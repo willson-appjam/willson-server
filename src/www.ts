@@ -7,5 +7,7 @@ const port: number = Number(process.env.PORT) || 3000;
 const app: express.Application = new App().app;
 
 app
-  .listen(port, () => console.log(`Express server listening at ${port}`))
+  .listen(port, () => console.log(`Express server listening at ${port} \n`))
   .on('error', err => console.error(err));
+
+export default app;

@@ -36,6 +36,7 @@ import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
+import api from './api/index';
 
 class App {
   
@@ -48,9 +49,10 @@ class App {
     this.app.use(helmet());
     this.app.use(express.static(path.join(__dirname, 'public')));
     this.app.use(bodyParser());
-
+    this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use('/api', api);
+    
     this.app.get('/check', (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        console.log('test');
         res.status(200).send("check success");
       });
   }
