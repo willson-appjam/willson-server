@@ -3,7 +3,7 @@ import request from "supertest";
 import { expect } from "chai";
 
 describe('GET /check', () => {
-  it('should respond with text message "Hello World"', (done) => {
+  it('should respond with text message "check success"', (done) => {
     request(app)
       .get('/check')
       .expect(200)
