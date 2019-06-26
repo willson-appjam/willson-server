@@ -1,8 +1,12 @@
+# 자세한 내용은 https://docs.aws.amazon.com/ko_kr/codedeploy/latest/userguide/reference-appspec-file.html을 확인
 version: 0.0
 os: linux
+
 files:
-  - source:  /
+  - source: /
     destination: /home/ec2-user/deploy/willson # S3에서 가지고온 파일을 저장할 디렉터리 지정
+
+# 생성 되는 파일에 대한 permission을 설정
 permissions:
   - object: /home/ec2-user
     owner: ec2-user
@@ -11,7 +15,9 @@ permissions:
     type:
       - directory
       - file
+
 # 훅에서 잡히는 locationd은 destination 인듯.
+# runas는 명령어를 실행할 사용자를 선택 (현재는 ec2-user)
 hooks:
   AfterInstall:
     - location: deploy.sh
