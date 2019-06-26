@@ -13,7 +13,7 @@ branches:
 
 script:
   - yarn test
-  - yarn build
+  - yarn build:dev
 
 before_deploy:
   - rm -rf node_modules
