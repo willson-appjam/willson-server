@@ -18,6 +18,7 @@ permissions:
 
 # 훅에서 잡히는 locationd은 destination 인듯.
 # runas는 명령어를 실행할 사용자를 선택 (현재는 ec2-user)
+# timeout은 오류로 판단하는 대기 시간
 hooks:
   AfterInstall:
     - location: deploy.sh
