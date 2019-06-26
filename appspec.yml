@@ -1,0 +1,19 @@
+version: 0.0
+os: linux
+files:
+  - source:  /
+    destination: /home/ec2-user/deploy/willson # S3에서 가지고온 파일을 저장할 디렉터리 지정
+permissions:
+  - object: /home/ec2-user
+    owner: ec2-user
+    group: ec2-user
+    mode: 755
+    type:
+      - directory
+      - file
+# 훅에서 잡히는 locationd은 destination 인듯.
+hooks:
+  AfterInstall:
+    - location: deploy.sh
+      timeout: 180
+      runas: ec2-user
