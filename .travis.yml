@@ -12,6 +12,7 @@ branches:
     - master
 
 script:
+  - yarn test
   - yarn build
 
 before_deploy:

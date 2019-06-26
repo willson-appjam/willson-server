@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import api from './api/index';
 
 class App {
-  
+
   public app: express.Application;
 
   constructor() {

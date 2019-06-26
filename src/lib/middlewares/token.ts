@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken')
 
-exports.encode = function generateToken(secret : string, userId : String, level: string) {
+const encode = function generateToken(secret : string, userId : String, level: string) {
   return new Promise((resolve, reject) => {
     const token = jwt.sign({userId, level}, secret, {
       issuer: 'willson',
@@ -12,7 +12,7 @@ exports.encode = function generateToken(secret : string, userId : String, level:
   })
 }
 
-exports.decode = function decodedToken(token: string, secret: string) {
+const decode = function decodedToken(token: string, secret: string) {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err: Error, decoded: string) => {
       if(err) {
@@ -24,3 +24,5 @@ exports.decode = function decodedToken(token: string, secret: string) {
     })
   })
 }
+
+export { encode, decode }
