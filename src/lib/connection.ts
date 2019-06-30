@@ -1,4 +1,4 @@
-import { dbconfig } from '../../secret/index'
+import { dbconfig } from '../../secret'
 import mysql from 'mysql'
 
 const config : string = JSON.stringify(dbconfig)

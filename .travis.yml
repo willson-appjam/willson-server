@@ -9,11 +9,10 @@ before_install:
 
 branches:
   only:
-    - master
+    - develop
 
 script:
   - yarn test
-  - yarn build:dev
 
 before_deploy:
   - rm -rf node_modules
