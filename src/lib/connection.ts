@@ -1,14 +1,15 @@
 import { dbconfig } from '../../secret'
-import mysql from 'mysql'
+import mysql, { Connection } from 'mysql'
 
-const config : string = JSON.stringify(dbconfig)
-const dbpool : mysql.Pool = mysql.createPool(config);
+const config : string = JSON.stringify(dbconfig);
+const dbpool : mysql.Pool = mysql.createPool(dbconfig);
 
-export default function dbConnection() {
+export default function dbConnection() : Promise<Connection> {
   return new Promise((resolve, reject) => {
-    dbpool.getConnection((err: Error, connection: mysql.Connection) => {
+    dbpool.getConnection((err: Error, connection: Connection) => {
       if (err) {
-        reject('db connection error')
+        console.log(err)
+        reject(err)
       } else {
         resolve(connection)
       }
