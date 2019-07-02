@@ -8,7 +8,7 @@ before_install:
   - npm install -g yarn
 
 install:
-  - true
+  - false
 
 branches:
   only:
