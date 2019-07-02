@@ -24,20 +24,20 @@ deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
-    bucket: test-willson
+    bucket: willson-deploy
     region: ap-northeast-2
     skip_cleanup: true
     local_dir: deploy
     wait-until-deployed: true
     on:
       repo: willson-appjam/WillSon-Server
-      branch: master
+      branch: develop
 
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
-    bucket: test-willson
-    key: test.zip # 해당 버킷에 저장되어 있는 파일 이름
+    bucket: willson-deploy
+    key: willson-deploy.zip # 해당 버킷에 저장되어 있는 파일 이름
     bundle_type: zip
     deployment_group: test
     application: test
@@ -45,7 +45,7 @@ deploy:
     wait-until-deployed: true
     on:
       repo: willson-appjam/WillSon-Server
-      branch: master
+      branch: develop
 
 notifications:
   email:

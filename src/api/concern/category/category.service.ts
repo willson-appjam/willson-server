@@ -10,8 +10,6 @@ const getCategoryListService = (req: express.Request, res: express.Response) => 
 
       const categoryList = await categoryModel.selectCategoryListWithId(connection, category_idx);
       
-      console.log(categoryList)
-
       resolve(categoryList)
 
     } catch (e) {
