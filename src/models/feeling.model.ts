@@ -15,21 +15,28 @@ const selectFeelingList = (connection: Connection,): Promise<Array<{}>> => {
   })
 }
 
-const insertQuestionFeeling = (connection: Connection, question_idx : number, feeling: Array<number>): Promise<Array<{}>> => {
+const insertQuestionFeeling = (connection: Connection, { insertId }: any, feeling: Array<number>): Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const value: number[][] = [];
+
     _.forEach(feeling, (element) => {
-      value.push([question_idx, element])
+      value.push([insertId, element])
     })
+
+    console.log(value);
 
     const query = `
       INSERT INTO
         question_feeling (question_idx, feeling_idx)
       VALUES
-        (?)
+        ?
     `
-    connection.query(query, value, (err, result) => {
-      err ? reject(err) : resolve(result)
+    const Query = connection.query(query, [value], (err, result) => {
+      if(err) {
+        console.log(Query.sql);
+        reject(err)
+      }
+      resolve(result)
     })
   })
 }

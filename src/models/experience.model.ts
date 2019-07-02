@@ -12,9 +12,9 @@ const insertQuestionExperience = (connection: Connection, { insertId }: any , ex
       INSERT INTO
         question_experience (question_idx, experience_idx)
       VALUES
-        (?)
+        ?
     `
-    connection.query(query, value, (err, result) => {
+    connection.query(query, [value], (err, result) => {
       err ? reject(err) : resolve(result)
     })
   })

@@ -2,8 +2,8 @@ import express from 'express';
 import questionService from './question.service';
 import { respondBasic, respondOnError } from '../../../lib/middlewares/respond';
 
-const getUserQuestionList = async (req: any, res: any) => {
-  
+const getUserQuestionList = async (req: express.Request, res: express.Response) => {
+
   await questionService.getUserQuestion(req, res)
   .then((data: any) => {
     respondBasic(res, 100, 'success', data);

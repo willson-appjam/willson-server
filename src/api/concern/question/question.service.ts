@@ -18,7 +18,9 @@ const postUserQuestion = (req: express.Request, res: express.Response) => {
     try {
       
       const { question, feeling, personality, experience } = req.body
-      const qResult: any = await questionModel.insertQuestion(connection, question);
+      const { user } = req
+
+      const qResult: any = await questionModel.insertQuestion(connection, question, user);
       
       qResult.affectedRows == 0 && reject({message: 'insert error'})
 
@@ -68,11 +70,10 @@ const getUserQuestion = (req: express.Request, res: express.Response) => {
       })
 
       resolve({
-        feeling: {
           user,
           question,
           category,
-        }
+          size: qList.length,
       })
     } catch (e) {
       reject(e)
