@@ -9,7 +9,7 @@ import experienceModel from '../../../models/experience.model';
 
 import { qList, Question, User, Category } from './question.interface';
 
-const postUserQuestion = (req: express.Request, res: express.Response) => {
+const postUserQuestion = (req: any, res: express.Response) => {
   
   return new Promise(async (resolve, reject) => {
     

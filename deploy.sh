@@ -3,8 +3,11 @@
 source /home/ec2-user/.bash_profile
 export WILLSON=$HOME/deploy/willson
 
- NODE_ENV=src
- pm2 delete willson
- pm2 start --name willson $WILLSON/config/dist/bundle.js
+NODE_ENV=src
+
+yarn build:dev
+pm2 delete willson
+pm2 start --name willson $WILLSON/config/dist/bundle.js
+pm2 logs willson
 
  
