@@ -7,13 +7,13 @@ cache :
 before_install:
   - npm install -g yarn
 
-install:
-  - false
-
 branches:
   only:
     - develop
 
+script:
+  - echo "skipping tests"
+  
 before_deploy:
   - rm -rf node_modules
   - zip -r willson-deploy ./*
