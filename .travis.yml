@@ -11,9 +11,6 @@ branches:
   only:
     - develop
 
-script:
-  - yarn test
-
 before_deploy:
   - rm -rf node_modules
   - zip -r test ./*
@@ -30,7 +27,7 @@ deploy:
     local_dir: deploy
     wait-until-deployed: true
     on:
-      repo: willson-appjam/WillSon-Server
+      repo: willson-appjam/willson-server
       branch: develop
 
   - provider: codedeploy
@@ -39,12 +36,12 @@ deploy:
     bucket: willson-deploy
     key: willson-deploy.zip # 해당 버킷에 저장되어 있는 파일 이름
     bundle_type: zip
-    deployment_group: test
-    application: test
+    deployment_group: willson
+    application: willson
     region: ap-northeast-2
     wait-until-deployed: true
     on:
-      repo: willson-appjam/WillSon-Server
+      repo: willson-appjam/willson-server
       branch: develop
 
 notifications:
