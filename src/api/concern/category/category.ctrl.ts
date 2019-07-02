@@ -1,7 +1,9 @@
 import express from 'express';
 import categoryService from './category.service';
 
-const getCategoryList = async (req: express.Request, res: express.Response) => {
+const getCategoryList = async (req: any, res: express.Response) => {
+
+  console.log('tttt', req.user);
 
   await categoryService.getCategoryListService(req, res)
   .then((result: any) => {

@@ -1,6 +1,6 @@
 import express from 'express';
 import dbConnection from '../../../lib/connection';
-import feelingModel from '../../../models/feeling';
+import feelingModel from '../../../models/feeling.model';
 
 const getfeelingService = (req: express.Request, res: express.Response) => {
   return new Promise(async (resolve, reject) => {

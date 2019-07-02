@@ -1,6 +1,7 @@
-import mysql, { Connection } from "mysql";
+import mysql, { Connection, MysqlError } from "mysql";
+import _ from 'lodash'
 
-const insertQuestion = (connection: Connection,): Promise<Array<{}>> => {
+const insertQuestion = (connection: Connection, question : any): Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const query = `
       INSERT INTO
@@ -11,13 +12,12 @@ const insertQuestion = (connection: Connection,): Promise<Array<{}>> => {
           emotion,
           advise,
           experience,
-          user_idx,
           categoryList_idx,
-          agreement
-        )
-      VALUES(?,?,?,?,?,?,?,?)
+          agreement,
+          user_idx
+        ) values (?,?,?,?,?,?,?,?,?)
   `
-    connection.query(query, (err: Error, result: Array<any>) => {
+    connection.query(query, _.map(question, (value) => value), (err, result) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -33,9 +33,9 @@ const selectUserQuestion = (connection: Connection) : Promise<Array<{}>> => {
       INNER JOIN
         user as U on Q.user_idx = U.user_idx
       INNER JOIN
-        categoryList as CL Q.categoryList_idx = CL.categoryList.idx
+        categoryList as CL on Q.categoryList_idx = CL.categoryList_idx
       INNER JOIN
-        category as C C.category_idx = CL.category_idx
+        category as C on C.category_idx = CL.category_idx
       WHERE
         Q.status = 'wait'
     `

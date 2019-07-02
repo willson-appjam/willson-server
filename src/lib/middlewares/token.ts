@@ -25,4 +25,7 @@ const decode = function decodedToken(token: string, secret: string) {
   })
 }
 
-export { encode, decode }
+export default {
+  encode,
+  decode,
+}

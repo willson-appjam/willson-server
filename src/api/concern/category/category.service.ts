@@ -1,6 +1,6 @@
 import express from 'express';
 import dbConnection from '../../../lib/connection';
-import categoryModel from '../../../models/category';
+import categoryModel from '../../../models/category.model';
 
 const getCategoryListService = (req: express.Request, res: express.Response) => {
   return new Promise(async (resolve, reject) => {

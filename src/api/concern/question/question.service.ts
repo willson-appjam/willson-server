@@ -1,16 +1,35 @@
 import express from 'express';
-import dbConnection from '../../../lib/connection';
-import questionModel from '../../../models/question';
-import { qList, Question, User, Category }from './question.interface';
 import _ from 'lodash';
 
+import dbConnection from '../../../lib/connection';
+import questionModel from '../../../models/question.model';
+import personalityModel from '../../../models/personality.model';
+import feelingModel from '../../../models/feeling.model';
+import experienceModel from '../../../models/experience.model';
+
+import { qList, Question, User, Category } from './question.interface';
+
 const postUserQuestion = (req: express.Request, res: express.Response) => {
+  
   return new Promise(async (resolve, reject) => {
+    
     const connection = await dbConnection();
+    
     try {
-      const qList = await questionModel.insertQuestion(connection);
-      resolve(qList)
+      
+      const { question, feeling, personality, experience } = req.body
+      const qResult: any = await questionModel.insertQuestion(connection, question);
+      
+      qResult.affectedRows == 0 && reject({message: 'insert error'})
+
+      const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
+      const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);
+      const eResult = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+
+      resolve({})
+      
     } catch (e) {
+      console.log(e);
       reject(e)
     } finally {
       connection.end();
@@ -21,8 +40,10 @@ const postUserQuestion = (req: express.Request, res: express.Response) => {
 const getUserQuestion = (req: express.Request, res: express.Response) => {
   return new Promise(async (resolve, reject) => {
     const connection = await dbConnection();
+    
     try {
       const qList : qList = await questionModel.selectUserQuestion(connection);
+      
       let user: {}[] = [];
       let question: {}[] = [];
       let category: {}[] = [];
@@ -37,7 +58,7 @@ const getUserQuestion = (req: express.Request, res: express.Response) => {
         })
 
         question.push({
-          title: value.title,
+          title: value.content,
         })
 
         category.push({
@@ -47,9 +68,11 @@ const getUserQuestion = (req: express.Request, res: express.Response) => {
       })
 
       resolve({
-        user,
-        question,
-        category,
+        feeling: {
+          user,
+          question,
+          category,
+        }
       })
     } catch (e) {
       reject(e)
