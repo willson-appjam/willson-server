@@ -19,7 +19,6 @@ export default async (req: any, res: any, next: NextFunction) => {
     await next()
     
   } catch (e) {
-    console.log('authCheck', e)
-    respondOnError(req, 100, 'token decode error', 500);
+    respondOnError(res, 100, 'token decode error', 500);
   }
 }

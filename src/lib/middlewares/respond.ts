@@ -18,7 +18,7 @@ const respondOnError = (res: express.Response, code: number, message: string, st
   console.error('MESSAGE: ', message)
   console.error('DATA: ', result)
 
-  res.status(status).json({
+  res.status(status).send({
     code,
     message: message,
     result,
