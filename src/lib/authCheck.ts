@@ -13,16 +13,13 @@ export default async (req: any, res: any, next: NextFunction) => {
   
   try {
     
-    if (empty(webToken)) {
-      req.user = { user_id: 0 }
-    } else {
-      req.user = await token.decode(webToken, key)
-    }
-
-    return next()
-
+    if (empty(webToken)) req.user = { user_id: 0 }
+    else req.user = await token.decode(webToken, key)
+    
+    await next()
+    
   } catch (e) {
-    console.log(e)
+    console.log('authCheck', e)
     respondOnError(req, 100, 'token decode error', 500);
   }
 }
