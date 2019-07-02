@@ -13,9 +13,9 @@ branches:
 
 before_deploy:
   - rm -rf node_modules
-  - zip -r test ./*
+  - zip -r willson-deploy ./*
   - mkdir -p deploy
-  - mv test.zip deploy/test.zip
+  - mv willson-deploy.zip deploy/willson-deploy.zip
 
 deploy:
   - provider: s3
