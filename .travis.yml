@@ -39,7 +39,7 @@ deploy:
     bucket: willson-deploy
     key: willson-deploy.zip # 해당 버킷에 저장되어 있는 파일 이름
     bundle_type: zip
-    deployment_group: willson
+    deployment_group: willson-group
     application: willson
     region: ap-northeast-2
     wait-until-deployed: true
