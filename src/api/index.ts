@@ -8,6 +8,6 @@ const router = express.Router()
 
 router.use('/user', user);
 router.use('/review', review);
-router.use('/helper', helper)
+router.use('/helper', helper);
 
 export default router;
