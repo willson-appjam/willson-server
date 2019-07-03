@@ -1,7 +1,7 @@
 import express from 'express';
 import feelingService from './feeling.service';
 
-const getFeelingList = async (req: express.Request, res: express.Response) => {
+const getFeelingList = async (req: any, res: any) => {
 
   await feelingService.getfeelingService(req, res)
   .then((result: any) => {

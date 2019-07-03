@@ -18,7 +18,7 @@ class App {
     this.app.use(bodyParser.urlencoded({ extended: true }));
     this.app.use('/api', api);
     
-    this.app.get('/check', (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.app.get('/check', (req: any, res: any, next: express.NextFunction) => {
         res.status(200).send("check success");
       });
   }

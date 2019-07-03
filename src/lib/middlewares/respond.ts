@@ -60,7 +60,7 @@ const CustomError = class CustomError extends Error {
   }
 }
 
-const resFormat = (req: express.Request, res: express.Response) => {
+const resFormat = (req: any, res: any) => {
   respondBasic(res, 12011, 'get Main list fail', {});
 }
 
