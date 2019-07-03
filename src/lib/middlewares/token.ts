@@ -18,6 +18,7 @@ const decode = function decodedToken(token: string, secret: string) {
       if(err) {
         if(err.message === 'jwt expired') reject('token expired')
         else if(err.message === 'invalid token') reject('invalid token')
+        else reject(err)
       } else {
         resolve(decoded)
       }
@@ -25,4 +26,7 @@ const decode = function decodedToken(token: string, secret: string) {
   })
 }
 
-export { encode, decode }
+export default {
+  encode,
+  decode,
+}

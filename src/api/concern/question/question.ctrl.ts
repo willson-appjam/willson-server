@@ -1,40 +1,27 @@
 import express from 'express';
 import questionService from './question.service';
+import { respondBasic, respondOnError } from '../../../lib/middlewares/respond';
 
-const getUserQuestionList = async (req: express.Request, res: express.Response) => {
+const getUserQuestionList = async (req: any, res: any) => {
 
   await questionService.getUserQuestion(req, res)
-  .then((result: any) => {
-    res.send({
-      message: '',
-      code: 100,
-      data: {
-        feeling: result,
-      }
-    })
+  .then((data: any) => {
+    respondBasic(res, 100, 'success', data);
   })
   .catch((e: Error) => {
-    res.send(e)
+    respondOnError(res, 100, 'fail', 500);
   })
 }
 
-const postUserQuestion = async (req: express.Request, res: express.Response) => {
-  
+const postUserQuestion = async (req: any, res: any) => {
   await questionService.postUserQuestion(req, res)
-  .then((result: any) => {
-    res.send({
-      message: '',
-      code: 100,
-      data: {
-        feeling: result,
-      }
-    })
+  .then((data: any) => {
+    respondBasic(res, 100, 'success', data);
   })
   .catch((e: Error) => {
-    res.send(e)
+    respondOnError(res, 100, 'fail', 500);
   })
 }
-
 
 export {
   getUserQuestionList,

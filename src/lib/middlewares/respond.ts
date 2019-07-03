@@ -18,7 +18,7 @@ const respondOnError = (res: express.Response, code: number, message: string, st
   console.error('MESSAGE: ', message)
   console.error('DATA: ', result)
 
-  res.status(status).json({
+  res.status(status).send({
     code,
     message: message,
     result,
@@ -60,7 +60,7 @@ const CustomError = class CustomError extends Error {
   }
 }
 
-const resFormat = (req: express.Request, res: express.Response) => {
+const resFormat = (req: any, res: any) => {
   respondBasic(res, 12011, 'get Main list fail', {});
 }
 
