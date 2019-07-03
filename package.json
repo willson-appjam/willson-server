@@ -4,10 +4,11 @@
   "description": "appjam for sopt",
   "main": "index.js",
   "scripts": {
-    "build:dev": "NODE_EVN=development webpack --mode development --config ./config/webpack.config.js",
-    "local": "nodemon --watch src --delay 1 --exec 'ts-node' src/www.ts",
+    "build:dev": "webpack --mode development --config ./config/webpack.config.js",
+    "local": "nodemon --watch src --delay 1 --exec ts-node src/www.ts",
     "test": "mocha -r ts-node/register --exit './src/test/**/*.test.ts'",
-    "start": "NODE_PATH=src pm2 start ./config/dist/bundle.js"
+    "start": "NODE_PATH=src pm2 start ./config/dist/bundle.js",
+    "soyeon": "yarn build:dev && yarn local"
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,7 @@
   "homepage": "https://github.com/willson-appjam/WillSon-Server#readme",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "crypto-promise": "^2.1.0",
     "express": "^4.17.1",
     "helmet": "^3.18.0",
     "lodash": "^4.17.11",
