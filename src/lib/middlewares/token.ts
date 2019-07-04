@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken')
 
-const encode = function generateToken(secret : string, userId : String, level: string) {
+const encode = function generateToken(secret : string, user_idx : String, level: string) {
   return new Promise((resolve, reject) => {
-    const token = jwt.sign({userId, level}, secret, {
+    const token = jwt.sign({user_idx, level}, secret, {
       issuer: 'willson',
       algorithm: 'HS256',
       expiresIn: 3600 * 24 * 10 * 10, // 토큰의 유효기간이 100일
