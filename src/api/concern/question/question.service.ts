@@ -19,7 +19,7 @@ const postUserQuestion = (req: any, res: any) => {
       
       const { question, feeling, personality, experience } = req.body
       const { user } = req
-
+      
       const qResult: any = await questionModel.insertQuestion(connection, question, user);
       
       qResult.affectedRows == 0 && reject({message: 'insert error'})
