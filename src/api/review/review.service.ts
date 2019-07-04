@@ -42,8 +42,6 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const {params} = req
 			const {user} = req
 
-			console.log('test');
-			
 			if (!body.stars || !body.review_content){
 				reject({
 					code: 204,

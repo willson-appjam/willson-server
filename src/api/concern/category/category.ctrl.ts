@@ -2,7 +2,6 @@ import express from 'express';
 import categoryService from './category.service';
 
 const getCategoryList = async (req: any, res: any) => {
-  console.log(test)
   await categoryService.getCategoryListService(req, res)
   .then((result: any) => {
     res.send(result)
