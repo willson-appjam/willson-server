@@ -1,8 +1,7 @@
 import { dbconfig } from '../../secret'
 import mysql from 'mysql'
 
-const config : string = JSON.stringify(dbconfig)
-const dbpool : mysql.Pool = mysql.createPool(config);
+const dbpool : mysql.Pool = mysql.createPool(dbconfig);
 
 export default function dbConnection() {
   return new Promise((resolve, reject) => {
