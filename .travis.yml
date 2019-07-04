@@ -12,40 +12,40 @@ branches:
     - develop
 
 script:
-  - yarn test
-
+  - echo "skipping tests"
+  
 before_deploy:
   - rm -rf node_modules
-  - zip -r test ./*
+  - zip -r willson-deploy ./*
   - mkdir -p deploy
-  - mv test.zip deploy/test.zip
+  - mv willson-deploy.zip deploy/willson-deploy.zip
 
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
-    bucket: test-willson
+    bucket: willson-deploy
     region: ap-northeast-2
     skip_cleanup: true
     local_dir: deploy
     wait-until-deployed: true
     on:
-      repo: willson-appjam/WillSon-Server
-      branch: master
+      repo: willson-appjam/willson-server
+      branch: develop
 
   - provider: codedeploy
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
-    bucket: test-willson
-    key: test.zip # 해당 버킷에 저장되어 있는 파일 이름
+    bucket: willson-deploy
+    key: willson-deploy.zip # 해당 버킷에 저장되어 있는 파일 이름
     bundle_type: zip
-    deployment_group: test
-    application: test
+    deployment_group: willson-group
+    application: willson
     region: ap-northeast-2
     wait-until-deployed: true
     on:
-      repo: willson-appjam/WillSon-Server
-      branch: master
+      repo: willson-appjam/willson-server
+      branch: develop
 
 notifications:
   email:

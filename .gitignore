@@ -62,5 +62,6 @@ typings/
 
 # config file
 secret/
+config/
 
 package-lock.json

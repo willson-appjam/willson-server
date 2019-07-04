@@ -1,11 +1,15 @@
 // const express = require('express')
 import express from 'express';
 import user from './user'
-import helper from './helper';
+import concern from './concern';
 
 const router = express.Router()
 
+router.get('/test', (req: any, res: any) => {
+  res.send('test');
+})
+
 router.use('/user', user);
-router.use('/helper', helper);
+router.use('/concern', concern);
 
 export default router;
