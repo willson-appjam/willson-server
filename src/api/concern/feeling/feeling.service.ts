@@ -2,7 +2,7 @@ import express from 'express';
 import dbConnection from '../../../lib/connection';
 import feelingModel from '../../../models/feeling.model';
 
-const getfeelingService = (req: express.Request, res: express.Response) => {
+const getfeelingService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     let connection = await dbConnection();
     try {

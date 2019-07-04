@@ -5,7 +5,7 @@ import concern from './concern';
 
 const router = express.Router()
 
-router.get('/test', (req: express.Request, res: express.Response) => {
+router.get('/test', (req: any, res: any) => {
   res.send('test');
 })
 

@@ -2,7 +2,7 @@ import express from 'express';
 import dbConnection from '../../../lib/connection';
 import categoryModel from '../../../models/category.model';
 
-const getCategoryListService = (req: express.Request, res: express.Response) => {
+const getCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     const connection = await dbConnection();
     try {
@@ -10,8 +10,6 @@ const getCategoryListService = (req: express.Request, res: express.Response) => 
 
       const categoryList = await categoryModel.selectCategoryListWithId(connection, category_idx);
       
-      console.log(categoryList)
-
       resolve(categoryList)
 
     } catch (e) {
@@ -23,7 +21,7 @@ const getCategoryListService = (req: express.Request, res: express.Response) => 
 }
 
 
-const postCategoryListService = (req: express.Request, res: express.Response) => {
+const postCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     
     const connection = await dbConnection();

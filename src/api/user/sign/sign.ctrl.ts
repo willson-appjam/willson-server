@@ -2,7 +2,7 @@ import express from 'express';
 import signService from './sign.service';
 import { respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
-const postSigninCtrl = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const postSigninCtrl = async (req: any, res: any, next: express.NextFunction) => {
 
   // validation 만들고 싶으면 만들기
 

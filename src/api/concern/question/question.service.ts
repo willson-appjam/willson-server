@@ -9,7 +9,7 @@ import experienceModel from '../../../models/experience.model';
 
 import { qList, Question, User, Category } from './question.interface';
 
-const postUserQuestion = (req: express.Request, res: express.Response) => {
+const postUserQuestion = (req: any, res: any) => {
   
   return new Promise(async (resolve, reject) => {
     
@@ -39,7 +39,7 @@ const postUserQuestion = (req: express.Request, res: express.Response) => {
   })
 }
 
-const getUserQuestion = (req: express.Request, res: express.Response) => {
+const getUserQuestion = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     const connection = await dbConnection();
     
