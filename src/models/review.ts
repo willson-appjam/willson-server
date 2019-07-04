@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { start } from 'repl';
 
-const insertHelperReview = (connection: any, body: any) :Promise<{}> => {
+const insertHelperReview = (connection: any, {stars, review_content, helper_idx, question_idx, category_idx}: any, {user_idx}: any) :Promise<{}> => {
 	return new Promise((resolve, reject) : any  => {
-		const value = _.map(body, (v, k, index) => v)
+		//const value = _.map(body, (v) => v)
 		const query = `
 		INSERT INTO
 			review(
@@ -16,86 +16,91 @@ const insertHelperReview = (connection: any, body: any) :Promise<{}> => {
 				)
 			VALUES (?,?,?,?,?,?)
 			`
-		const Query = connection.query(query, value, (err: Error, result:{}[]) => {
-			console.log(Query.sql)
+		connection.query(query, [stars, review_content, helper_idx, user_idx, question_idx, category_idx], (err: Error, result:{}[]) => {
 			if(err) reject(err) 
 			resolve(result)
 		})
 	})
-};
+}
 
-//후기가 등록되었을때 count +1
+
 const updateHelperReviewCount = (connection: any, {helper_idx}: any) => {
 	return new Promise((resolve, reject) => {
 		const query = `
-		UPDATE helper
-		SET review_count = review_count+1
-		WHERE helper_idx = ?
+		UPDATE
+			helper
+		SET
+			review_count = review_count+1
+		WHERE
+			helper_idx = ?
 		`
 		connection.query(query, [helper_idx], (err: Error, result: {}[]) => {
-			if(err) reject({
-				message: 'database error',
-				err,
-			});
-			resolve(result)
-		} )
-	})
-}
-
-//후기 등록됐을 때 평점 평균값 업데이트 해주기
-//평균 값 구하기
-const selectCountReview = (connection: any, { helper_idx }: any) => {
-	return new Promise((resolve, reject) => {
-		const query = `
-		SELECT ROUND(avg(stars), 2) AS stars
-		FROM review
-		WHERE helper_idx = ${helper_idx}
-		`
-		connection.query(query, (err:Error, result: {}[]) => {
-			if(err) reject(err);
-			console.log(result)
+			if(err) reject(err)
 			resolve(result)
 		})
 	})
 }
 
-const updateAvgstar = (connection : any, { helper_idx } : any, { stars }: any) => {
+
+const selectAvgStars = (connection: any, {helper_idx}: any) => {
 	return new Promise((resolve, reject) => {
 		const query = `
-		UPDATE helper
-		SET stars = ${stars}
-		WHERE helper_idx = ${helper_idx}
+		SELECT
+			ROUND(avg(stars), 2) AS stars
+		FROM
+			review
+		WHERE
+			helper_idx = ?
 		`
-
-		connection.query(query, (err:Error, result: {}[]) => {
-			if(err) reject(err);
-			console.log(result)
+		connection.query(query, [helper_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err)
 			resolve(result)
 		})
 	})
 }
 
-//req.params
-const updateReview = (connection: any, {stars} : any, {review_content} :any, {review_idx} : any) => {
+
+const updateAvgStars = (connection: any, {stars}: any, {helper_idx}: any) => {
 	return new Promise((resolve, reject) => {
 		const query = `
-		UPDATE review
-		SET stars = ${stars} , review_content = "${review_content}"
-		WHERE review_idx = ${review_idx}
+		UPDATE
+			helper
+		SET
+			stars = ?
+		WHERE
+			helper_idx = ?
 		`
-		connection.query(query, (err:Error, result: {}[]) => {
-			if(err) reject(err);
-			console.log(result)
+		connection.query(query, [stars, helper_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err)
 			resolve(result)
 		})
 	})
-
 }
 
-export  {
+
+const updateReview = (connection: any, {stars}: any, {review_content}: any, {review_idx}: any, {user_idx}: any) => {
+	return new Promise((resolve, reject) => {
+		const query = `
+		UPDATE
+			review
+		SET
+			stars = ?,
+			review_content = ?
+		WHERE
+			review_idx = ?
+			and user_idx = ?
+		`
+		connection.query(query, [stars, review_content, review_idx, user_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err);
+			resolve(result)
+		})
+	})
+}
+
+export{
 	insertHelperReview,
 	updateHelperReviewCount,
-	selectCountReview,
-	updateAvgstar,
+	selectAvgStars,
+	updateAvgStars,
 	updateReview
 }

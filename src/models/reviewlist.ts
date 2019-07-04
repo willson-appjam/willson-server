@@ -1,4 +1,4 @@
-const selectReviewList = (connection : any, {helper_idx}: any) :Promise<{}> => {
+const selectReviewList = (connection : any, {helper_idx}: any): Promise<{}> => {
 	return new Promise((resolve, reject) : any => {
 		const query = `
 		SELECT
@@ -18,16 +18,13 @@ const selectReviewList = (connection : any, {helper_idx}: any) :Promise<{}> => {
 			r.helper_idx = h.helper_idx
 			and r.user_idx = u.user_idx
 			and r.category_idx = c.category_idx 
-			and r.helper_idx = ${helper_idx}
+			and r.helper_idx = ?
 		`
 
-		connection.query(query, (err:Error, result: {}[]) => {
+		connection.query(query, [helper_idx], (err: Error, result: {}[]) => {
 			if(err) reject(err);
-			console.log(result)
 			resolve(result)
 		})
-
-
 	})
 }
 

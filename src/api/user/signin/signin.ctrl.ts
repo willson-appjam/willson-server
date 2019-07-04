@@ -7,6 +7,7 @@ const postSigninCtrl = async (req: express.Request, res: express.Response, next:
     .then((result: any) => {
       console.log(result)
       res.status(200).send({
+        data: result,
         message: '로그인 성공'
     })
   })

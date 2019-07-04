@@ -6,14 +6,14 @@ const getProfileCtrl = async (req: any, res: any, next: any) => {
 	await profileService.getProfileService(req, res, next)
 	.then((result: any) => {
 		res.status(200).send({
-			data: result,
-			message: '유저 프로필 가져오기 성공'
+			message: '유저 프로필 가져오기 성공',
+			data: result
 		})
-})
+	})
 .catch((e: any) => {
 	console.log(e);
 	respondOnError(res, e.message, e.err, 500)
-})
+	})
 }
 
 export{

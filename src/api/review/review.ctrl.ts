@@ -2,10 +2,9 @@ import express from 'express';
 import reviewService from './review.service';
 import {respondBasic, respondOnError} from '../../lib/middlewares/respond';
 
-const postReviewCtrl = async (req: any, res:any, next: any) => {
+const postReviewCtrl = async (req: any, res: any, next: any) => {
 	await reviewService.postReviewService(req, res, next)
 		.then((result: any) => {
-			console.log(result)
 			res.status(200).send({
 				message: '리뷰 등록 완료',
 			})

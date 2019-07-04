@@ -15,7 +15,7 @@ const selectUserEmail = (connection: any, {email}: any) : Promise<{}> => {
 const selectUserPassword = (connection: any, {password}: any) : Promise<{}> => {
 	return new Promise((resolve, reject): any => {
 		const query = `
-		SELECT password
+		SELECT password, user_idx
 		FROM user
 		WHERE password = ?
 		`
