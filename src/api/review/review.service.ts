@@ -1,8 +1,8 @@
 import express from 'express'
 import {CustomError, resFormat} from '../../lib/middlewares/respond'
 import dbconnection from '../../lib/connection'
-import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, updateReview} from '../../models/review'
-import review from './index';
+import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview}
+from '../../models/review'
 
 
 const postReviewService = (req: any, res: any, next: any) => {
@@ -11,8 +11,6 @@ const postReviewService = (req: any, res: any, next: any) => {
 			const {body} = req
 			const {user} = req
 
-			console.log('this is user', user)
-
 			if (!body.stars || !body.review_content || !body.helper_idx || !user.user_idx || !body.category_idx || !body.question_idx) {
 				reject({
 					code: 204,
@@ -20,13 +18,13 @@ const postReviewService = (req: any, res: any, next: any) => {
 				})
 			}
 			
-			const connection = await dbconnection();
-			const uploadReview = await insertHelperReview(connection, body, user);			
-			const modifiedReviewCount = await updateHelperReviewCount(connection, body);		
-			const avgStars : any = await selectAvgStars(connection, body);
-			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body);
-			
-			resolve(uploadReview);
+			const connection = await dbconnection()
+			const uploadReview = await insertHelperReview(connection, body, user)			
+			const modifiedReviewCount = await updateHelperReviewCount(connection, body)		
+			const avgStars : any = await selectAvgStars(connection, body)
+			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body)
+
+			resolve(uploadReview)
 		}catch(e){
 			console.log(e)
 			reject(e)
@@ -42,11 +40,6 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const {params} = req
 			const {user} = req
 
-<<<<<<< HEAD
-			
-			
-=======
->>>>>>> e4cb29638de52e48f22797b1aa303f158d83d98e
 			if (!body.stars || !body.review_content){
 				reject({
 					code: 204,
@@ -55,15 +48,23 @@ const putReviewService = (req: any, res: any, next: any) => {
 			}
 
 			const connection = await dbconnection();
-			const modifiedReview: any = await updateReview(connection, body, body, params, user)
-
-			resolve(modifiedReview)
-		}catch(e){
+			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
+			if (!idxFromReview[0]){
+				reject({
+					code: 403,
+					message: '작성한 사용자만 수정 및 삭제 가능'
+				})
+				}else{
+					const updateReview: any = await updateHelperReview(connection, body, user)
+					resolve(updateReview)
+				}						
+			}catch(e){
 			console.log(e)
 			reject(e)
 		}
 	})
 }
+
 
 export default{
 	postReviewService,
