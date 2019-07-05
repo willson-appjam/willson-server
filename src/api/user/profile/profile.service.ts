@@ -5,6 +5,7 @@ import { resolveCname } from 'dns';
 import profile from '../index';
 import { selectUserProfileList, selectPersonality, selectFeeling, selectExperience, selectUserPersonality }
 from '../../../models/profile';
+import {getAge} from '../../../modules/getAge'
 
 const getProfileService = (req: any, res: any, next: any) => {
 	return new Promise(async(resolve, reject) => {
@@ -24,12 +25,13 @@ const getProfileService = (req: any, res: any, next: any) => {
 			const feeling : any = await selectFeeling(connection, params)
 			const experience : any = await selectExperience(connection, params)
 			const userPersonality : any = await selectUserPersonality(connection, params)
+			const ageStr = await getAge(userProfileList[0].age)
 
 			resolve({
 				user: {
 					nickname : userProfileList[0].nickname,
 					gender : userProfileList[0].gender,
-					age : userProfileList[0].age
+					age : ageStr
 				},
 				user_personality: userPersonality,
 				question : {
