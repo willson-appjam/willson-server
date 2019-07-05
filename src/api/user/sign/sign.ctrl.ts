@@ -5,7 +5,6 @@ import { respondBasic, respondOnError, CustomError } from '../../../lib/middlewa
 const postSigninCtrl = async (req: any, res: any, next: express.NextFunction) => {
 
   // validation 만들고 싶으면 만들기
-
   
   await signService.postSignService(req, res, next)
     .then((result: any) => {
