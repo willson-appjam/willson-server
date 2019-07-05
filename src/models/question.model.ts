@@ -1,9 +1,8 @@
 import mysql, { Connection, MysqlError } from "mysql";
 import _ from 'lodash'
 
-const insertQuestion = (connection: Connection, question : {}, { user_idx } : any): Promise<Array<{}>> => {
+const insertUserQuestion = (connection: Connection, question : {}, { user_idx } : any): Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
-
     const q : Array<any> = _.map(question, (value) => value)
     q.push(user_idx);
 
@@ -27,7 +26,7 @@ const insertQuestion = (connection: Connection, question : {}, { user_idx } : an
   })
 }
 
-const selectUserQuestion = (connection: Connection) : Promise<Array<{}>> => {
+const selectUserQuestionWithStatus = (connection: Connection) : Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const query = `
       SELECT
@@ -44,13 +43,12 @@ const selectUserQuestion = (connection: Connection) : Promise<Array<{}>> => {
         Q.status = 'wait'
     `
     connection.query(query, (err, result) => {
-      console.log('access question insert');
       err ? reject(err) : resolve(result)
     })
   })
 }
 
 export default {
-  insertQuestion,
-  selectUserQuestion
+  insertUserQuestion,
+  selectUserQuestionWithStatus
 }

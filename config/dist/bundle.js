@@ -336,6 +336,36 @@ function validMime (type) {
 
 /***/ }),
 
+/***/ "./node_modules/array-filter/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/array-filter/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/**
+ * Array#filter.
+ *
+ * @param {Array} arr
+ * @param {Function} fn
+ * @return {Array}
+ */
+
+module.exports = function (arr, fn) {
+  if (arr.filter) return arr.filter(fn);
+  var ret = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (!hasOwn.call(arr, i)) continue;
+    if (fn(arr[i], i, arr)) ret.push(arr[i]);
+  }
+  return ret;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+
+/***/ }),
+
 /***/ "./node_modules/array-flatten/array-flatten.js":
 /*!*****************************************************!*\
   !*** ./node_modules/array-flatten/array-flatten.js ***!
@@ -408,6 +438,181 @@ function arrayFlatten (array, depth) {
 
   return flattenWithDepth(array, [], depth)
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/array-map/index.js":
+/*!*****************************************!*\
+  !*** ./node_modules/array-map/index.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = function (xs, f) {
+    if (xs.map) return xs.map(f);
+    var res = [];
+    for (var i = 0; i < xs.length; i++) {
+        var x = xs[i];
+        if (hasOwn.call(xs, i)) res.push(f(x, i, xs));
+    }
+    return res;
+};
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+
+/***/ }),
+
+/***/ "./node_modules/array-reduce/index.js":
+/*!********************************************!*\
+  !*** ./node_modules/array-reduce/index.js ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var hasOwn = Object.prototype.hasOwnProperty;
+
+module.exports = function (xs, f, acc) {
+    var hasAcc = arguments.length >= 3;
+    if (hasAcc && xs.reduce) return xs.reduce(f, acc);
+    if (xs.reduce) return xs.reduce(f);
+    
+    for (var i = 0; i < xs.length; i++) {
+        if (!hasOwn.call(xs, i)) continue;
+        if (!hasAcc) {
+            acc = xs[i];
+            hasAcc = true;
+            continue;
+        }
+        acc = f(acc, xs[i], i);
+    }
+    return acc;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/asap/asap.js":
+/*!***********************************!*\
+  !*** ./node_modules/asap/asap.js ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+// Use the fastest possible means to execute a task in a future turn
+// of the event loop.
+
+// linked list of tasks (single, with head node)
+var head = {task: void 0, next: null};
+var tail = head;
+var flushing = false;
+var requestFlush = void 0;
+var isNodeJS = false;
+
+function flush() {
+    /* jshint loopfunc: true */
+
+    while (head.next) {
+        head = head.next;
+        var task = head.task;
+        head.task = void 0;
+        var domain = head.domain;
+
+        if (domain) {
+            head.domain = void 0;
+            domain.enter();
+        }
+
+        try {
+            task();
+
+        } catch (e) {
+            if (isNodeJS) {
+                // In node, uncaught exceptions are considered fatal errors.
+                // Re-throw them synchronously to interrupt flushing!
+
+                // Ensure continuation if the uncaught exception is suppressed
+                // listening "uncaughtException" events (as domains does).
+                // Continue in next event to avoid tick recursion.
+                if (domain) {
+                    domain.exit();
+                }
+                setTimeout(flush, 0);
+                if (domain) {
+                    domain.enter();
+                }
+
+                throw e;
+
+            } else {
+                // In browsers, uncaught exceptions are not fatal.
+                // Re-throw them asynchronously to avoid slow-downs.
+                setTimeout(function() {
+                   throw e;
+                }, 0);
+            }
+        }
+
+        if (domain) {
+            domain.exit();
+        }
+    }
+
+    flushing = false;
+}
+
+if (typeof process !== "undefined" && process.nextTick) {
+    // Node.js before 0.9. Note that some fake-Node environments, like the
+    // Mocha test runner, introduce a `process` global without a `nextTick`.
+    isNodeJS = true;
+
+    requestFlush = function () {
+        process.nextTick(flush);
+    };
+
+} else if (typeof setImmediate === "function") {
+    // In IE10, Node.js 0.9+, or https://github.com/NobleJS/setImmediate
+    if (typeof window !== "undefined") {
+        requestFlush = setImmediate.bind(window, flush);
+    } else {
+        requestFlush = function () {
+            setImmediate(flush);
+        };
+    }
+
+} else if (typeof MessageChannel !== "undefined") {
+    // modern browsers
+    // http://www.nonblocking.io/2011/06/windownexttick.html
+    var channel = new MessageChannel();
+    channel.port1.onmessage = flush;
+    requestFlush = function () {
+        channel.port2.postMessage(0);
+    };
+
+} else {
+    // old browsers
+    requestFlush = function () {
+        setTimeout(flush, 0);
+    };
+}
+
+function asap(task) {
+    tail = tail.next = {
+        task: task,
+        domain: isNodeJS && process.domain,
+        next: null
+    };
+
+    if (!flushing) {
+        flushing = true;
+        requestFlush();
+    }
+};
+
+module.exports = asap;
+
 
 
 /***/ }),
@@ -4742,6 +4947,161 @@ function reduce (xs, f, acc) {
 
 /***/ }),
 
+/***/ "./node_modules/concat-stream/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/concat-stream/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var Writable = __webpack_require__(/*! readable-stream */ "./node_modules/readable-stream/readable.js").Writable
+var inherits = __webpack_require__(/*! inherits */ "./node_modules/inherits/inherits.js")
+var bufferFrom = __webpack_require__(/*! buffer-from */ "./node_modules/buffer-from/index.js")
+
+if (typeof Uint8Array === 'undefined') {
+  var U8 = __webpack_require__(/*! typedarray */ "./node_modules/typedarray/index.js").Uint8Array
+} else {
+  var U8 = Uint8Array
+}
+
+function ConcatStream(opts, cb) {
+  if (!(this instanceof ConcatStream)) return new ConcatStream(opts, cb)
+
+  if (typeof opts === 'function') {
+    cb = opts
+    opts = {}
+  }
+  if (!opts) opts = {}
+
+  var encoding = opts.encoding
+  var shouldInferEncoding = false
+
+  if (!encoding) {
+    shouldInferEncoding = true
+  } else {
+    encoding =  String(encoding).toLowerCase()
+    if (encoding === 'u8' || encoding === 'uint8') {
+      encoding = 'uint8array'
+    }
+  }
+
+  Writable.call(this, { objectMode: true })
+
+  this.encoding = encoding
+  this.shouldInferEncoding = shouldInferEncoding
+
+  if (cb) this.on('finish', function () { cb(this.getBody()) })
+  this.body = []
+}
+
+module.exports = ConcatStream
+inherits(ConcatStream, Writable)
+
+ConcatStream.prototype._write = function(chunk, enc, next) {
+  this.body.push(chunk)
+  next()
+}
+
+ConcatStream.prototype.inferEncoding = function (buff) {
+  var firstBuffer = buff === undefined ? this.body[0] : buff;
+  if (Buffer.isBuffer(firstBuffer)) return 'buffer'
+  if (typeof Uint8Array !== 'undefined' && firstBuffer instanceof Uint8Array) return 'uint8array'
+  if (Array.isArray(firstBuffer)) return 'array'
+  if (typeof firstBuffer === 'string') return 'string'
+  if (Object.prototype.toString.call(firstBuffer) === "[object Object]") return 'object'
+  return 'buffer'
+}
+
+ConcatStream.prototype.getBody = function () {
+  if (!this.encoding && this.body.length === 0) return []
+  if (this.shouldInferEncoding) this.encoding = this.inferEncoding()
+  if (this.encoding === 'array') return arrayConcat(this.body)
+  if (this.encoding === 'string') return stringConcat(this.body)
+  if (this.encoding === 'buffer') return bufferConcat(this.body)
+  if (this.encoding === 'uint8array') return u8Concat(this.body)
+  return this.body
+}
+
+var isArray = Array.isArray || function (arr) {
+  return Object.prototype.toString.call(arr) == '[object Array]'
+}
+
+function isArrayish (arr) {
+  return /Array\]$/.test(Object.prototype.toString.call(arr))
+}
+
+function isBufferish (p) {
+  return typeof p === 'string' || isArrayish(p) || (p && typeof p.subarray === 'function')
+}
+
+function stringConcat (parts) {
+  var strings = []
+  var needsToString = false
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i]
+    if (typeof p === 'string') {
+      strings.push(p)
+    } else if (Buffer.isBuffer(p)) {
+      strings.push(p)
+    } else if (isBufferish(p)) {
+      strings.push(bufferFrom(p))
+    } else {
+      strings.push(bufferFrom(String(p)))
+    }
+  }
+  if (Buffer.isBuffer(parts[0])) {
+    strings = Buffer.concat(strings)
+    strings = strings.toString('utf8')
+  } else {
+    strings = strings.join('')
+  }
+  return strings
+}
+
+function bufferConcat (parts) {
+  var bufs = []
+  for (var i = 0; i < parts.length; i++) {
+    var p = parts[i]
+    if (Buffer.isBuffer(p)) {
+      bufs.push(p)
+    } else if (isBufferish(p)) {
+      bufs.push(bufferFrom(p))
+    } else {
+      bufs.push(bufferFrom(String(p)))
+    }
+  }
+  return Buffer.concat(bufs)
+}
+
+function arrayConcat (parts) {
+  var res = []
+  for (var i = 0; i < parts.length; i++) {
+    res.push.apply(res, parts[i])
+  }
+  return res
+}
+
+function u8Concat (parts) {
+  var len = 0
+  for (var i = 0; i < parts.length; i++) {
+    if (typeof parts[i] === 'string') {
+      parts[i] = bufferFrom(parts[i])
+    }
+    len += parts[i].length
+  }
+  var u8 = new U8(len)
+  for (var i = 0, offset = 0; i < parts.length; i++) {
+    var part = parts[i]
+    for (var j = 0; j < part.length; j++) {
+      u8[offset++] = part[j]
+    }
+  }
+  return u8
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/content-disposition/index.js":
 /*!***************************************************!*\
   !*** ./node_modules/content-disposition/index.js ***!
@@ -5878,6 +6238,36 @@ exports.isBuffer = Buffer.isBuffer;
 function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/crypto-promise/index.js":
+/*!**********************************************!*\
+  !*** ./node_modules/crypto-promise/index.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+const crypto = __webpack_require__(/*! crypto */ "crypto")
+const denodeify = __webpack_require__(/*! es6-denodeify */ "./node_modules/es6-denodeify/index.js")()
+const concat = __webpack_require__(/*! stream-concat-promise */ "./node_modules/stream-concat-promise/index.js")
+
+const cryptoStream = create => (...args) =>
+  (data, encoding) => {
+    const stream = create(...args)
+    stream.end(data, encoding)
+    return concat(stream)
+  }
+
+exports.hash = cryptoStream(crypto.createHash)
+exports.hmac = cryptoStream(crypto.createHmac)
+exports.cipher = cryptoStream(crypto.createCipher)
+exports.decipher = cryptoStream(crypto.createDecipher)
+exports.cipheriv = cryptoStream(crypto.createCipheriv)
+exports.decipheriv = cryptoStream(crypto.createDecipheriv)
+exports.randomBytes = denodeify(crypto.randomBytes)
+exports.pbkdf2 = denodeify(crypto.pbkdf2)
 
 
 /***/ }),
@@ -7968,6 +8358,43 @@ function encodeUrl (url) {
     .replace(UNMATCHED_SURROGATE_PAIR_REGEXP, UNMATCHED_SURROGATE_PAIR_REPLACE)
     .replace(ENCODE_CHARS_REGEXP, encodeURI)
 }
+
+
+/***/ }),
+
+/***/ "./node_modules/es6-denodeify/index.js":
+/*!*********************************************!*\
+  !*** ./node_modules/es6-denodeify/index.js ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports["default"] = function () {
+  var PromiseArg = arguments[0] === undefined ? Promise : arguments[0];
+  return function (f) {
+    return function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return new PromiseArg(function (resolve, reject) {
+        return f.apply(undefined, args.concat([function (err, val) {
+          return err ? reject(err) : resolve(val);
+        }]));
+      });
+    };
+  };
+};
+
+module.exports = exports["default"];
+
 
 
 /***/ }),
@@ -19425,6 +19852,468 @@ var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/jsonify/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/jsonify/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports.parse = __webpack_require__(/*! ./lib/parse */ "./node_modules/jsonify/lib/parse.js");
+exports.stringify = __webpack_require__(/*! ./lib/stringify */ "./node_modules/jsonify/lib/stringify.js");
+
+
+/***/ }),
+
+/***/ "./node_modules/jsonify/lib/parse.js":
+/*!*******************************************!*\
+  !*** ./node_modules/jsonify/lib/parse.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var at, // The index of the current character
+    ch, // The current character
+    escapee = {
+        '"':  '"',
+        '\\': '\\',
+        '/':  '/',
+        b:    '\b',
+        f:    '\f',
+        n:    '\n',
+        r:    '\r',
+        t:    '\t'
+    },
+    text,
+
+    error = function (m) {
+        // Call error when something is wrong.
+        throw {
+            name:    'SyntaxError',
+            message: m,
+            at:      at,
+            text:    text
+        };
+    },
+    
+    next = function (c) {
+        // If a c parameter is provided, verify that it matches the current character.
+        if (c && c !== ch) {
+            error("Expected '" + c + "' instead of '" + ch + "'");
+        }
+        
+        // Get the next character. When there are no more characters,
+        // return the empty string.
+        
+        ch = text.charAt(at);
+        at += 1;
+        return ch;
+    },
+    
+    number = function () {
+        // Parse a number value.
+        var number,
+            string = '';
+        
+        if (ch === '-') {
+            string = '-';
+            next('-');
+        }
+        while (ch >= '0' && ch <= '9') {
+            string += ch;
+            next();
+        }
+        if (ch === '.') {
+            string += '.';
+            while (next() && ch >= '0' && ch <= '9') {
+                string += ch;
+            }
+        }
+        if (ch === 'e' || ch === 'E') {
+            string += ch;
+            next();
+            if (ch === '-' || ch === '+') {
+                string += ch;
+                next();
+            }
+            while (ch >= '0' && ch <= '9') {
+                string += ch;
+                next();
+            }
+        }
+        number = +string;
+        if (!isFinite(number)) {
+            error("Bad number");
+        } else {
+            return number;
+        }
+    },
+    
+    string = function () {
+        // Parse a string value.
+        var hex,
+            i,
+            string = '',
+            uffff;
+        
+        // When parsing for string values, we must look for " and \ characters.
+        if (ch === '"') {
+            while (next()) {
+                if (ch === '"') {
+                    next();
+                    return string;
+                } else if (ch === '\\') {
+                    next();
+                    if (ch === 'u') {
+                        uffff = 0;
+                        for (i = 0; i < 4; i += 1) {
+                            hex = parseInt(next(), 16);
+                            if (!isFinite(hex)) {
+                                break;
+                            }
+                            uffff = uffff * 16 + hex;
+                        }
+                        string += String.fromCharCode(uffff);
+                    } else if (typeof escapee[ch] === 'string') {
+                        string += escapee[ch];
+                    } else {
+                        break;
+                    }
+                } else {
+                    string += ch;
+                }
+            }
+        }
+        error("Bad string");
+    },
+
+    white = function () {
+
+// Skip whitespace.
+
+        while (ch && ch <= ' ') {
+            next();
+        }
+    },
+
+    word = function () {
+
+// true, false, or null.
+
+        switch (ch) {
+        case 't':
+            next('t');
+            next('r');
+            next('u');
+            next('e');
+            return true;
+        case 'f':
+            next('f');
+            next('a');
+            next('l');
+            next('s');
+            next('e');
+            return false;
+        case 'n':
+            next('n');
+            next('u');
+            next('l');
+            next('l');
+            return null;
+        }
+        error("Unexpected '" + ch + "'");
+    },
+
+    value,  // Place holder for the value function.
+
+    array = function () {
+
+// Parse an array value.
+
+        var array = [];
+
+        if (ch === '[') {
+            next('[');
+            white();
+            if (ch === ']') {
+                next(']');
+                return array;   // empty array
+            }
+            while (ch) {
+                array.push(value());
+                white();
+                if (ch === ']') {
+                    next(']');
+                    return array;
+                }
+                next(',');
+                white();
+            }
+        }
+        error("Bad array");
+    },
+
+    object = function () {
+
+// Parse an object value.
+
+        var key,
+            object = {};
+
+        if (ch === '{') {
+            next('{');
+            white();
+            if (ch === '}') {
+                next('}');
+                return object;   // empty object
+            }
+            while (ch) {
+                key = string();
+                white();
+                next(':');
+                if (Object.hasOwnProperty.call(object, key)) {
+                    error('Duplicate key "' + key + '"');
+                }
+                object[key] = value();
+                white();
+                if (ch === '}') {
+                    next('}');
+                    return object;
+                }
+                next(',');
+                white();
+            }
+        }
+        error("Bad object");
+    };
+
+value = function () {
+
+// Parse a JSON value. It could be an object, an array, a string, a number,
+// or a word.
+
+    white();
+    switch (ch) {
+    case '{':
+        return object();
+    case '[':
+        return array();
+    case '"':
+        return string();
+    case '-':
+        return number();
+    default:
+        return ch >= '0' && ch <= '9' ? number() : word();
+    }
+};
+
+// Return the json_parse function. It will have access to all of the above
+// functions and variables.
+
+module.exports = function (source, reviver) {
+    var result;
+    
+    text = source;
+    at = 0;
+    ch = ' ';
+    result = value();
+    white();
+    if (ch) {
+        error("Syntax error");
+    }
+
+    // If there is a reviver function, we recursively walk the new structure,
+    // passing each name/value pair to the reviver function for possible
+    // transformation, starting with a temporary root object that holds the result
+    // in an empty key. If there is not a reviver function, we simply return the
+    // result.
+
+    return typeof reviver === 'function' ? (function walk(holder, key) {
+        var k, v, value = holder[key];
+        if (value && typeof value === 'object') {
+            for (k in value) {
+                if (Object.prototype.hasOwnProperty.call(value, k)) {
+                    v = walk(value, k);
+                    if (v !== undefined) {
+                        value[k] = v;
+                    } else {
+                        delete value[k];
+                    }
+                }
+            }
+        }
+        return reviver.call(holder, key, value);
+    }({'': result}, '')) : result;
+};
+
+
+/***/ }),
+
+/***/ "./node_modules/jsonify/lib/stringify.js":
+/*!***********************************************!*\
+  !*** ./node_modules/jsonify/lib/stringify.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var cx = /[\u0000\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    escapable = /[\\\"\x00-\x1f\x7f-\x9f\u00ad\u0600-\u0604\u070f\u17b4\u17b5\u200c-\u200f\u2028-\u202f\u2060-\u206f\ufeff\ufff0-\uffff]/g,
+    gap,
+    indent,
+    meta = {    // table of character substitutions
+        '\b': '\\b',
+        '\t': '\\t',
+        '\n': '\\n',
+        '\f': '\\f',
+        '\r': '\\r',
+        '"' : '\\"',
+        '\\': '\\\\'
+    },
+    rep;
+
+function quote(string) {
+    // If the string contains no control characters, no quote characters, and no
+    // backslash characters, then we can safely slap some quotes around it.
+    // Otherwise we must also replace the offending characters with safe escape
+    // sequences.
+    
+    escapable.lastIndex = 0;
+    return escapable.test(string) ? '"' + string.replace(escapable, function (a) {
+        var c = meta[a];
+        return typeof c === 'string' ? c :
+            '\\u' + ('0000' + a.charCodeAt(0).toString(16)).slice(-4);
+    }) + '"' : '"' + string + '"';
+}
+
+function str(key, holder) {
+    // Produce a string from holder[key].
+    var i,          // The loop counter.
+        k,          // The member key.
+        v,          // The member value.
+        length,
+        mind = gap,
+        partial,
+        value = holder[key];
+    
+    // If the value has a toJSON method, call it to obtain a replacement value.
+    if (value && typeof value === 'object' &&
+            typeof value.toJSON === 'function') {
+        value = value.toJSON(key);
+    }
+    
+    // If we were called with a replacer function, then call the replacer to
+    // obtain a replacement value.
+    if (typeof rep === 'function') {
+        value = rep.call(holder, key, value);
+    }
+    
+    // What happens next depends on the value's type.
+    switch (typeof value) {
+        case 'string':
+            return quote(value);
+        
+        case 'number':
+            // JSON numbers must be finite. Encode non-finite numbers as null.
+            return isFinite(value) ? String(value) : 'null';
+        
+        case 'boolean':
+        case 'null':
+            // If the value is a boolean or null, convert it to a string. Note:
+            // typeof null does not produce 'null'. The case is included here in
+            // the remote chance that this gets fixed someday.
+            return String(value);
+            
+        case 'object':
+            if (!value) return 'null';
+            gap += indent;
+            partial = [];
+            
+            // Array.isArray
+            if (Object.prototype.toString.apply(value) === '[object Array]') {
+                length = value.length;
+                for (i = 0; i < length; i += 1) {
+                    partial[i] = str(i, value) || 'null';
+                }
+                
+                // Join all of the elements together, separated with commas, and
+                // wrap them in brackets.
+                v = partial.length === 0 ? '[]' : gap ?
+                    '[\n' + gap + partial.join(',\n' + gap) + '\n' + mind + ']' :
+                    '[' + partial.join(',') + ']';
+                gap = mind;
+                return v;
+            }
+            
+            // If the replacer is an array, use it to select the members to be
+            // stringified.
+            if (rep && typeof rep === 'object') {
+                length = rep.length;
+                for (i = 0; i < length; i += 1) {
+                    k = rep[i];
+                    if (typeof k === 'string') {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+            else {
+                // Otherwise, iterate through all of the keys in the object.
+                for (k in value) {
+                    if (Object.prototype.hasOwnProperty.call(value, k)) {
+                        v = str(k, value);
+                        if (v) {
+                            partial.push(quote(k) + (gap ? ': ' : ':') + v);
+                        }
+                    }
+                }
+            }
+            
+        // Join all of the member texts together, separated with commas,
+        // and wrap them in braces.
+
+        v = partial.length === 0 ? '{}' : gap ?
+            '{\n' + gap + partial.join(',\n' + gap) + '\n' + mind + '}' :
+            '{' + partial.join(',') + '}';
+        gap = mind;
+        return v;
+    }
+}
+
+module.exports = function (value, replacer, space) {
+    var i;
+    gap = '';
+    indent = '';
+    
+    // If the space parameter is a number, make an indent string containing that
+    // many spaces.
+    if (typeof space === 'number') {
+        for (i = 0; i < space; i += 1) {
+            indent += ' ';
+        }
+    }
+    // If the space parameter is a string, it will be used as the indent string.
+    else if (typeof space === 'string') {
+        indent = space;
+    }
+
+    // If there is a replacer, it must be a function or an array.
+    // Otherwise, throw an error.
+    rep = replacer;
+    if (replacer && typeof replacer !== 'function'
+    && (typeof replacer !== 'object' || typeof replacer.length !== 'number')) {
+        throw new Error('JSON.stringify');
+    }
+    
+    // Make a fake root object containing our value under the key of ''.
+    // Return the result of stringifying the value.
+    return str('', {'': value});
 };
 
 
@@ -39707,6 +40596,95 @@ module.exports = once;
 
 /***/ }),
 
+/***/ "./node_modules/mecab-ya/mecab.js":
+/*!****************************************!*\
+  !*** ./node_modules/mecab-ya/mecab.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(__dirname) {var cp = __webpack_require__(/*! child_process */ "child_process");
+var sq = __webpack_require__(/*! shell-quote */ "./node_modules/shell-quote/index.js");
+
+var MECAB_LIB_PATH =
+    process.env.MECAB_LIB_PATH ?
+    process.env.MECAB_LIB_PATH :
+    __dirname + '/mecab';
+
+var buildCommand = function (text) {
+    return 'LD_LIBRARY_PATH=' + MECAB_LIB_PATH + ' ' +
+        sq.quote(['echo', text]) + ' | ' + MECAB_LIB_PATH + '/bin/mecab';
+};
+
+var execMecab = function (text, callback) {
+    cp.exec(buildCommand(text), function(err, result) {
+        if (err) { return callback(err); }
+        callback(err, result);
+    });    
+};
+
+var parseFunctions = {
+    'pos': function (result, elems) {
+        result.push([elems[0]].concat(elems[1].split(',')[0]));
+        return result;
+    },
+
+    'morphs': function (result, elems) {
+        result.push(elems[0]);
+        return result;
+    },
+
+    'nouns': function (result, elems) {
+        var tag = elems[1].split(',')[0];
+        
+        if (tag === 'NNG' || tag === 'NNP') {
+            result.push(elems[0]);
+        }
+
+        return result;
+    }
+};
+
+var parse = function (text, method, callback) {
+    execMecab(text, function (err, result) {
+        if (err) { return callback(err); }
+
+        result = result.split('\n').reduce(function(parsed, line) {
+            var elems = line.split('\t');
+
+            if (elems.length > 1) {
+                return parseFunctions[method](parsed, elems);
+            } else {
+                return parsed;
+            }
+        }, []);
+
+        callback(err, result);
+    });
+};
+
+var pos = function (text, callback) {
+    parse(text, 'pos', callback);
+};
+
+var morphs = function (text, callback) {
+    parse(text, 'morphs', callback);
+};
+
+var nouns = function (text, callback) {
+    parse(text, 'nouns', callback);
+};
+
+module.exports = {
+    pos: pos,
+    morphs: morphs,
+    nouns: nouns
+};
+
+/* WEBPACK VAR INJECTION */}.call(this, "/"))
+
+/***/ }),
+
 /***/ "./node_modules/media-typer/index.js":
 /*!*******************************************!*\
   !*** ./node_modules/media-typer/index.js ***!
@@ -52191,6 +53169,360 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 /***/ }),
 
+/***/ "./node_modules/promise/index.js":
+/*!***************************************!*\
+  !*** ./node_modules/promise/index.js ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+module.exports = __webpack_require__(/*! ./lib/core.js */ "./node_modules/promise/lib/core.js")
+__webpack_require__(/*! ./lib/done.js */ "./node_modules/promise/lib/done.js")
+__webpack_require__(/*! ./lib/es6-extensions.js */ "./node_modules/promise/lib/es6-extensions.js")
+__webpack_require__(/*! ./lib/node-extensions.js */ "./node_modules/promise/lib/node-extensions.js")
+
+/***/ }),
+
+/***/ "./node_modules/promise/lib/core.js":
+/*!******************************************!*\
+  !*** ./node_modules/promise/lib/core.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var asap = __webpack_require__(/*! asap */ "./node_modules/asap/asap.js")
+
+module.exports = Promise;
+function Promise(fn) {
+  if (typeof this !== 'object') throw new TypeError('Promises must be constructed via new')
+  if (typeof fn !== 'function') throw new TypeError('not a function')
+  var state = null
+  var value = null
+  var deferreds = []
+  var self = this
+
+  this.then = function(onFulfilled, onRejected) {
+    return new self.constructor(function(resolve, reject) {
+      handle(new Handler(onFulfilled, onRejected, resolve, reject))
+    })
+  }
+
+  function handle(deferred) {
+    if (state === null) {
+      deferreds.push(deferred)
+      return
+    }
+    asap(function() {
+      var cb = state ? deferred.onFulfilled : deferred.onRejected
+      if (cb === null) {
+        (state ? deferred.resolve : deferred.reject)(value)
+        return
+      }
+      var ret
+      try {
+        ret = cb(value)
+      }
+      catch (e) {
+        deferred.reject(e)
+        return
+      }
+      deferred.resolve(ret)
+    })
+  }
+
+  function resolve(newValue) {
+    try { //Promise Resolution Procedure: https://github.com/promises-aplus/promises-spec#the-promise-resolution-procedure
+      if (newValue === self) throw new TypeError('A promise cannot be resolved with itself.')
+      if (newValue && (typeof newValue === 'object' || typeof newValue === 'function')) {
+        var then = newValue.then
+        if (typeof then === 'function') {
+          doResolve(then.bind(newValue), resolve, reject)
+          return
+        }
+      }
+      state = true
+      value = newValue
+      finale()
+    } catch (e) { reject(e) }
+  }
+
+  function reject(newValue) {
+    state = false
+    value = newValue
+    finale()
+  }
+
+  function finale() {
+    for (var i = 0, len = deferreds.length; i < len; i++)
+      handle(deferreds[i])
+    deferreds = null
+  }
+
+  doResolve(fn, resolve, reject)
+}
+
+
+function Handler(onFulfilled, onRejected, resolve, reject){
+  this.onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : null
+  this.onRejected = typeof onRejected === 'function' ? onRejected : null
+  this.resolve = resolve
+  this.reject = reject
+}
+
+/**
+ * Take a potentially misbehaving resolver function and make sure
+ * onFulfilled and onRejected are only called once.
+ *
+ * Makes no guarantees about asynchrony.
+ */
+function doResolve(fn, onFulfilled, onRejected) {
+  var done = false;
+  try {
+    fn(function (value) {
+      if (done) return
+      done = true
+      onFulfilled(value)
+    }, function (reason) {
+      if (done) return
+      done = true
+      onRejected(reason)
+    })
+  } catch (ex) {
+    if (done) return
+    done = true
+    onRejected(ex)
+  }
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/promise/lib/done.js":
+/*!******************************************!*\
+  !*** ./node_modules/promise/lib/done.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Promise = __webpack_require__(/*! ./core.js */ "./node_modules/promise/lib/core.js")
+var asap = __webpack_require__(/*! asap */ "./node_modules/asap/asap.js")
+
+module.exports = Promise
+Promise.prototype.done = function (onFulfilled, onRejected) {
+  var self = arguments.length ? this.then.apply(this, arguments) : this
+  self.then(null, function (err) {
+    asap(function () {
+      throw err
+    })
+  })
+}
+
+/***/ }),
+
+/***/ "./node_modules/promise/lib/es6-extensions.js":
+/*!****************************************************!*\
+  !*** ./node_modules/promise/lib/es6-extensions.js ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//This file contains the ES6 extensions to the core Promises/A+ API
+
+var Promise = __webpack_require__(/*! ./core.js */ "./node_modules/promise/lib/core.js")
+var asap = __webpack_require__(/*! asap */ "./node_modules/asap/asap.js")
+
+module.exports = Promise
+
+/* Static Functions */
+
+function ValuePromise(value) {
+  this.then = function (onFulfilled) {
+    if (typeof onFulfilled !== 'function') return this
+    return new Promise(function (resolve, reject) {
+      asap(function () {
+        try {
+          resolve(onFulfilled(value))
+        } catch (ex) {
+          reject(ex);
+        }
+      })
+    })
+  }
+}
+ValuePromise.prototype = Promise.prototype
+
+var TRUE = new ValuePromise(true)
+var FALSE = new ValuePromise(false)
+var NULL = new ValuePromise(null)
+var UNDEFINED = new ValuePromise(undefined)
+var ZERO = new ValuePromise(0)
+var EMPTYSTRING = new ValuePromise('')
+
+Promise.resolve = function (value) {
+  if (value instanceof Promise) return value
+
+  if (value === null) return NULL
+  if (value === undefined) return UNDEFINED
+  if (value === true) return TRUE
+  if (value === false) return FALSE
+  if (value === 0) return ZERO
+  if (value === '') return EMPTYSTRING
+
+  if (typeof value === 'object' || typeof value === 'function') {
+    try {
+      var then = value.then
+      if (typeof then === 'function') {
+        return new Promise(then.bind(value))
+      }
+    } catch (ex) {
+      return new Promise(function (resolve, reject) {
+        reject(ex)
+      })
+    }
+  }
+
+  return new ValuePromise(value)
+}
+
+Promise.all = function (arr) {
+  var args = Array.prototype.slice.call(arr)
+
+  return new Promise(function (resolve, reject) {
+    if (args.length === 0) return resolve([])
+    var remaining = args.length
+    function res(i, val) {
+      try {
+        if (val && (typeof val === 'object' || typeof val === 'function')) {
+          var then = val.then
+          if (typeof then === 'function') {
+            then.call(val, function (val) { res(i, val) }, reject)
+            return
+          }
+        }
+        args[i] = val
+        if (--remaining === 0) {
+          resolve(args);
+        }
+      } catch (ex) {
+        reject(ex)
+      }
+    }
+    for (var i = 0; i < args.length; i++) {
+      res(i, args[i])
+    }
+  })
+}
+
+Promise.reject = function (value) {
+  return new Promise(function (resolve, reject) { 
+    reject(value);
+  });
+}
+
+Promise.race = function (values) {
+  return new Promise(function (resolve, reject) { 
+    values.forEach(function(value){
+      Promise.resolve(value).then(resolve, reject);
+    })
+  });
+}
+
+/* Prototype Methods */
+
+Promise.prototype['catch'] = function (onRejected) {
+  return this.then(null, onRejected);
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/promise/lib/node-extensions.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/promise/lib/node-extensions.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+//This file contains then/promise specific extensions that are only useful for node.js interop
+
+var Promise = __webpack_require__(/*! ./core.js */ "./node_modules/promise/lib/core.js")
+var asap = __webpack_require__(/*! asap */ "./node_modules/asap/asap.js")
+
+module.exports = Promise
+
+/* Static Functions */
+
+Promise.denodeify = function (fn, argumentCount) {
+  argumentCount = argumentCount || Infinity
+  return function () {
+    var self = this
+    var args = Array.prototype.slice.call(arguments)
+    return new Promise(function (resolve, reject) {
+      while (args.length && args.length > argumentCount) {
+        args.pop()
+      }
+      args.push(function (err, res) {
+        if (err) reject(err)
+        else resolve(res)
+      })
+      var res = fn.apply(self, args)
+      if (res && (typeof res === 'object' || typeof res === 'function') && typeof res.then === 'function') {
+        resolve(res)
+      }
+    })
+  }
+}
+Promise.nodeify = function (fn) {
+  return function () {
+    var args = Array.prototype.slice.call(arguments)
+    var callback = typeof args[args.length - 1] === 'function' ? args.pop() : null
+    var ctx = this
+    try {
+      return fn.apply(this, arguments).nodeify(callback, ctx)
+    } catch (ex) {
+      if (callback === null || typeof callback == 'undefined') {
+        return new Promise(function (resolve, reject) { reject(ex) })
+      } else {
+        asap(function () {
+          callback.call(ctx, ex)
+        })
+      }
+    }
+  }
+}
+
+Promise.prototype.nodeify = function (callback, ctx) {
+  if (typeof callback != 'function') return this
+
+  this.then(function (value) {
+    asap(function () {
+      callback.call(ctx, null, value)
+    })
+  }, function (err) {
+    asap(function () {
+      callback.call(ctx, err)
+    })
+  })
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/proxy-addr/index.js":
 /*!******************************************!*\
   !*** ./node_modules/proxy-addr/index.js ***!
@@ -59488,6 +60820,216 @@ function mixinProperties (obj, proto) {
 
 /***/ }),
 
+/***/ "./node_modules/shell-quote/index.js":
+/*!*******************************************!*\
+  !*** ./node_modules/shell-quote/index.js ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var json = typeof JSON !== undefined ? JSON : __webpack_require__(/*! jsonify */ "./node_modules/jsonify/index.js");
+var map = __webpack_require__(/*! array-map */ "./node_modules/array-map/index.js");
+var filter = __webpack_require__(/*! array-filter */ "./node_modules/array-filter/index.js");
+var reduce = __webpack_require__(/*! array-reduce */ "./node_modules/array-reduce/index.js");
+
+exports.quote = function (xs) {
+    return map(xs, function (s) {
+        if (s && typeof s === 'object') {
+            return s.op.replace(/(.)/g, '\\$1');
+        }
+        else if (/["\s]/.test(s) && !/'/.test(s)) {
+            return "'" + s.replace(/(['\\])/g, '\\$1') + "'";
+        }
+        else if (/["'\s]/.test(s)) {
+            return '"' + s.replace(/(["\\$`!])/g, '\\$1') + '"';
+        }
+        else {
+            return String(s).replace(/([#!"$&'()*,:;<=>?@\[\\\]^`{|}])/g, '\\$1'); 
+        }
+    }).join(' ');
+};
+
+var CONTROL = '(?:' + [
+    '\\|\\|', '\\&\\&', ';;', '\\|\\&', '[&;()|<>]'
+].join('|') + ')';
+var META = '|&;()<> \\t';
+var BAREWORD = '(\\\\[\'"' + META + ']|[^\\s\'"' + META + '])+';
+var SINGLE_QUOTE = '"((\\\\"|[^"])*?)"';
+var DOUBLE_QUOTE = '\'((\\\\\'|[^\'])*?)\'';
+
+var TOKEN = '';
+for (var i = 0; i < 4; i++) {
+    TOKEN += (Math.pow(16,8)*Math.random()).toString(16);
+}
+
+exports.parse = function (s, env, opts) {
+    var mapped = parse(s, env, opts);
+    if (typeof env !== 'function') return mapped;
+    return reduce(mapped, function (acc, s) {
+        if (typeof s === 'object') return acc.concat(s);
+        var xs = s.split(RegExp('(' + TOKEN + '.*?' + TOKEN + ')', 'g'));
+        if (xs.length === 1) return acc.concat(xs[0]);
+        return acc.concat(map(filter(xs, Boolean), function (x) {
+            if (RegExp('^' + TOKEN).test(x)) {
+                return json.parse(x.split(TOKEN)[1]);
+            }
+            else return x;
+        }));
+    }, []);
+};
+
+function parse (s, env, opts) {
+    var chunker = new RegExp([
+        '(' + CONTROL + ')', // control chars
+        '(' + BAREWORD + '|' + SINGLE_QUOTE + '|' + DOUBLE_QUOTE + ')*'
+    ].join('|'), 'g');
+    var match = filter(s.match(chunker), Boolean);
+    var commented = false;
+
+    if (!match) return [];
+    if (!env) env = {};
+    if (!opts) opts = {};
+    return map(match, function (s, j) {
+        if (commented) {
+            return;
+        }
+        if (RegExp('^' + CONTROL + '$').test(s)) {
+            return { op: s };
+        }
+
+        // Hand-written scanner/parser for Bash quoting rules:
+        //
+        //  1. inside single quotes, all characters are printed literally.
+        //  2. inside double quotes, all characters are printed literally
+        //     except variables prefixed by '$' and backslashes followed by
+        //     either a double quote or another backslash.
+        //  3. outside of any quotes, backslashes are treated as escape
+        //     characters and not printed (unless they are themselves escaped)
+        //  4. quote context can switch mid-token if there is no whitespace
+        //     between the two quote contexts (e.g. all'one'"token" parses as
+        //     "allonetoken")
+        var SQ = "'";
+        var DQ = '"';
+        var DS = '$';
+        var BS = opts.escape || '\\';
+        var quote = false;
+        var esc = false;
+        var out = '';
+        var isGlob = false;
+
+        for (var i = 0, len = s.length; i < len; i++) {
+            var c = s.charAt(i);
+            isGlob = isGlob || (!quote && (c === '*' || c === '?'));
+            if (esc) {
+                out += c;
+                esc = false;
+            }
+            else if (quote) {
+                if (c === quote) {
+                    quote = false;
+                }
+                else if (quote == SQ) {
+                    out += c;
+                }
+                else { // Double quote
+                    if (c === BS) {
+                        i += 1;
+                        c = s.charAt(i);
+                        if (c === DQ || c === BS || c === DS) {
+                            out += c;
+                        } else {
+                            out += BS + c;
+                        }
+                    }
+                    else if (c === DS) {
+                        out += parseEnvVar();
+                    }
+                    else {
+                        out += c;
+                    }
+                }
+            }
+            else if (c === DQ || c === SQ) {
+                quote = c;
+            }
+            else if (RegExp('^' + CONTROL + '$').test(c)) {
+                return { op: s };
+            }
+            else if (RegExp('^#$').test(c)) {
+                commented = true;
+                if (out.length){
+                    return [out, { comment: s.slice(i+1) + match.slice(j+1).join(' ') }];
+                }
+                return [{ comment: s.slice(i+1) + match.slice(j+1).join(' ') }];
+            }
+            else if (c === BS) {
+                esc = true;
+            }
+            else if (c === DS) {
+                out += parseEnvVar();
+            }
+            else out += c;
+        }
+
+        if (isGlob) return {op: 'glob', pattern: out};
+
+        return out;
+
+        function parseEnvVar() {
+            i += 1;
+            var varend, varname;
+            //debugger
+            if (s.charAt(i) === '{') {
+                i += 1;
+                if (s.charAt(i) === '}') {
+                    throw new Error("Bad substitution: " + s.substr(i - 2, 3));
+                }
+                varend = s.indexOf('}', i);
+                if (varend < 0) {
+                    throw new Error("Bad substitution: " + s.substr(i));
+                }
+                varname = s.substr(i, varend - i);
+                i = varend;
+            }
+            else if (/[*@#?$!_\-]/.test(s.charAt(i))) {
+                varname = s.charAt(i);
+                i += 1;
+            }
+            else {
+                varend = s.substr(i).match(/[^\w\d_]/);
+                if (!varend) {
+                    varname = s.substr(i);
+                    i = s.length;
+                } else {
+                    varname = s.substr(i, varend.index);
+                    i += varend.index - 1;
+                }
+            }
+            return getVar(null, '', varname);
+        }
+    })
+    // finalize parsed aruments
+    .reduce(function(prev, arg){
+        if (arg === undefined){
+            return prev;
+        }
+        return prev.concat(arg);
+    },[]);
+
+    function getVar (_, pre, key) {
+        var r = typeof env === 'function' ? env(key) : env[key];
+        if (r === undefined) r = '';
+
+        if (typeof r === 'object') {
+            return pre + TOKEN + json.stringify(r) + TOKEN;
+        }
+        else return pre + r;
+    }
+}
+
+
+/***/ }),
+
 /***/ "./node_modules/source-map-support/node_modules/source-map/lib/array-set.js":
 /*!**********************************************************************************!*\
   !*** ./node_modules/source-map-support/node_modules/source-map/lib/array-set.js ***!
@@ -63706,6 +65248,31 @@ function status (code) {
 
 /***/ }),
 
+/***/ "./node_modules/stream-concat-promise/index.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/stream-concat-promise/index.js ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _interopRequire = function (obj) { return obj && obj.__esModule ? obj["default"] : obj; };
+
+var concat = _interopRequire(__webpack_require__(/*! concat-stream */ "./node_modules/concat-stream/index.js"));
+
+var Promise = _interopRequire(__webpack_require__(/*! promise */ "./node_modules/promise/index.js"));
+
+module.exports = function (stream, opts) {
+  return new Promise(function (resolve, reject) {
+    stream.on("error", reject);
+    stream.pipe(concat(opts, resolve));
+  });
+};
+
+/***/ }),
+
 /***/ "./node_modules/string_decoder/lib/string_decoder.js":
 /*!***********************************************************!*\
   !*** ./node_modules/string_decoder/lib/string_decoder.js ***!
@@ -64332,6 +65899,647 @@ function tryNormalizeType (value) {
 
 /***/ }),
 
+/***/ "./node_modules/typedarray/index.js":
+/*!******************************************!*\
+  !*** ./node_modules/typedarray/index.js ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var undefined = (void 0); // Paranoia
+
+// Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
+// create, and consume so much memory, that the browser appears frozen.
+var MAX_ARRAY_LENGTH = 1e5;
+
+// Approximations of internal ECMAScript conversion functions
+var ECMAScript = (function() {
+  // Stash a copy in case other scripts modify these
+  var opts = Object.prototype.toString,
+      ophop = Object.prototype.hasOwnProperty;
+
+  return {
+    // Class returns internal [[Class]] property, used to avoid cross-frame instanceof issues:
+    Class: function(v) { return opts.call(v).replace(/^\[object *|\]$/g, ''); },
+    HasProperty: function(o, p) { return p in o; },
+    HasOwnProperty: function(o, p) { return ophop.call(o, p); },
+    IsCallable: function(o) { return typeof o === 'function'; },
+    ToInt32: function(v) { return v >> 0; },
+    ToUint32: function(v) { return v >>> 0; }
+  };
+}());
+
+// Snapshot intrinsics
+var LN2 = Math.LN2,
+    abs = Math.abs,
+    floor = Math.floor,
+    log = Math.log,
+    min = Math.min,
+    pow = Math.pow,
+    round = Math.round;
+
+// ES5: lock down object properties
+function configureProperties(obj) {
+  if (getOwnPropNames && defineProp) {
+    var props = getOwnPropNames(obj), i;
+    for (i = 0; i < props.length; i += 1) {
+      defineProp(obj, props[i], {
+        value: obj[props[i]],
+        writable: false,
+        enumerable: false,
+        configurable: false
+      });
+    }
+  }
+}
+
+// emulate ES5 getter/setter API using legacy APIs
+// http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx
+// (second clause tests for Object.defineProperty() in IE<9 that only supports extending DOM prototypes, but
+// note that IE<9 does not support __defineGetter__ or __defineSetter__ so it just renders the method harmless)
+var defineProp
+if (Object.defineProperty && (function() {
+      try {
+        Object.defineProperty({}, 'x', {});
+        return true;
+      } catch (e) {
+        return false;
+      }
+    })()) {
+  defineProp = Object.defineProperty;
+} else {
+  defineProp = function(o, p, desc) {
+    if (!o === Object(o)) throw new TypeError("Object.defineProperty called on non-object");
+    if (ECMAScript.HasProperty(desc, 'get') && Object.prototype.__defineGetter__) { Object.prototype.__defineGetter__.call(o, p, desc.get); }
+    if (ECMAScript.HasProperty(desc, 'set') && Object.prototype.__defineSetter__) { Object.prototype.__defineSetter__.call(o, p, desc.set); }
+    if (ECMAScript.HasProperty(desc, 'value')) { o[p] = desc.value; }
+    return o;
+  };
+}
+
+var getOwnPropNames = Object.getOwnPropertyNames || function (o) {
+  if (o !== Object(o)) throw new TypeError("Object.getOwnPropertyNames called on non-object");
+  var props = [], p;
+  for (p in o) {
+    if (ECMAScript.HasOwnProperty(o, p)) {
+      props.push(p);
+    }
+  }
+  return props;
+};
+
+// ES5: Make obj[index] an alias for obj._getter(index)/obj._setter(index, value)
+// for index in 0 ... obj.length
+function makeArrayAccessors(obj) {
+  if (!defineProp) { return; }
+
+  if (obj.length > MAX_ARRAY_LENGTH) throw new RangeError("Array too large for polyfill");
+
+  function makeArrayAccessor(index) {
+    defineProp(obj, index, {
+      'get': function() { return obj._getter(index); },
+      'set': function(v) { obj._setter(index, v); },
+      enumerable: true,
+      configurable: false
+    });
+  }
+
+  var i;
+  for (i = 0; i < obj.length; i += 1) {
+    makeArrayAccessor(i);
+  }
+}
+
+// Internal conversion functions:
+//    pack<Type>()   - take a number (interpreted as Type), output a byte array
+//    unpack<Type>() - take a byte array, output a Type-like number
+
+function as_signed(value, bits) { var s = 32 - bits; return (value << s) >> s; }
+function as_unsigned(value, bits) { var s = 32 - bits; return (value << s) >>> s; }
+
+function packI8(n) { return [n & 0xff]; }
+function unpackI8(bytes) { return as_signed(bytes[0], 8); }
+
+function packU8(n) { return [n & 0xff]; }
+function unpackU8(bytes) { return as_unsigned(bytes[0], 8); }
+
+function packU8Clamped(n) { n = round(Number(n)); return [n < 0 ? 0 : n > 0xff ? 0xff : n & 0xff]; }
+
+function packI16(n) { return [(n >> 8) & 0xff, n & 0xff]; }
+function unpackI16(bytes) { return as_signed(bytes[0] << 8 | bytes[1], 16); }
+
+function packU16(n) { return [(n >> 8) & 0xff, n & 0xff]; }
+function unpackU16(bytes) { return as_unsigned(bytes[0] << 8 | bytes[1], 16); }
+
+function packI32(n) { return [(n >> 24) & 0xff, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]; }
+function unpackI32(bytes) { return as_signed(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], 32); }
+
+function packU32(n) { return [(n >> 24) & 0xff, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff]; }
+function unpackU32(bytes) { return as_unsigned(bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3], 32); }
+
+function packIEEE754(v, ebits, fbits) {
+
+  var bias = (1 << (ebits - 1)) - 1,
+      s, e, f, ln,
+      i, bits, str, bytes;
+
+  function roundToEven(n) {
+    var w = floor(n), f = n - w;
+    if (f < 0.5)
+      return w;
+    if (f > 0.5)
+      return w + 1;
+    return w % 2 ? w + 1 : w;
+  }
+
+  // Compute sign, exponent, fraction
+  if (v !== v) {
+    // NaN
+    // http://dev.w3.org/2006/webapi/WebIDL/#es-type-mapping
+    e = (1 << ebits) - 1; f = pow(2, fbits - 1); s = 0;
+  } else if (v === Infinity || v === -Infinity) {
+    e = (1 << ebits) - 1; f = 0; s = (v < 0) ? 1 : 0;
+  } else if (v === 0) {
+    e = 0; f = 0; s = (1 / v === -Infinity) ? 1 : 0;
+  } else {
+    s = v < 0;
+    v = abs(v);
+
+    if (v >= pow(2, 1 - bias)) {
+      e = min(floor(log(v) / LN2), 1023);
+      f = roundToEven(v / pow(2, e) * pow(2, fbits));
+      if (f / pow(2, fbits) >= 2) {
+        e = e + 1;
+        f = 1;
+      }
+      if (e > bias) {
+        // Overflow
+        e = (1 << ebits) - 1;
+        f = 0;
+      } else {
+        // Normalized
+        e = e + bias;
+        f = f - pow(2, fbits);
+      }
+    } else {
+      // Denormalized
+      e = 0;
+      f = roundToEven(v / pow(2, 1 - bias - fbits));
+    }
+  }
+
+  // Pack sign, exponent, fraction
+  bits = [];
+  for (i = fbits; i; i -= 1) { bits.push(f % 2 ? 1 : 0); f = floor(f / 2); }
+  for (i = ebits; i; i -= 1) { bits.push(e % 2 ? 1 : 0); e = floor(e / 2); }
+  bits.push(s ? 1 : 0);
+  bits.reverse();
+  str = bits.join('');
+
+  // Bits to bytes
+  bytes = [];
+  while (str.length) {
+    bytes.push(parseInt(str.substring(0, 8), 2));
+    str = str.substring(8);
+  }
+  return bytes;
+}
+
+function unpackIEEE754(bytes, ebits, fbits) {
+
+  // Bytes to bits
+  var bits = [], i, j, b, str,
+      bias, s, e, f;
+
+  for (i = bytes.length; i; i -= 1) {
+    b = bytes[i - 1];
+    for (j = 8; j; j -= 1) {
+      bits.push(b % 2 ? 1 : 0); b = b >> 1;
+    }
+  }
+  bits.reverse();
+  str = bits.join('');
+
+  // Unpack sign, exponent, fraction
+  bias = (1 << (ebits - 1)) - 1;
+  s = parseInt(str.substring(0, 1), 2) ? -1 : 1;
+  e = parseInt(str.substring(1, 1 + ebits), 2);
+  f = parseInt(str.substring(1 + ebits), 2);
+
+  // Produce number
+  if (e === (1 << ebits) - 1) {
+    return f !== 0 ? NaN : s * Infinity;
+  } else if (e > 0) {
+    // Normalized
+    return s * pow(2, e - bias) * (1 + f / pow(2, fbits));
+  } else if (f !== 0) {
+    // Denormalized
+    return s * pow(2, -(bias - 1)) * (f / pow(2, fbits));
+  } else {
+    return s < 0 ? -0 : 0;
+  }
+}
+
+function unpackF64(b) { return unpackIEEE754(b, 11, 52); }
+function packF64(v) { return packIEEE754(v, 11, 52); }
+function unpackF32(b) { return unpackIEEE754(b, 8, 23); }
+function packF32(v) { return packIEEE754(v, 8, 23); }
+
+
+//
+// 3 The ArrayBuffer Type
+//
+
+(function() {
+
+  /** @constructor */
+  var ArrayBuffer = function ArrayBuffer(length) {
+    length = ECMAScript.ToInt32(length);
+    if (length < 0) throw new RangeError('ArrayBuffer size is not a small enough positive integer');
+
+    this.byteLength = length;
+    this._bytes = [];
+    this._bytes.length = length;
+
+    var i;
+    for (i = 0; i < this.byteLength; i += 1) {
+      this._bytes[i] = 0;
+    }
+
+    configureProperties(this);
+  };
+
+  exports.ArrayBuffer = exports.ArrayBuffer || ArrayBuffer;
+
+  //
+  // 4 The ArrayBufferView Type
+  //
+
+  // NOTE: this constructor is not exported
+  /** @constructor */
+  var ArrayBufferView = function ArrayBufferView() {
+    //this.buffer = null;
+    //this.byteOffset = 0;
+    //this.byteLength = 0;
+  };
+
+  //
+  // 5 The Typed Array View Types
+  //
+
+  function makeConstructor(bytesPerElement, pack, unpack) {
+    // Each TypedArray type requires a distinct constructor instance with
+    // identical logic, which this produces.
+
+    var ctor;
+    ctor = function(buffer, byteOffset, length) {
+      var array, sequence, i, s;
+
+      if (!arguments.length || typeof arguments[0] === 'number') {
+        // Constructor(unsigned long length)
+        this.length = ECMAScript.ToInt32(arguments[0]);
+        if (length < 0) throw new RangeError('ArrayBufferView size is not a small enough positive integer');
+
+        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
+        this.buffer = new ArrayBuffer(this.byteLength);
+        this.byteOffset = 0;
+      } else if (typeof arguments[0] === 'object' && arguments[0].constructor === ctor) {
+        // Constructor(TypedArray array)
+        array = arguments[0];
+
+        this.length = array.length;
+        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
+        this.buffer = new ArrayBuffer(this.byteLength);
+        this.byteOffset = 0;
+
+        for (i = 0; i < this.length; i += 1) {
+          this._setter(i, array._getter(i));
+        }
+      } else if (typeof arguments[0] === 'object' &&
+                 !(arguments[0] instanceof ArrayBuffer || ECMAScript.Class(arguments[0]) === 'ArrayBuffer')) {
+        // Constructor(sequence<type> array)
+        sequence = arguments[0];
+
+        this.length = ECMAScript.ToUint32(sequence.length);
+        this.byteLength = this.length * this.BYTES_PER_ELEMENT;
+        this.buffer = new ArrayBuffer(this.byteLength);
+        this.byteOffset = 0;
+
+        for (i = 0; i < this.length; i += 1) {
+          s = sequence[i];
+          this._setter(i, Number(s));
+        }
+      } else if (typeof arguments[0] === 'object' &&
+                 (arguments[0] instanceof ArrayBuffer || ECMAScript.Class(arguments[0]) === 'ArrayBuffer')) {
+        // Constructor(ArrayBuffer buffer,
+        //             optional unsigned long byteOffset, optional unsigned long length)
+        this.buffer = buffer;
+
+        this.byteOffset = ECMAScript.ToUint32(byteOffset);
+        if (this.byteOffset > this.buffer.byteLength) {
+          throw new RangeError("byteOffset out of range");
+        }
+
+        if (this.byteOffset % this.BYTES_PER_ELEMENT) {
+          // The given byteOffset must be a multiple of the element
+          // size of the specific type, otherwise an exception is raised.
+          throw new RangeError("ArrayBuffer length minus the byteOffset is not a multiple of the element size.");
+        }
+
+        if (arguments.length < 3) {
+          this.byteLength = this.buffer.byteLength - this.byteOffset;
+
+          if (this.byteLength % this.BYTES_PER_ELEMENT) {
+            throw new RangeError("length of buffer minus byteOffset not a multiple of the element size");
+          }
+          this.length = this.byteLength / this.BYTES_PER_ELEMENT;
+        } else {
+          this.length = ECMAScript.ToUint32(length);
+          this.byteLength = this.length * this.BYTES_PER_ELEMENT;
+        }
+
+        if ((this.byteOffset + this.byteLength) > this.buffer.byteLength) {
+          throw new RangeError("byteOffset and length reference an area beyond the end of the buffer");
+        }
+      } else {
+        throw new TypeError("Unexpected argument type(s)");
+      }
+
+      this.constructor = ctor;
+
+      configureProperties(this);
+      makeArrayAccessors(this);
+    };
+
+    ctor.prototype = new ArrayBufferView();
+    ctor.prototype.BYTES_PER_ELEMENT = bytesPerElement;
+    ctor.prototype._pack = pack;
+    ctor.prototype._unpack = unpack;
+    ctor.BYTES_PER_ELEMENT = bytesPerElement;
+
+    // getter type (unsigned long index);
+    ctor.prototype._getter = function(index) {
+      if (arguments.length < 1) throw new SyntaxError("Not enough arguments");
+
+      index = ECMAScript.ToUint32(index);
+      if (index >= this.length) {
+        return undefined;
+      }
+
+      var bytes = [], i, o;
+      for (i = 0, o = this.byteOffset + index * this.BYTES_PER_ELEMENT;
+           i < this.BYTES_PER_ELEMENT;
+           i += 1, o += 1) {
+        bytes.push(this.buffer._bytes[o]);
+      }
+      return this._unpack(bytes);
+    };
+
+    // NONSTANDARD: convenience alias for getter: type get(unsigned long index);
+    ctor.prototype.get = ctor.prototype._getter;
+
+    // setter void (unsigned long index, type value);
+    ctor.prototype._setter = function(index, value) {
+      if (arguments.length < 2) throw new SyntaxError("Not enough arguments");
+
+      index = ECMAScript.ToUint32(index);
+      if (index >= this.length) {
+        return undefined;
+      }
+
+      var bytes = this._pack(value), i, o;
+      for (i = 0, o = this.byteOffset + index * this.BYTES_PER_ELEMENT;
+           i < this.BYTES_PER_ELEMENT;
+           i += 1, o += 1) {
+        this.buffer._bytes[o] = bytes[i];
+      }
+    };
+
+    // void set(TypedArray array, optional unsigned long offset);
+    // void set(sequence<type> array, optional unsigned long offset);
+    ctor.prototype.set = function(index, value) {
+      if (arguments.length < 1) throw new SyntaxError("Not enough arguments");
+      var array, sequence, offset, len,
+          i, s, d,
+          byteOffset, byteLength, tmp;
+
+      if (typeof arguments[0] === 'object' && arguments[0].constructor === this.constructor) {
+        // void set(TypedArray array, optional unsigned long offset);
+        array = arguments[0];
+        offset = ECMAScript.ToUint32(arguments[1]);
+
+        if (offset + array.length > this.length) {
+          throw new RangeError("Offset plus length of array is out of range");
+        }
+
+        byteOffset = this.byteOffset + offset * this.BYTES_PER_ELEMENT;
+        byteLength = array.length * this.BYTES_PER_ELEMENT;
+
+        if (array.buffer === this.buffer) {
+          tmp = [];
+          for (i = 0, s = array.byteOffset; i < byteLength; i += 1, s += 1) {
+            tmp[i] = array.buffer._bytes[s];
+          }
+          for (i = 0, d = byteOffset; i < byteLength; i += 1, d += 1) {
+            this.buffer._bytes[d] = tmp[i];
+          }
+        } else {
+          for (i = 0, s = array.byteOffset, d = byteOffset;
+               i < byteLength; i += 1, s += 1, d += 1) {
+            this.buffer._bytes[d] = array.buffer._bytes[s];
+          }
+        }
+      } else if (typeof arguments[0] === 'object' && typeof arguments[0].length !== 'undefined') {
+        // void set(sequence<type> array, optional unsigned long offset);
+        sequence = arguments[0];
+        len = ECMAScript.ToUint32(sequence.length);
+        offset = ECMAScript.ToUint32(arguments[1]);
+
+        if (offset + len > this.length) {
+          throw new RangeError("Offset plus length of array is out of range");
+        }
+
+        for (i = 0; i < len; i += 1) {
+          s = sequence[i];
+          this._setter(offset + i, Number(s));
+        }
+      } else {
+        throw new TypeError("Unexpected argument type(s)");
+      }
+    };
+
+    // TypedArray subarray(long begin, optional long end);
+    ctor.prototype.subarray = function(start, end) {
+      function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
+
+      start = ECMAScript.ToInt32(start);
+      end = ECMAScript.ToInt32(end);
+
+      if (arguments.length < 1) { start = 0; }
+      if (arguments.length < 2) { end = this.length; }
+
+      if (start < 0) { start = this.length + start; }
+      if (end < 0) { end = this.length + end; }
+
+      start = clamp(start, 0, this.length);
+      end = clamp(end, 0, this.length);
+
+      var len = end - start;
+      if (len < 0) {
+        len = 0;
+      }
+
+      return new this.constructor(
+        this.buffer, this.byteOffset + start * this.BYTES_PER_ELEMENT, len);
+    };
+
+    return ctor;
+  }
+
+  var Int8Array = makeConstructor(1, packI8, unpackI8);
+  var Uint8Array = makeConstructor(1, packU8, unpackU8);
+  var Uint8ClampedArray = makeConstructor(1, packU8Clamped, unpackU8);
+  var Int16Array = makeConstructor(2, packI16, unpackI16);
+  var Uint16Array = makeConstructor(2, packU16, unpackU16);
+  var Int32Array = makeConstructor(4, packI32, unpackI32);
+  var Uint32Array = makeConstructor(4, packU32, unpackU32);
+  var Float32Array = makeConstructor(4, packF32, unpackF32);
+  var Float64Array = makeConstructor(8, packF64, unpackF64);
+
+  exports.Int8Array = exports.Int8Array || Int8Array;
+  exports.Uint8Array = exports.Uint8Array || Uint8Array;
+  exports.Uint8ClampedArray = exports.Uint8ClampedArray || Uint8ClampedArray;
+  exports.Int16Array = exports.Int16Array || Int16Array;
+  exports.Uint16Array = exports.Uint16Array || Uint16Array;
+  exports.Int32Array = exports.Int32Array || Int32Array;
+  exports.Uint32Array = exports.Uint32Array || Uint32Array;
+  exports.Float32Array = exports.Float32Array || Float32Array;
+  exports.Float64Array = exports.Float64Array || Float64Array;
+}());
+
+//
+// 6 The DataView View Type
+//
+
+(function() {
+  function r(array, index) {
+    return ECMAScript.IsCallable(array.get) ? array.get(index) : array[index];
+  }
+
+  var IS_BIG_ENDIAN = (function() {
+    var u16array = new(exports.Uint16Array)([0x1234]),
+        u8array = new(exports.Uint8Array)(u16array.buffer);
+    return r(u8array, 0) === 0x12;
+  }());
+
+  // Constructor(ArrayBuffer buffer,
+  //             optional unsigned long byteOffset,
+  //             optional unsigned long byteLength)
+  /** @constructor */
+  var DataView = function DataView(buffer, byteOffset, byteLength) {
+    if (arguments.length === 0) {
+      buffer = new exports.ArrayBuffer(0);
+    } else if (!(buffer instanceof exports.ArrayBuffer || ECMAScript.Class(buffer) === 'ArrayBuffer')) {
+      throw new TypeError("TypeError");
+    }
+
+    this.buffer = buffer || new exports.ArrayBuffer(0);
+
+    this.byteOffset = ECMAScript.ToUint32(byteOffset);
+    if (this.byteOffset > this.buffer.byteLength) {
+      throw new RangeError("byteOffset out of range");
+    }
+
+    if (arguments.length < 3) {
+      this.byteLength = this.buffer.byteLength - this.byteOffset;
+    } else {
+      this.byteLength = ECMAScript.ToUint32(byteLength);
+    }
+
+    if ((this.byteOffset + this.byteLength) > this.buffer.byteLength) {
+      throw new RangeError("byteOffset and length reference an area beyond the end of the buffer");
+    }
+
+    configureProperties(this);
+  };
+
+  function makeGetter(arrayType) {
+    return function(byteOffset, littleEndian) {
+
+      byteOffset = ECMAScript.ToUint32(byteOffset);
+
+      if (byteOffset + arrayType.BYTES_PER_ELEMENT > this.byteLength) {
+        throw new RangeError("Array index out of range");
+      }
+      byteOffset += this.byteOffset;
+
+      var uint8Array = new exports.Uint8Array(this.buffer, byteOffset, arrayType.BYTES_PER_ELEMENT),
+          bytes = [], i;
+      for (i = 0; i < arrayType.BYTES_PER_ELEMENT; i += 1) {
+        bytes.push(r(uint8Array, i));
+      }
+
+      if (Boolean(littleEndian) === Boolean(IS_BIG_ENDIAN)) {
+        bytes.reverse();
+      }
+
+      return r(new arrayType(new exports.Uint8Array(bytes).buffer), 0);
+    };
+  }
+
+  DataView.prototype.getUint8 = makeGetter(exports.Uint8Array);
+  DataView.prototype.getInt8 = makeGetter(exports.Int8Array);
+  DataView.prototype.getUint16 = makeGetter(exports.Uint16Array);
+  DataView.prototype.getInt16 = makeGetter(exports.Int16Array);
+  DataView.prototype.getUint32 = makeGetter(exports.Uint32Array);
+  DataView.prototype.getInt32 = makeGetter(exports.Int32Array);
+  DataView.prototype.getFloat32 = makeGetter(exports.Float32Array);
+  DataView.prototype.getFloat64 = makeGetter(exports.Float64Array);
+
+  function makeSetter(arrayType) {
+    return function(byteOffset, value, littleEndian) {
+
+      byteOffset = ECMAScript.ToUint32(byteOffset);
+      if (byteOffset + arrayType.BYTES_PER_ELEMENT > this.byteLength) {
+        throw new RangeError("Array index out of range");
+      }
+
+      // Get bytes
+      var typeArray = new arrayType([value]),
+          byteArray = new exports.Uint8Array(typeArray.buffer),
+          bytes = [], i, byteView;
+
+      for (i = 0; i < arrayType.BYTES_PER_ELEMENT; i += 1) {
+        bytes.push(r(byteArray, i));
+      }
+
+      // Flip if necessary
+      if (Boolean(littleEndian) === Boolean(IS_BIG_ENDIAN)) {
+        bytes.reverse();
+      }
+
+      // Write them
+      byteView = new exports.Uint8Array(this.buffer, byteOffset, arrayType.BYTES_PER_ELEMENT);
+      byteView.set(bytes);
+    };
+  }
+
+  DataView.prototype.setUint8 = makeSetter(exports.Uint8Array);
+  DataView.prototype.setInt8 = makeSetter(exports.Int8Array);
+  DataView.prototype.setUint16 = makeSetter(exports.Uint16Array);
+  DataView.prototype.setInt16 = makeSetter(exports.Int16Array);
+  DataView.prototype.setUint32 = makeSetter(exports.Uint32Array);
+  DataView.prototype.setInt32 = makeSetter(exports.Int32Array);
+  DataView.prototype.setFloat32 = makeSetter(exports.Float32Array);
+  DataView.prototype.setFloat64 = makeSetter(exports.Float64Array);
+
+  exports.DataView = exports.DataView || DataView;
+
+}());
+
+
+/***/ }),
+
 /***/ "./node_modules/unpipe/index.js":
 /*!**************************************!*\
   !*** ./node_modules/unpipe/index.js ***!
@@ -64755,10 +66963,62 @@ exports.dbconfig = database_1.default;
 
 /***/ }),
 
-/***/ "./src/api/concern/category/category.ctrl.ts":
-/*!***************************************************!*\
-  !*** ./src/api/concern/category/category.ctrl.ts ***!
-  \***************************************************/
+/***/ "./src/api/helper/index.ts":
+/*!*********************************!*\
+  !*** ./src/api/helper/index.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var registration_1 = __importDefault(__webpack_require__(/*! ./registration */ "./src/api/helper/registration/index.ts"));
+var profile_1 = __importDefault(__webpack_require__(/*! ./profile */ "./src/api/helper/profile/index.ts"));
+var story_1 = __importDefault(__webpack_require__(/*! ./story */ "./src/api/helper/story/index.ts"));
+var selection_1 = __importDefault(__webpack_require__(/*! ./selection */ "./src/api/helper/selection/index.ts"));
+var list_1 = __importDefault(__webpack_require__(/*! ./list */ "./src/api/helper/list/index.ts"));
+var helper = express_1.default.Router();
+helper.use('/registration', registration_1.default);
+helper.use('/profile', profile_1.default);
+helper.use('/story', story_1.default);
+helper.use('/selection', selection_1.default);
+helper.use('/list', list_1.default);
+exports.default = helper;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/list/index.ts":
+/*!**************************************!*\
+  !*** ./src/api/helper/list/index.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var list_ctrl_1 = __webpack_require__(/*! ../list/list.ctrl */ "./src/api/helper/list/list.ctrl.ts");
+var list = express_1.default.Router();
+list.get('/:question_idx', list_ctrl_1.getListCtrl);
+exports.default = list;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/list/list.ctrl.ts":
+/*!******************************************!*\
+  !*** ./src/api/helper/list/list.ctrl.ts ***!
+  \******************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -64804,51 +67064,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var category_service_1 = __importDefault(__webpack_require__(/*! ./category.service */ "./src/api/concern/category/category.service.ts"));
-var getCategoryList = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+var list_service_1 = __importDefault(__webpack_require__(/*! ./list.service */ "./src/api/helper/list/list.service.ts"));
+var getListCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    var _this = this;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                console.log(test);
-                return [4 /*yield*/, category_service_1.default.getCategoryListService(req, res)
-                        .then(function (result) {
-                        res.send(result);
-                    })
-                        .catch(function (e) {
-                        res.send(e);
-                    })];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
+        new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, list_service_1.default.getListService(req, res)
+                            .then(function (result) {
+                            res.status(200).send(result);
+                        })
+                            .catch(function (e) {
+                            res.status(500).send(e);
+                        })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        }); });
+        return [2 /*return*/];
     });
 }); };
-exports.getCategoryList = getCategoryList;
-var postCategoryList = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, category_service_1.default.postCategoryListService(req, res)
-                    .then(function (result) {
-                    res.send(result);
-                })
-                    .catch(function (e) {
-                    res.send(e);
-                })];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
-exports.postCategoryList = postCategoryList;
+exports.getListCtrl = getListCtrl;
 
 
 /***/ }),
 
-/***/ "./src/api/concern/category/category.service.ts":
-/*!******************************************************!*\
-  !*** ./src/api/concern/category/category.service.ts ***!
-  \******************************************************/
+/***/ "./src/api/helper/list/list.service.ts":
+/*!*********************************************!*\
+  !*** ./src/api/helper/list/list.service.ts ***!
+  \*********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -64895,88 +67142,172 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
-var category_model_1 = __importDefault(__webpack_require__(/*! ../../../models/category.model */ "./src/models/category.model.ts"));
-var getCategoryListService = function (req, res) {
+var helper_1 = __webpack_require__(/*! ../../../models/helper */ "./src/models/helper.ts");
+var mecab = __webpack_require__(/*! mecab-ya */ "./node_modules/mecab-ya/mecab.js");
+var getListService = function (req, res) {
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, category_idx, categoryList, e_1;
+        var question_idx, connection, info, experience_name, personality_idx, helpers_idx, helpers_arr, helper_num, i, helpers_info, helpers_personality, age_match, user_age, i, score, difference, personality_match, personality_idx_arr, i, i, match_num, categoryList_match, i, keyword_match, _loop_1, i, total_1, i, score, indices, i, result, i, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, connection_1.default()];
+                case 0:
+                    _a.trys.push([0, 8, 9, 10]);
+                    question_idx = req.params.question_idx;
+                    return [4 /*yield*/, connection_1.default()];
                 case 1:
                     connection = _a.sent();
-                    _a.label = 2;
+                    return [4 /*yield*/, helper_1.UserWantInfo(connection, question_idx)];
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
-                    category_idx = req.params.category_idx;
-                    return [4 /*yield*/, category_model_1.default.selectCategoryListWithId(connection, category_idx)];
+                    info = _a.sent();
+                    return [4 /*yield*/, helper_1.UserWantInfo2(connection, question_idx)];
                 case 3:
-                    categoryList = _a.sent();
-                    resolve(categoryList);
-                    return [3 /*break*/, 6];
+                    experience_name = _a.sent();
+                    return [4 /*yield*/, helper_1.UserWantInfo3(connection, question_idx)];
                 case 4:
-                    e_1 = _a.sent();
-                    reject(e_1);
-                    return [3 /*break*/, 6];
+                    personality_idx = _a.sent();
+                    return [4 /*yield*/, helper_1.Helper_idx(connection, question_idx)];
                 case 5:
-                    connection.end();
-                    return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
-            }
-        });
-    }); });
-};
-var postCategoryListService = function (req, res) {
-    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, data, resultCategory, categoryList, e_2;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, connection_1.default()];
-                case 1:
-                    connection = _a.sent();
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 8, 9, 10]);
-                    data = req.body;
-                    return [4 /*yield*/, category_model_1.default.selectCategoryListWithName(connection, data)];
-                case 3:
-                    resultCategory = _a.sent();
-                    categoryList = null;
-                    if (!(resultCategory.length === 0)) return [3 /*break*/, 5];
-                    return [4 /*yield*/, category_model_1.default.insertCategoryList(connection, data)];
-                case 4:
-                    categoryList = _a.sent();
-                    return [3 /*break*/, 7];
-                case 5: return [4 /*yield*/, category_model_1.default.updateCategoryListCount(connection, resultCategory[0])];
+                    helpers_idx = _a.sent();
+                    helpers_arr = [];
+                    helper_num = helpers_idx.length;
+                    for (i = 0; i < helper_num; i++) {
+                        helpers_arr.push(helpers_idx[i].helper_idx);
+                    }
+                    return [4 /*yield*/, helper_1.HelperInfo1(connection, helpers_arr)];
                 case 6:
-                    categoryList = _a.sent();
-                    _a.label = 7;
+                    helpers_info = _a.sent();
+                    return [4 /*yield*/, helper_1.HelperInfo2(connection, helpers_arr)];
                 case 7:
-                    resolve(categoryList);
+                    helpers_personality = _a.sent();
+                    //받은 헬퍼 요청이 3명 초과면 매칭 알고리즘 수행
+                    if (helper_num > 3) {
+                        age_match = [];
+                        user_age = info[0].age;
+                        for (i = 0; i < helper_num; i++) {
+                            score = 10;
+                            difference = helpers_info[i].age - user_age - 5;
+                            if (difference >= 0 && difference <= 10) {
+                                score = score - difference;
+                            }
+                            else if (difference < 0 && difference >= -5) {
+                                score = score + difference * 2;
+                            }
+                            else {
+                                score = 0;
+                            }
+                            age_match.push(score);
+                        }
+                        personality_match = [];
+                        personality_idx_arr = [];
+                        for (i = 0; i < personality_idx.length; i++) {
+                            personality_idx_arr.push(personality_idx[i].personality_idx);
+                        }
+                        for (i = 0; i < helper_num; i++) {
+                            match_num = 0;
+                            if (personality_idx_arr.includes(helpers_personality[i * 3].idx)) {
+                                match_num++;
+                            }
+                            if (personality_idx_arr.includes(helpers_personality[i * 3 + 1].idx)) {
+                                match_num++;
+                            }
+                            if (personality_idx_arr.includes(helpers_personality[i * 3 + 2].idx)) {
+                                match_num++;
+                            }
+                            personality_match.push(match_num);
+                        }
+                        categoryList_match = [];
+                        for (i = 0; i < helper_num; i++) {
+                            if (info[0].categoryList_idx == helpers_info[i].categoryList_idx) {
+                                categoryList_match.push(1);
+                            }
+                            else {
+                                categoryList_match.push(0);
+                            }
+                        }
+                        keyword_match = [];
+                        _loop_1 = function (i) {
+                            var text = helpers_info[i].title.concat(helpers_info[i].content);
+                            //헬퍼의 서술형 데이터에서 명사만 뽑기
+                            var noun_arr;
+                            mecab.nouns(text, function (err, result) {
+                                if (err) {
+                                    //에러처리
+                                }
+                                else {
+                                    noun_arr = result;
+                                }
+                            });
+                            var keyword = experience_name; //아직 객체임
+                            //파이썬 서버랑 통신
+                            for (var i_1 = 0; i_1 < helper_num; i_1++) {
+                                keyword_match.push(0);
+                            }
+                        };
+                        for (i = 0; i < helper_num; i++) {
+                            _loop_1(i);
+                        }
+                        total_1 = [];
+                        for (i = 0; i < helper_num; i++) {
+                            score = age_match[i] + personality_match[i] + categoryList_match[i] + keyword_match[i];
+                            total_1.push(score);
+                        }
+                        indices = new Array(helper_num);
+                        for (i = 0; i < helper_num; i++) {
+                            indices[i] = i;
+                        }
+                        indices.sort(function (a, b) { return total_1[a] < total_1[b] ? 1 : total_1[a] > total_1[b] ? 1 : 0; });
+                        result = [];
+                        for (i = 0; i < 3; i++) {
+                            result.push(helpers_info[indices[i]]);
+                        }
+                        resolve(result);
+                    }
+                    else {
+                        resolve({ helpers_info: helpers_info });
+                    }
                     return [3 /*break*/, 10];
                 case 8:
-                    e_2 = _a.sent();
-                    reject(e_2);
+                    e_1 = _a.sent();
                     return [3 /*break*/, 10];
-                case 9:
-                    connection.end();
-                    return [7 /*endfinally*/];
+                case 9: return [7 /*endfinally*/];
                 case 10: return [2 /*return*/];
             }
         });
     }); });
 };
 exports.default = {
-    getCategoryListService: getCategoryListService,
-    postCategoryListService: postCategoryListService,
+    getListService: getListService
 };
 
 
 /***/ }),
 
-/***/ "./src/api/concern/feeling/feeling.ctrl.ts":
-/*!*************************************************!*\
-  !*** ./src/api/concern/feeling/feeling.ctrl.ts ***!
-  \*************************************************/
+/***/ "./src/api/helper/profile/index.ts":
+/*!*****************************************!*\
+  !*** ./src/api/helper/profile/index.ts ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var profile_ctrl_1 = __webpack_require__(/*! ../profile/profile.ctrl */ "./src/api/helper/profile/profile.ctrl.ts");
+var profile = express_1.default.Router();
+profile.get('/:helper_idx', profile_ctrl_1.getProfileCtrl);
+profile.put('/', profile_ctrl_1.putProfileCtrl);
+exports.default = profile;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/profile/profile.ctrl.ts":
+/*!************************************************!*\
+  !*** ./src/api/helper/profile/profile.ctrl.ts ***!
+  \************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65022,23 +67353,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var feeling_service_1 = __importDefault(__webpack_require__(/*! ./feeling.service */ "./src/api/concern/feeling/feeling.service.ts"));
-var getFeelingList = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+var profile_service_1 = __importDefault(__webpack_require__(/*! ./profile.service */ "./src/api/helper/profile/profile.service.ts"));
+var getProfileCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, feeling_service_1.default.getfeelingService(req, res)
+            case 0: return [4 /*yield*/, profile_service_1.default.getProfileService(req, res)
                     .then(function (result) {
-                    res.send({
-                        message: '',
-                        code: 100,
-                        data: {
-                            feeling: result,
-                        }
-                    });
+                    res.status(200).send(result);
                 })
                     .catch(function (e) {
-                    console.log(e);
-                    res.send(e);
+                    res.status(500).send(e);
                 })];
             case 1:
                 _a.sent();
@@ -65046,14 +67370,433 @@ var getFeelingList = function (req, res) { return __awaiter(_this, void 0, void 
         }
     });
 }); };
-exports.getFeelingList = getFeelingList;
+exports.getProfileCtrl = getProfileCtrl;
+var putProfileCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, profile_service_1.default.putProfileService(req, res)
+                    .then(function (result) {
+                    res.status(200).send(result);
+                })
+                    .catch(function (e) {
+                    res.status(500).send(e);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.putProfileCtrl = putProfileCtrl;
 
 
 /***/ }),
 
-/***/ "./src/api/concern/feeling/feeling.service.ts":
+/***/ "./src/api/helper/profile/profile.service.ts":
+/*!***************************************************!*\
+  !*** ./src/api/helper/profile/profile.service.ts ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var helper_1 = __webpack_require__(/*! ../../../models/helper */ "./src/models/helper.ts");
+var getProfileService = function (req, res) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var helper_idx, connection, helper, experience, e_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 4, 5, 6]);
+                    helper_idx = req.params;
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _a.sent();
+                    return [4 /*yield*/, helper_1.selectProfileHelper(connection, helper_idx.helper_idx)];
+                case 2:
+                    helper = _a.sent();
+                    return [4 /*yield*/, helper_1.selectProfileExperience(connection, helper_idx.helper_idx)];
+                case 3:
+                    experience = _a.sent();
+                    resolve({ helper: helper, experience: experience });
+                    return [3 /*break*/, 6];
+                case 4:
+                    e_1 = _a.sent();
+                    reject(e_1);
+                    return [3 /*break*/, 6];
+                case 5: return [7 /*endfinally*/];
+                case 6: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+var putProfileService = function (req, res) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var _a, helper, experience, connection, categorylist_idx, user_idx, helper_idx, old_experience_idx, i, experience_idx, e_2;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 17, 18, 19]);
+                    _a = req.body, helper = _a.helper, experience = _a.experience;
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _b.sent();
+                    return [4 /*yield*/, helper_1.selectRegistrationCategorylist(connection, helper.categoryList_name)];
+                case 2:
+                    categorylist_idx = _b.sent();
+                    if (!!categorylist_idx.length) return [3 /*break*/, 5];
+                    return [4 /*yield*/, helper_1.insertRegistrationCategorylist(connection, helper)];
+                case 3:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectLastInsert(connection)];
+                case 4:
+                    categorylist_idx = _b.sent();
+                    _b.label = 5;
+                case 5:
+                    helper.categorylist_idx = categorylist_idx[0].idx;
+                    delete helper.categoryList_name;
+                    user_idx = helper.user_idx;
+                    delete helper.user_idx;
+                    helper.user_idx = user_idx;
+                    return [4 /*yield*/, helper_1.updateProfileHelper(connection, Object.values(helper))];
+                case 6:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectProfileHelper_idx(connection, helper.user_idx)];
+                case 7:
+                    helper_idx = _b.sent();
+                    return [4 /*yield*/, helper_1.selectProfileHelper_experience(connection, helper_idx[0].helper_idx)];
+                case 8:
+                    old_experience_idx = _b.sent();
+                    i = 0;
+                    _b.label = 9;
+                case 9:
+                    if (!(i < 3)) return [3 /*break*/, 16];
+                    return [4 /*yield*/, helper_1.selectRegistrationExperience(connection, experience.experience_name[i])];
+                case 10:
+                    experience_idx = _b.sent();
+                    if (!!experience_idx.length) return [3 /*break*/, 13];
+                    return [4 /*yield*/, helper_1.insertRegistrationExperience(connection, experience.experience_name[i])];
+                case 11:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectLastInsert(connection)];
+                case 12:
+                    experience_idx = _b.sent();
+                    _b.label = 13;
+                case 13: return [4 /*yield*/, helper_1.updateProfileHelper_experience(connection, [experience_idx[0].idx, old_experience_idx[i].experience_idx])];
+                case 14:
+                    _b.sent();
+                    _b.label = 15;
+                case 15:
+                    i++;
+                    return [3 /*break*/, 9];
+                case 16:
+                    resolve({});
+                    return [3 /*break*/, 19];
+                case 17:
+                    e_2 = _b.sent();
+                    return [3 /*break*/, 19];
+                case 18: return [7 /*endfinally*/];
+                case 19: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+exports.default = {
+    getProfileService: getProfileService,
+    putProfileService: putProfileService
+};
+
+
+/***/ }),
+
+/***/ "./src/api/helper/registration/index.ts":
+/*!**********************************************!*\
+  !*** ./src/api/helper/registration/index.ts ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var registration_ctrl_1 = __webpack_require__(/*! ../registration/registration.ctrl */ "./src/api/helper/registration/registration.ctrl.ts");
+var registration = express_1.default.Router();
+registration.post('/', registration_ctrl_1.postRegistrationCtrl);
+exports.default = registration;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/registration/registration.ctrl.ts":
+/*!**********************************************************!*\
+  !*** ./src/api/helper/registration/registration.ctrl.ts ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var registration_service_1 = __importDefault(__webpack_require__(/*! ./registration.service */ "./src/api/helper/registration/registration.service.ts"));
+var postRegistrationCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, registration_service_1.default.postRegistrationService(req, res)
+                    .then(function (result) {
+                    res.status(200).send(result);
+                })
+                    .catch(function (e) {
+                    res.status(500).send(e);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.postRegistrationCtrl = postRegistrationCtrl;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/registration/registration.service.ts":
+/*!*************************************************************!*\
+  !*** ./src/api/helper/registration/registration.service.ts ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var helper_1 = __webpack_require__(/*! ../../../models/helper */ "./src/models/helper.ts");
+var postRegistrationService = function (req, res) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var connection, _a, helper, experience, categoryList_idx, helper_idx, i, experience_idx, e_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _b.sent();
+                    _b.label = 2;
+                case 2:
+                    _b.trys.push([2, 17, 18, 19]);
+                    _a = req.body, helper = _a.helper, experience = _a.experience;
+                    return [4 /*yield*/, helper_1.selectRegistrationCategorylist(connection, helper.categoryList_name)];
+                case 3:
+                    categoryList_idx = _b.sent();
+                    if (!!categoryList_idx.length) return [3 /*break*/, 6];
+                    return [4 /*yield*/, helper_1.insertRegistrationCategorylist(connection, helper.categoryList_name)];
+                case 4:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectLastInsert(connection)];
+                case 5:
+                    categoryList_idx = _b.sent();
+                    _b.label = 6;
+                case 6:
+                    helper.categoryList_idx = categoryList_idx[0].idx;
+                    delete helper.categoryList_name;
+                    return [4 /*yield*/, helper_1.insertRegistrationHelper(connection, Object.values(helper))];
+                case 7:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectLastInsert(connection)];
+                case 8:
+                    helper_idx = _b.sent();
+                    i = 0;
+                    _b.label = 9;
+                case 9:
+                    if (!(i < 3)) return [3 /*break*/, 16];
+                    return [4 /*yield*/, helper_1.selectRegistrationExperience(connection, experience.experience_name[i])];
+                case 10:
+                    experience_idx = _b.sent();
+                    if (!!experience_idx.length) return [3 /*break*/, 13];
+                    return [4 /*yield*/, helper_1.insertRegistrationExperience(connection, experience.experience_name[i])];
+                case 11:
+                    _b.sent();
+                    return [4 /*yield*/, helper_1.selectLastInsert(connection)];
+                case 12:
+                    experience_idx = _b.sent();
+                    _b.label = 13;
+                case 13: return [4 /*yield*/, helper_1.insertRegistrationHelper_experience(connection, [experience_idx[0].idx, helper_idx[0].idx])];
+                case 14:
+                    _b.sent();
+                    _b.label = 15;
+                case 15:
+                    i++;
+                    return [3 /*break*/, 9];
+                case 16:
+                    ;
+                    resolve({});
+                    return [3 /*break*/, 19];
+                case 17:
+                    e_1 = _b.sent();
+                    reject(e_1);
+                    return [3 /*break*/, 19];
+                case 18:
+                    connection.end();
+                    return [7 /*endfinally*/];
+                case 19: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+exports.default = {
+    postRegistrationService: postRegistrationService
+};
+
+
+/***/ }),
+
+/***/ "./src/api/helper/selection/index.ts":
+/*!*******************************************!*\
+  !*** ./src/api/helper/selection/index.ts ***!
+  \*******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var selection_ctrl_1 = __webpack_require__(/*! ../selection/selection.ctrl */ "./src/api/helper/selection/selection.ctrl.ts");
+var selection = express_1.default.Router();
+selection.post('/', selection_ctrl_1.postSelectionCtrl);
+exports.default = selection;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/selection/selection.ctrl.ts":
 /*!****************************************************!*\
-  !*** ./src/api/concern/feeling/feeling.service.ts ***!
+  !*** ./src/api/helper/selection/selection.ctrl.ts ***!
   \****************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
@@ -65100,47 +67843,115 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
+var selection_service_1 = __importDefault(__webpack_require__(/*! ./selection.service */ "./src/api/helper/selection/selection.service.ts"));
+var postSelectionCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, selection_service_1.default.postSelectionService(req, res)
+                    .then(function (result) {
+                    res.status(200).send(result);
+                })
+                    .catch(function (e) {
+                    res.status(500).send(e);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.postSelectionCtrl = postSelectionCtrl;
+
+
+/***/ }),
+
+/***/ "./src/api/helper/selection/selection.service.ts":
+/*!*******************************************************!*\
+  !*** ./src/api/helper/selection/selection.service.ts ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
 var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
-var feeling_model_1 = __importDefault(__webpack_require__(/*! ../../../models/feeling.model */ "./src/models/feeling.model.ts"));
-var getfeelingService = function (req, res) {
+var helper_1 = __webpack_require__(/*! ../../../models/helper */ "./src/models/helper.ts");
+var postSelectionService = function (req, res) {
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, feelingList, e_1;
+        var connection, body, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, connection_1.default()];
+                case 0:
+                    _a.trys.push([0, 3, 4, 5]);
+                    return [4 /*yield*/, connection_1.default()];
                 case 1:
                     connection = _a.sent();
-                    _a.label = 2;
+                    body = req.body;
+                    return [4 /*yield*/, helper_1.insertSelectionSelected_question(connection, body)];
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
-                    return [4 /*yield*/, feeling_model_1.default.selectFeelingList(connection)];
+                    _a.sent();
+                    resolve({});
+                    return [3 /*break*/, 5];
                 case 3:
-                    feelingList = _a.sent();
-                    resolve(feelingList);
-                    return [3 /*break*/, 6];
-                case 4:
                     e_1 = _a.sent();
-                    reject(e_1);
-                    return [3 /*break*/, 6];
-                case 5:
-                    connection.end();
-                    return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 4: return [7 /*endfinally*/];
+                case 5: return [2 /*return*/];
             }
         });
     }); });
 };
 exports.default = {
-    getfeelingService: getfeelingService,
+    postSelectionService: postSelectionService
 };
 
 
 /***/ }),
 
-/***/ "./src/api/concern/index.ts":
-/*!**********************************!*\
-  !*** ./src/api/concern/index.ts ***!
-  \**********************************/
+/***/ "./src/api/helper/story/index.ts":
+/*!***************************************!*\
+  !*** ./src/api/helper/story/index.ts ***!
+  \***************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65151,25 +67962,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
-var category_ctrl_1 = __webpack_require__(/*! ./category/category.ctrl */ "./src/api/concern/category/category.ctrl.ts");
-var feeling_ctrl_1 = __webpack_require__(/*! ./feeling/feeling.ctrl */ "./src/api/concern/feeling/feeling.ctrl.ts");
-var question_ctrl_1 = __webpack_require__(/*! ./question/question.ctrl */ "./src/api/concern/question/question.ctrl.ts");
-var authCheck_1 = __importDefault(__webpack_require__(/*! ../../lib/authCheck */ "./src/lib/authCheck.ts"));
-var concern = express_1.default.Router();
-concern.get('/category/:category_idx', authCheck_1.default, category_ctrl_1.getCategoryList);
-concern.post('/category', category_ctrl_1.postCategoryList);
-concern.get('/feeling', feeling_ctrl_1.getFeelingList);
-concern.post('/question', authCheck_1.default, question_ctrl_1.postUserQuestion);
-concern.get('/list', authCheck_1.default, question_ctrl_1.getUserQuestionList);
-exports.default = concern;
+var story_ctrl_1 = __webpack_require__(/*! ../story/story.ctrl */ "./src/api/helper/story/story.ctrl.ts");
+var story = express_1.default.Router();
+story.get('/', story_ctrl_1.getStoryCtrl);
+exports.default = story;
 
 
 /***/ }),
 
-/***/ "./src/api/concern/question/question.ctrl.ts":
-/*!***************************************************!*\
-  !*** ./src/api/concern/question/question.ctrl.ts ***!
-  \***************************************************/
+/***/ "./src/api/helper/story/story.ctrl.ts":
+/*!********************************************!*\
+  !*** ./src/api/helper/story/story.ctrl.ts ***!
+  \********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65215,17 +68019,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var question_service_1 = __importDefault(__webpack_require__(/*! ./question.service */ "./src/api/concern/question/question.service.ts"));
-var respond_1 = __webpack_require__(/*! ../../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
-var getUserQuestionList = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+var story_service_1 = __importDefault(__webpack_require__(/*! ./story.service */ "./src/api/helper/story/story.service.ts"));
+var getStoryCtrl = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, question_service_1.default.getUserQuestion(req, res)
-                    .then(function (data) {
-                    respond_1.respondBasic(res, 100, 'success', data);
+            case 0: return [4 /*yield*/, story_service_1.default.getStoryService(req, res)
+                    .then(function (result) {
+                    res.status(200).send(result);
                 })
                     .catch(function (e) {
-                    respond_1.respondOnError(res, 100, 'fail', 500);
+                    res.status(500).send(e);
                 })];
             case 1:
                 _a.sent();
@@ -65233,32 +68036,15 @@ var getUserQuestionList = function (req, res) { return __awaiter(_this, void 0, 
         }
     });
 }); };
-exports.getUserQuestionList = getUserQuestionList;
-var postUserQuestion = function (req, res) { return __awaiter(_this, void 0, void 0, function () {
-    return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0: return [4 /*yield*/, question_service_1.default.postUserQuestion(req, res)
-                    .then(function (data) {
-                    respond_1.respondBasic(res, 100, 'success', data);
-                })
-                    .catch(function (e) {
-                    respond_1.respondOnError(res, 100, 'fail', 500);
-                })];
-            case 1:
-                _a.sent();
-                return [2 /*return*/];
-        }
-    });
-}); };
-exports.postUserQuestion = postUserQuestion;
+exports.getStoryCtrl = getStoryCtrl;
 
 
 /***/ }),
 
-/***/ "./src/api/concern/question/question.service.ts":
-/*!******************************************************!*\
-  !*** ./src/api/concern/question/question.service.ts ***!
-  \******************************************************/
+/***/ "./src/api/helper/story/story.service.ts":
+/*!***********************************************!*\
+  !*** ./src/api/helper/story/story.service.ts ***!
+  \***********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65304,107 +68090,45 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
 var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
-var question_model_1 = __importDefault(__webpack_require__(/*! ../../../models/question.model */ "./src/models/question.model.ts"));
-var personality_model_1 = __importDefault(__webpack_require__(/*! ../../../models/personality.model */ "./src/models/personality.model.ts"));
-var feeling_model_1 = __importDefault(__webpack_require__(/*! ../../../models/feeling.model */ "./src/models/feeling.model.ts"));
-var experience_model_1 = __importDefault(__webpack_require__(/*! ../../../models/experience.model */ "./src/models/experience.model.ts"));
-var postUserQuestion = function (req, res) {
+var helper_1 = __webpack_require__(/*! ../../../models/helper */ "./src/models/helper.ts");
+var getStoryService = function (req, res) {
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, _a, question, feeling, personality, experience, user, qResult, fResult, pResult, eResult, e_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0: return [4 /*yield*/, connection_1.default()];
-                case 1:
-                    connection = _b.sent();
-                    _b.label = 2;
-                case 2:
-                    _b.trys.push([2, 7, 8, 9]);
-                    _a = req.body, question = _a.question, feeling = _a.feeling, personality = _a.personality, experience = _a.experience;
-                    user = req.user;
-                    return [4 /*yield*/, question_model_1.default.insertQuestion(connection, question, user)];
-                case 3:
-                    qResult = _b.sent();
-                    qResult.affectedRows == 0 && reject({ message: 'insert error' });
-                    return [4 /*yield*/, feeling_model_1.default.insertQuestionFeeling(connection, qResult, feeling)];
-                case 4:
-                    fResult = _b.sent();
-                    return [4 /*yield*/, personality_model_1.default.insertQuestionPersonality(connection, qResult, personality)];
-                case 5:
-                    pResult = _b.sent();
-                    return [4 /*yield*/, experience_model_1.default.insertQuestionExperience(connection, qResult, experience)];
-                case 6:
-                    eResult = _b.sent();
-                    resolve({});
-                    return [3 /*break*/, 9];
-                case 7:
-                    e_1 = _b.sent();
-                    console.log(e_1);
-                    reject(e_1);
-                    return [3 /*break*/, 9];
-                case 8:
-                    connection.end();
-                    return [7 /*endfinally*/];
-                case 9: return [2 /*return*/];
-            }
-        });
-    }); });
-};
-var getUserQuestion = function (req, res) {
-    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
-        var connection, qList, user_1, question_1, category_1, e_2;
+        var connection, result, i, helper, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, connection_1.default()];
+                case 0:
+                    _a.trys.push([0, 6, 7, 8]);
+                    return [4 /*yield*/, connection_1.default()];
                 case 1:
                     connection = _a.sent();
+                    result = [];
+                    i = 0;
                     _a.label = 2;
                 case 2:
-                    _a.trys.push([2, 4, 5, 6]);
-                    return [4 /*yield*/, question_model_1.default.selectUserQuestion(connection)];
+                    if (!(i < 5)) return [3 /*break*/, 5];
+                    return [4 /*yield*/, helper_1.selectStoryHelper(connection, i)];
                 case 3:
-                    qList = _a.sent();
-                    user_1 = [];
-                    question_1 = [];
-                    category_1 = [];
-                    lodash_1.default.forEach(qList, function (value, index) {
-                        user_1.push({
-                            user_idx: value.user_idx,
-                            nickname: value.nickname,
-                            gender: value.gender,
-                            age: value.age,
-                        });
-                        question_1.push({
-                            title: value.content,
-                        });
-                        category_1.push({
-                            category_idx: value.category_idx,
-                            category_name: value.category_name
-                        });
-                    });
-                    resolve({
-                        user: user_1,
-                        question: question_1,
-                        category: category_1,
-                        size: qList.length,
-                    });
-                    return [3 /*break*/, 6];
+                    helper = _a.sent();
+                    result.push(helper);
+                    _a.label = 4;
                 case 4:
-                    e_2 = _a.sent();
-                    reject(e_2);
-                    return [3 /*break*/, 6];
+                    i++;
+                    return [3 /*break*/, 2];
                 case 5:
-                    connection.end();
-                    return [7 /*endfinally*/];
-                case 6: return [2 /*return*/];
+                    resolve({ result: result });
+                    return [3 /*break*/, 8];
+                case 6:
+                    e_1 = _a.sent();
+                    return [3 /*break*/, 8];
+                case 7: return [7 /*endfinally*/];
+                case 8: return [2 /*return*/];
             }
         });
     }); });
 };
 exports.default = {
-    getUserQuestion: getUserQuestion,
-    postUserQuestion: postUserQuestion,
+    getStoryService: getStoryService
 };
 
 
@@ -65426,14 +68150,269 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // const express = require('express')
 var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
 var user_1 = __importDefault(__webpack_require__(/*! ./user */ "./src/api/user/index.ts"));
-var concern_1 = __importDefault(__webpack_require__(/*! ./concern */ "./src/api/concern/index.ts"));
+var review_1 = __importDefault(__webpack_require__(/*! ./review */ "./src/api/review/index.ts"));
+var helper_1 = __importDefault(__webpack_require__(/*! ./helper */ "./src/api/helper/index.ts"));
 var router = express_1.default.Router();
-router.get('/test', function (req, res) {
-    res.send('test');
-});
 router.use('/user', user_1.default);
-router.use('/concern', concern_1.default);
+router.use('/review', review_1.default);
+router.use('/helper', helper_1.default);
 exports.default = router;
+
+
+/***/ }),
+
+/***/ "./src/api/review/index.ts":
+/*!*********************************!*\
+  !*** ./src/api/review/index.ts ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
+var review_ctrl_1 = __webpack_require__(/*! ./review.ctrl */ "./src/api/review/review.ctrl.ts");
+var authCheck_1 = __importDefault(__webpack_require__(/*! ../../lib/authCheck */ "./src/lib/authCheck.ts"));
+var review = express_1.default.Router();
+review.post('/', authCheck_1.default, review_ctrl_1.postReviewCtrl);
+review.put('/:review_idx', authCheck_1.default, review_ctrl_1.putReviewCtrl);
+exports.default = review;
+
+
+/***/ }),
+
+/***/ "./src/api/review/review.ctrl.ts":
+/*!***************************************!*\
+  !*** ./src/api/review/review.ctrl.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var review_service_1 = __importDefault(__webpack_require__(/*! ./review.service */ "./src/api/review/review.service.ts"));
+var respond_1 = __webpack_require__(/*! ../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
+var postReviewCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, review_service_1.default.postReviewService(req, res, next)
+                    .then(function (result) {
+                    res.status(200).send({
+                        message: '리뷰 등록 완료',
+                    });
+                })
+                    .catch(function (e) {
+                    console.log(e);
+                    respond_1.respondOnError(res, e.message, e.err, 500);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.postReviewCtrl = postReviewCtrl;
+var putReviewCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, review_service_1.default.putReviewService(req, res, next)
+                    .then(function (result) {
+                    console.log(result);
+                    res.status(200).send({
+                        message: '리뷰 수정 완료'
+                    });
+                })
+                    .catch(function (e) {
+                    console.log(e);
+                    respond_1.respondOnError(res, e.message, e.err, 500);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.putReviewCtrl = putReviewCtrl;
+
+
+/***/ }),
+
+/***/ "./src/api/review/review.service.ts":
+/*!******************************************!*\
+  !*** ./src/api/review/review.service.ts ***!
+  \******************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __importDefault(__webpack_require__(/*! ../../lib/connection */ "./src/lib/connection.ts"));
+var review_1 = __webpack_require__(/*! ../../models/review */ "./src/models/review.ts");
+var postReviewService = function (req, res, next) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var body, user, connection, uploadReview, modifiedReviewCount, avgStars, modifiedAvgStars, e_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 6, , 7]);
+                    body = req.body;
+                    user = req.user;
+                    console.log('this is user', user);
+                    if (!body.stars || !body.review_content || !body.helper_idx || !user.user_idx || !body.category_idx || !body.question_idx) {
+                        reject({
+                            code: 204,
+                            message: 'body에 NULL값이 존재합니다.'
+                        });
+                    }
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _a.sent();
+                    return [4 /*yield*/, review_1.insertHelperReview(connection, body, user)];
+                case 2:
+                    uploadReview = _a.sent();
+                    return [4 /*yield*/, review_1.updateHelperReviewCount(connection, body)];
+                case 3:
+                    modifiedReviewCount = _a.sent();
+                    return [4 /*yield*/, review_1.selectAvgStars(connection, body)];
+                case 4:
+                    avgStars = _a.sent();
+                    return [4 /*yield*/, review_1.updateAvgStars(connection, avgStars[0], body)];
+                case 5:
+                    modifiedAvgStars = _a.sent();
+                    resolve(uploadReview);
+                    return [3 /*break*/, 7];
+                case 6:
+                    e_1 = _a.sent();
+                    console.log(e_1);
+                    reject(e_1);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+var putReviewService = function (req, res, next) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var body, params, user, connection, modifiedReview, e_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 3, , 4]);
+                    body = req.body;
+                    params = req.params;
+                    user = req.user;
+                    if (!body.stars || !body.review_content) {
+                        reject({
+                            code: 204,
+                            message: 'body에 NULL값이 존재합니다.'
+                        });
+                    }
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _a.sent();
+                    return [4 /*yield*/, review_1.updateReview(connection, body, body, params, user)];
+                case 2:
+                    modifiedReview = _a.sent();
+                    resolve(modifiedReview);
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_2 = _a.sent();
+                    console.log(e_2);
+                    reject(e_2);
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+exports.default = {
+    postReviewService: postReviewService,
+    putReviewService: putReviewService
+};
 
 
 /***/ }),
@@ -65452,18 +68431,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express_1 = __importDefault(__webpack_require__(/*! express */ "./node_modules/express/index.js"));
-var sign_ctrl_1 = __webpack_require__(/*! ./sign/sign.ctrl */ "./src/api/user/sign/sign.ctrl.ts");
-var sign = express_1.default.Router();
-sign.get('/signin', sign_ctrl_1.postSigninCtrl);
-exports.default = sign;
+var signin_ctrl_1 = __webpack_require__(/*! ./signin/signin.ctrl */ "./src/api/user/signin/signin.ctrl.ts");
+var signup_ctrl_1 = __webpack_require__(/*! ./signup/signup.ctrl */ "./src/api/user/signup/signup.ctrl.ts");
+var profile_ctrl_1 = __webpack_require__(/*! ./profile/profile.ctrl */ "./src/api/user/profile/profile.ctrl.ts");
+// postSignupCtrl 추가하기
+var user = express_1.default.Router();
+user.post('/signin', signin_ctrl_1.postSigninCtrl);
+user.post('/signup', signup_ctrl_1.postSignupCtrl);
+user.get('/profile/:question_idx', profile_ctrl_1.getProfileCtrl);
+exports.default = user;
 
 
 /***/ }),
 
-/***/ "./src/api/user/sign/sign.ctrl.ts":
-/*!****************************************!*\
-  !*** ./src/api/user/sign/sign.ctrl.ts ***!
-  \****************************************/
+/***/ "./src/api/user/profile/profile.ctrl.ts":
+/*!**********************************************!*\
+  !*** ./src/api/user/profile/profile.ctrl.ts ***!
+  \**********************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65509,39 +68493,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var sign_service_1 = __importDefault(__webpack_require__(/*! ./sign.service */ "./src/api/user/sign/sign.service.ts"));
+var profile_service_1 = __importDefault(__webpack_require__(/*! ./profile.service */ "./src/api/user/profile/profile.service.ts"));
 var respond_1 = __webpack_require__(/*! ../../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
-var postSigninCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+var getProfileCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: 
-            // validation 만들고 싶으면 만들기
-            return [4 /*yield*/, sign_service_1.default.postSignService(req, res, next)
+            case 0: return [4 /*yield*/, profile_service_1.default.getProfileService(req, res, next)
                     .then(function (result) {
-                    respond_1.respondBasic(res, 0, 'Sample Success Message', result);
+                    res.status(200).send({
+                        message: '유저 프로필 가져오기 성공',
+                        data: result
+                    });
                 })
                     .catch(function (e) {
-                    if (e instanceof respond_1.CustomError)
-                        respond_1.respondOnError(res, e.code, e.message, e.status, e.data);
-                    else
-                        respond_1.respondOnError(res, 0, 'Sample Error Message', 500);
+                    console.log(e);
+                    respond_1.respondOnError(res, e.message, e.err, 500);
                 })];
             case 1:
-                // validation 만들고 싶으면 만들기
                 _a.sent();
                 return [2 /*return*/];
         }
     });
 }); };
-exports.postSigninCtrl = postSigninCtrl;
+exports.getProfileCtrl = getProfileCtrl;
 
 
 /***/ }),
 
-/***/ "./src/api/user/sign/sign.service.ts":
-/*!*******************************************!*\
-  !*** ./src/api/user/sign/sign.service.ts ***!
-  \*******************************************/
+/***/ "./src/api/user/profile/profile.service.ts":
+/*!*************************************************!*\
+  !*** ./src/api/user/profile/profile.service.ts ***!
+  \*************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -65582,24 +68564,459 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
-var postSignService = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var profile_1 = __webpack_require__(/*! ../../../models/profile */ "./src/models/profile.ts");
+var getProfileService = function (req, res, next) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var params, connection, userProfileList, personality, feeling, experience, userPersonality, e_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    _a.trys.push([0, 7, , 8]);
+                    params = req.params;
+                    if (!params.question_idx) {
+                        reject({
+                            code: 400,
+                            message: 'params에 NULL값이 존재합니다.'
+                        });
+                    }
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _a.sent();
+                    return [4 /*yield*/, profile_1.selectUserProfileList(connection, params)];
+                case 2:
+                    userProfileList = _a.sent();
+                    return [4 /*yield*/, profile_1.selectPersonality(connection, params)];
+                case 3:
+                    personality = _a.sent();
+                    return [4 /*yield*/, profile_1.selectFeeling(connection, params)];
+                case 4:
+                    feeling = _a.sent();
+                    return [4 /*yield*/, profile_1.selectExperience(connection, params)];
+                case 5:
+                    experience = _a.sent();
+                    return [4 /*yield*/, profile_1.selectUserPersonality(connection, params)];
+                case 6:
+                    userPersonality = _a.sent();
+                    resolve({
+                        user: {
+                            nickname: userProfileList[0].nickname,
+                            gender: userProfileList[0].gender,
+                            age: userProfileList[0].age
+                        },
+                        user_personality: userPersonality,
+                        question: {
+                            category_name: userProfileList[0].category_name,
+                            weight: userProfileList[0].weight,
+                            content: userProfileList[0].content,
+                            helper_gender: userProfileList[0].helper_gender,
+                            advise: userProfileList[0].advise,
+                            emotion: userProfileList[0].emotion,
+                            experience: userProfileList[0].experience,
+                            question_personality: personality,
+                            question_feeling: feeling,
+                            question_experience: experience
+                        }
+                    });
+                    return [3 /*break*/, 8];
+                case 7:
+                    e_1 = _a.sent();
+                    console.log(e_1);
+                    reject(e_1);
+                    return [3 /*break*/, 8];
+                case 8: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+exports.default = {
+    getProfileService: getProfileService
+};
+
+
+/***/ }),
+
+/***/ "./src/api/user/signin/signin.ctrl.ts":
+/*!********************************************!*\
+  !*** ./src/api/user/signin/signin.ctrl.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var signin_service_1 = __importDefault(__webpack_require__(/*! ./signin.service */ "./src/api/user/signin/signin.service.ts"));
+var respond_1 = __webpack_require__(/*! ../../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
+var postSigninCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
-        return [2 /*return*/, new Promise(function (resolve, reject) {
-                try {
-                    // bussiness model
-                }
-                catch (e) {
-                }
-                finally {
-                    resolve('success');
-                }
-            })];
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, signin_service_1.default.postSigninService(req, res, next)
+                    .then(function (result) {
+                    console.log(result);
+                    res.status(200).send({
+                        data: result,
+                        message: '로그인 성공'
+                    });
+                })
+                    .catch(function (e) {
+                    console.log(e);
+                    respond_1.respondOnError(res, e.message, e.err, 500);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
     });
 }); };
+exports.postSigninCtrl = postSigninCtrl;
+
+
+/***/ }),
+
+/***/ "./src/api/user/signin/signin.service.ts":
+/*!***********************************************!*\
+  !*** ./src/api/user/signin/signin.service.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var signin_1 = __webpack_require__(/*! ../../../models/signin */ "./src/models/signin.ts");
+var cryptoPassword_1 = __webpack_require__(/*! ../../../modules/cryptoPassword */ "./src/modules/cryptoPassword.ts");
+var token_1 = __importDefault(__webpack_require__(/*! ../../../lib/middlewares/token */ "./src/lib/middlewares/token.ts"));
+var aesKey_1 = __webpack_require__(/*! ../../../../secret/aesKey */ "./secret/aesKey.ts");
+var postSigninService = function (req, res, next) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var body, userToken, connection, userInfoEmail, _a, userInfoPassword, e_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0:
+                    _b.trys.push([0, 8, , 9]);
+                    body = req.body;
+                    userToken = null;
+                    if (!body.email || !body.password) {
+                        reject({
+                            code: 204,
+                            message: 'body에 NULL값이 존재합니다.'
+                        });
+                    }
+                    return [4 /*yield*/, connection_1.default()];
+                case 1:
+                    connection = _b.sent();
+                    return [4 /*yield*/, signin_1.selectUserEmail(connection, body)];
+                case 2:
+                    userInfoEmail = (_b.sent())[0];
+                    if (!!userInfoEmail) return [3 /*break*/, 3];
+                    reject({
+                        code: 401,
+                        message: '아이디 or 비밀번호 값이 일치하지 않습니다.'
+                    });
+                    return [3 /*break*/, 7];
+                case 3:
+                    if (!userInfoEmail.email) return [3 /*break*/, 7];
+                    _a = body;
+                    return [4 /*yield*/, cryptoPassword_1.cryptoPassword.hashedPassword(userInfoEmail.salt, body.password)];
+                case 4:
+                    _a.password = _b.sent();
+                    return [4 /*yield*/, signin_1.selectUserPassword(connection, body)];
+                case 5:
+                    userInfoPassword = (_b.sent())[0];
+                    if (!userInfoPassword) {
+                        reject({
+                            code: 401,
+                            message: '아이디 or 비밀번호 값이 일치하지 않습니다.'
+                        });
+                    }
+                    return [4 /*yield*/, token_1.default.encode(aesKey_1.key, userInfoPassword.user_idx, "0")];
+                case 6:
+                    userToken = _b.sent();
+                    _b.label = 7;
+                case 7:
+                    resolve({ token: userToken });
+                    return [3 /*break*/, 9];
+                case 8:
+                    e_1 = _b.sent();
+                    console.log(e_1);
+                    reject(e_1);
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
+            }
+        });
+    }); });
+};
 exports.default = {
-    postSignService: postSignService
+    postSigninService: postSigninService,
+};
+
+
+/***/ }),
+
+/***/ "./src/api/user/signup/signup.ctrl.ts":
+/*!********************************************!*\
+  !*** ./src/api/user/signup/signup.ctrl.ts ***!
+  \********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var signup_service_1 = __importDefault(__webpack_require__(/*! ./signup.service */ "./src/api/user/signup/signup.service.ts"));
+var respond_1 = __webpack_require__(/*! ../../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
+var postSignupCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0: return [4 /*yield*/, signup_service_1.default.postSignupService(req, res, next)
+                    .then(function (result) {
+                    res.status(200).send({
+                        message: '회원가입 성공'
+                    });
+                })
+                    .catch(function (e) {
+                    console.log(e);
+                    respond_1.respondOnError(res, e.message, e.err, 500);
+                })];
+            case 1:
+                _a.sent();
+                return [2 /*return*/];
+        }
+    });
+}); };
+exports.postSignupCtrl = postSignupCtrl;
+
+
+/***/ }),
+
+/***/ "./src/api/user/signup/signup.service.ts":
+/*!***********************************************!*\
+  !*** ./src/api/user/signup/signup.service.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var signup_1 = __webpack_require__(/*! ../../../models/signup */ "./src/models/signup.ts");
+var cryptoPassword_1 = __webpack_require__(/*! ../../../modules/cryptoPassword */ "./src/modules/cryptoPassword.ts");
+var postSignupService = function (req, res, next) {
+    return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
+        var body, _a, _b, connection, checkOverlapedEmail, userInfo, e_1;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    _c.trys.push([0, 8, , 9]);
+                    body = req.body;
+                    _a = body;
+                    return [4 /*yield*/, cryptoPassword_1.cryptoPassword.salt()];
+                case 1:
+                    _a.salt = _c.sent();
+                    _b = body;
+                    return [4 /*yield*/, cryptoPassword_1.cryptoPassword.hashedPassword(body.salt, body.password)];
+                case 2:
+                    _b.password = _c.sent();
+                    return [4 /*yield*/, connection_1.default()];
+                case 3:
+                    connection = _c.sent();
+                    return [4 /*yield*/, signup_1.selectCheckEmail(connection, body)];
+                case 4:
+                    checkOverlapedEmail = _c.sent();
+                    if (!body.nickname || !body.gender || !body.age || !body.email || !body.password || !body.device_token || !body.salt) {
+                        reject({
+                            code: 204,
+                            message: 'body에 NULL값이 존재합니다.'
+                        });
+                    }
+                    if (!(checkOverlapedEmail[0].success == 1)) return [3 /*break*/, 5];
+                    reject({
+                        code: 400,
+                        message: '중복된 email 존재'
+                    });
+                    return [3 /*break*/, 7];
+                case 5: return [4 /*yield*/, signup_1.insertUserInfo(connection, body)];
+                case 6:
+                    userInfo = _c.sent();
+                    resolve(userInfo);
+                    _c.label = 7;
+                case 7: return [3 /*break*/, 9];
+                case 8:
+                    e_1 = _c.sent();
+                    console.log(e_1);
+                    reject(e_1);
+                    return [3 /*break*/, 9];
+                case 9: return [2 /*return*/];
+            }
+        });
+    }); });
+};
+exports.default = {
+    postSignupService: postSignupService,
 };
 
 
@@ -65884,9 +69301,9 @@ exports.resFormat = resFormat;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = __webpack_require__(/*! jsonwebtoken */ "./node_modules/jsonwebtoken/index.js");
-var encode = function generateToken(secret, userId, level) {
+var encode = function generateToken(secret, user_idx, level) {
     return new Promise(function (resolve, reject) {
-        var token = jwt.sign({ userId: userId, level: level }, secret, {
+        var token = jwt.sign({ user_idx: user_idx, level: level }, secret, {
             issuer: 'willson',
             algorithm: 'HS256',
             expiresIn: 3600 * 24 * 10 * 10,
@@ -65920,222 +69337,544 @@ exports.default = {
 
 /***/ }),
 
-/***/ "./src/models/category.model.ts":
-/*!**************************************!*\
-  !*** ./src/models/category.model.ts ***!
-  \**************************************/
+/***/ "./src/models/helper.ts":
+/*!******************************!*\
+  !*** ./src/models/helper.ts ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var selectCategoryListWithId = function (connection, category_idx) {
+var selectRegistrationCategorylist = function (connection, categoryList_name) {
     return new Promise(function (resolve, reject) {
-        var query = "\n    SELECT\n      categoryList_idx, categoryList_name\n    FROM\n      categoryList\n    WHERE\n      category_idx = ?\n  ";
-        var Query = connection.query(query, [category_idx], function (err, result) {
-            if (err) {
-                reject(err);
-            }
-            resolve(result);
+        var query = "\n    SELECT categoryList_idx AS idx FROM categoryList WHERE categoryList_name = ?";
+        connection.query(query, categoryList_name, function (err, result) {
+            err ? reject(err) : resolve(result);
         });
     });
 };
-var selectCategoryListWithName = function (connection, _a) {
+exports.selectRegistrationCategorylist = selectRegistrationCategorylist;
+var insertRegistrationCategorylist = function (connection, _a) {
     var categoryList_name = _a.categoryList_name;
     return new Promise(function (resolve, reject) {
-        var query = "\n      SELECT\n        categoryList_idx, categoryList_name\n      FROM\n        categoryList\n      WHERE\n        categoryList_name LIKE '%" + categoryList_name + "%'\n  ";
+        var query = "\n    INSERT INTO categoryList (categoryList_name) VALUES (?)";
+        connection.query(query, [categoryList_name], function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.insertRegistrationCategorylist = insertRegistrationCategorylist;
+var insertRegistrationHelper = function (connection, helper) {
+    return new Promise(function (resolve, reject) {
+        var query = "INSERT INTO helper (title, content, category_idx, user_idx, categoryList_idx) VALUES (?,?,?,?,?)\n    ";
+        connection.query(query, helper, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.insertRegistrationHelper = insertRegistrationHelper;
+var selectRegistrationExperience = function (connection, experience_name) {
+    return new Promise(function (resolve, reject) {
+        var query = "SELECT experience_idx AS idx FROM experience where experience_name = (?)";
+        connection.query(query, [experience_name], function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectRegistrationExperience = selectRegistrationExperience;
+var selectLastInsert = function (connection) {
+    return new Promise(function (resolve, reject) {
+        var query = "SELECT LAST_INSERT_ID() AS idx";
         connection.query(query, function (err, result) {
             err ? reject(err) : resolve(result);
         });
     });
 };
-var insertCategoryList = function (connection, _a) {
-    var category_idx = _a.category_idx, categoryList_name = _a.categoryList_name;
+exports.selectLastInsert = selectLastInsert;
+var insertRegistrationHelper_experience = function (connection, helper_arr) {
     return new Promise(function (resolve, reject) {
-        var query = "\n    INSERT INTO\n      categoryList(category_idx, categoryList_name)\n    VALUES\n      (?, ?)\n  ";
-        connection.query(query, [category_idx, categoryList_name], function (err, result) {
+        var query = 'INSERT INTO helper_experience (experience_idx, helper_idx) values (?,?)';
+        connection.query(query, helper_arr, function (err, result) {
             err ? reject(err) : resolve(result);
         });
     });
 };
-var updateCategoryListCount = function (connection, _a) {
-    var categoryList_idx = _a.categoryList_idx;
+exports.insertRegistrationHelper_experience = insertRegistrationHelper_experience;
+var insertRegistrationExperience = function (connection, experience_name) {
     return new Promise(function (resolve, reject) {
-        var query = "\n      UPDATE\n        categoryList\n      SET\n        count = count + 1\n      WHERE\n        categoryList_idx = ?\n    ";
-        var Query = connection.query(query, [categoryList_idx], function (err, result) {
-            if (err) {
-                console.log(Query.sql);
+        var query = 'insert into experience (experience_name) values (?)';
+        connection.query(query, experience_name, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.insertRegistrationExperience = insertRegistrationExperience;
+//승낙 헬퍼 리스트
+var UserWantInfo = function (connection, question_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      helper_gender, age, categoryList_idx\n    FROM\n      question as Q\n    INNER JOIN\n      user as U ON Q.user_idx = U.user_idx\n    WHERE\n      question_idx = ?";
+        connection.query(query, question_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.UserWantInfo = UserWantInfo;
+var UserWantInfo2 = function (connection, question_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      experience_name\n    FROM\n      question_experience as Q\n    INNER JOIN\n      experience AS E ON Q.experience_idx = E.experience_idx\n    WHERE\n      question_idx = (?)";
+        connection.query(query, question_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.UserWantInfo2 = UserWantInfo2;
+var UserWantInfo3 = function (connection, question_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      personality_idx\n    FROM\n      question_personality\n    WHERE\n      question_idx = (?)";
+        connection.query(query, question_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.UserWantInfo3 = UserWantInfo3;
+var Helper_idx = function (connection, question_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      helper_idx\n    FROM\n      selected_question\n    WHERE\n      question_idx = (?)";
+        connection.query(query, question_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.Helper_idx = Helper_idx;
+var HelperInfo1 = function (connection, helper_arr) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      age, gender, category_idx, categoryList_idx, title, content, stars, review_count \n    FROM\n      helper AS H\n    INNER JOIN\n      user AS U ON H.user_idx = U.user_idx\n    WHERE\n      helper_idx IN (?)";
+        var Query = connection.query(query, [helper_arr], function (err, result) {
+            console.log(Query.sql);
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.HelperInfo1 = HelperInfo1;
+var HelperInfo2 = function (connection, helper_arr) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      personality_idx AS idx\n    FROM\n      helper AS H\n    INNER JOIN\n      user_personality AS U ON H.user_idx = U.user_idx\n    WHERE\n      helper_idx IN (?)";
+        connection.query(query, [helper_arr], function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.HelperInfo2 = HelperInfo2;
+//헬퍼 프로필
+var selectProfileHelper = function (connection, helper_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      category_idx, title, stars, review_count, content\n    FROM\n      helper as H\n    INNER JOIN\n      user as U ON H.user_idx = U.user_idx\n    WHERE\n      helper_idx = (?)";
+        connection.query(query, helper_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectProfileHelper = selectProfileHelper;
+var selectProfileExperience = function (connection, helper_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      experience_name\n    FROM\n      experience as A\n    INNER JOIN \n      helper_experience as B ON A.experience_idx = B.experience_idx\n    WHERE\n      helper_idx = (?)";
+        connection.query(query, helper_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectProfileExperience = selectProfileExperience;
+var updateProfileHelper = function (connection, helper) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    UPDATE \n      helper\n    SET\n      title = ?, content = ?, category_idx = ?, categoryList_idx = ?\n    WHERE\n      user_idx = (?)";
+        connection.query(query, helper, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.updateProfileHelper = updateProfileHelper;
+var getProfileHelper_experience_idx = function (connection, helper_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT \n      helper_experience_idx\n    FROM\n      helper_experience\n    WHERE\n      helper_idx = (?)";
+        connection.query(query, helper_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.getProfileHelper_experience_idx = getProfileHelper_experience_idx;
+var updateProfileHelper_experience = function (connection, arr) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    UPDATE \n      helper_experience\n    SET\n      experience_idx = (?)\n    WHERE\n      experience_idx = (?)";
+        connection.query(query, arr, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.updateProfileHelper_experience = updateProfileHelper_experience;
+var selectProfileHelper_experience = function (connection, helper_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      experience_idx\n    FROM\n      helper_experience\n    WHERE\n      helper_idx = (?)";
+        connection.query(query, helper_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectProfileHelper_experience = selectProfileHelper_experience;
+var selectProfileHelper_idx = function (connection, user_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      helper_idx\n    FROM\n      helper\n    WHERE\n      user_idx = (?)";
+        connection.query(query, user_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectProfileHelper_idx = selectProfileHelper_idx;
+//헬퍼 이야기
+var selectStoryHelper = function (connection, category_idx) {
+    return new Promise(function (resolve, reject) {
+        var query = "\n    SELECT\n      category_idx, title, nickname\n    FROM\n      helper_story\n    WHERE\n      category_idx = (?)\n    ORDER BY RAND() LIMIT 1\n  ";
+        connection.query(query, category_idx, function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.selectStoryHelper = selectStoryHelper;
+//요청 보내기
+var insertSelectionSelected_question = function (connection, _a) {
+    var helper_idx = _a.helper_idx, question_idx = _a.question_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n    INSERT INTO\n      selected_question (helper_idx, question_idx) VALUES (?, ?)\n  ";
+        connection.query(query, [helper_idx, question_idx], function (err, result) {
+            err ? reject(err) : resolve(result);
+        });
+    });
+};
+exports.insertSelectionSelected_question = insertSelectionSelected_question;
+
+
+/***/ }),
+
+/***/ "./src/models/profile.ts":
+/*!*******************************!*\
+  !*** ./src/models/profile.ts ***!
+  \*******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var selectUserProfileList = function (connection, _a) {
+    var question_idx = _a.question_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT\n\t\t\tu.nickname,\n\t\t\tu.gender,\n\t\t\tu.age,\n\t\t\tc.category_name,\n\t\t\tcL.categoryList_name,\n\t\t\tq.weight,\n\t\t\tq.content,\n\t\t\tq.helper_gender,\n\t\t\tq.emotion,\n\t\t\tq.advise,\n\t\t\tq.experience\n\t\tFROM\n\t\t\tquestion q,\n\t\t\tcategory c,\n\t\t\tcategoryList cL,\n\t\t\tuser u\n\t\tWHERE\n\t\t\tq.user_idx = u.user_idx\n\t\t\tand q.categoryList_idx = cL.categoryList_idx\n\t\t\tand cL.category_idx = c.category_idx\n\t\t\tand question_idx = ?\n\t\t";
+        connection.query(query, [question_idx], function (err, result) {
+            if (err)
                 reject(err);
-            }
             resolve(result);
         });
     });
 };
-exports.default = {
-    selectCategoryListWithId: selectCategoryListWithId,
-    selectCategoryListWithName: selectCategoryListWithName,
-    insertCategoryList: insertCategoryList,
-    updateCategoryListCount: updateCategoryListCount,
-};
-
-
-/***/ }),
-
-/***/ "./src/models/experience.model.ts":
-/*!****************************************!*\
-  !*** ./src/models/experience.model.ts ***!
-  \****************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
-var insertQuestionExperience = function (connection, _a, experience) {
-    var insertId = _a.insertId;
+exports.selectUserProfileList = selectUserProfileList;
+var selectPersonality = function (connection, _a) {
+    var question_idx = _a.question_idx;
     return new Promise(function (resolve, reject) {
-        var value = [];
-        lodash_1.default.forEach(experience, function (element) {
-            value.push([insertId, element]);
-        });
-        var query = "\n      INSERT INTO\n        question_experience (question_idx, experience_idx)\n      VALUES\n        ?\n    ";
-        connection.query(query, [value], function (err, result) {
-            err ? reject(err) : resolve(result);
-        });
-    });
-};
-exports.default = {
-    insertQuestionExperience: insertQuestionExperience,
-};
-
-
-/***/ }),
-
-/***/ "./src/models/feeling.model.ts":
-/*!*************************************!*\
-  !*** ./src/models/feeling.model.ts ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
-var selectFeelingList = function (connection) {
-    return new Promise(function (resolve, reject) {
-        var query = "\n    SELECT\n      *\n    FROM\n      feeling\n  ";
-        connection.query(query, function (err, result) {
-            err ? reject(err) : resolve(result);
-        });
-    });
-};
-var insertQuestionFeeling = function (connection, _a, feeling) {
-    var insertId = _a.insertId;
-    return new Promise(function (resolve, reject) {
-        var value = [];
-        lodash_1.default.forEach(feeling, function (element) {
-            value.push([insertId, element]);
-        });
-        console.log(value);
-        var query = "\n      INSERT INTO\n        question_feeling (question_idx, feeling_idx)\n      VALUES\n        ?\n    ";
-        var Query = connection.query(query, [value], function (err, result) {
-            if (err) {
-                console.log(Query.sql);
+        var query = "\n\t\tSELECT\n\t\t\tp.personality_name\n\t\tFROM\n\t\t\tquestion q,\n\t\t\tpersonality p,\n\t\t\tquestion_personality qp\n\t\tWHERE\n\t\t\tq.question_idx = qp.question_idx\n\t\t\tand p.personality_idx = qp.personality_idx\n\t\t\tand qp.question_idx = ?\n\t\t";
+        connection.query(query, [question_idx], function (err, result) {
+            if (err)
                 reject(err);
-            }
             resolve(result);
         });
     });
 };
-exports.default = {
-    selectFeelingList: selectFeelingList,
-    insertQuestionFeeling: insertQuestionFeeling,
+exports.selectPersonality = selectPersonality;
+var selectFeeling = function (connection, _a) {
+    var question_idx = _a.question_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT\n\t\t\tf.feeling_name\n\t\tFROM\n\t\t\tquestion q,\n\t\t\tfeeling f,\n\t\t\tquestion_feeling qf\n\t\tWHERE\n\t\t\tq.question_idx = qf.question_idx\n\t\t\tand f.feeling_idx = qf.feeling_idx\n\t\t\tand qf.question_idx = ?\n\t\t";
+        connection.query(query, [question_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
 };
+exports.selectFeeling = selectFeeling;
+var selectExperience = function (connection, _a) {
+    var question_idx = _a.question_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT\n\t\t\te.experience_name\n\t\tFROM\n\t\t\tquestion q,\n\t\t\texperience e,\n\t\t\tquestion_experience qe\n\t\tWHERE\n\t\t\tq.question_idx = qe.question_idx\n\t\t\tand e.experience_idx = qe.experience_idx\n\t\t\tand q.question_idx = ?\n\t\t";
+        connection.query(query, [question_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.selectExperience = selectExperience;
+var selectUserPersonality = function (connection, _a) {
+    var question_idx = _a.question_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT\n\t\t\tp.personality_name\n\t\tFROM\n\t\t\tpersonality p,\n\t\t\tuser_personality up,\n\t\t\tquestion q\n\t\tWHERE\n\t\t\tp.personality_idx = up.personality_idx\n\t\t\tand q.user_idx = up.user_idx\n\t\t\tand q.question_idx = ?\n\t\t";
+        connection.query(query, [question_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.selectUserPersonality = selectUserPersonality;
 
 
 /***/ }),
 
-/***/ "./src/models/personality.model.ts":
-/*!*****************************************!*\
-  !*** ./src/models/personality.model.ts ***!
-  \*****************************************/
+/***/ "./src/models/review.ts":
+/*!******************************!*\
+  !*** ./src/models/review.ts ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
-var insertQuestionPersonality = function (connection, _a, personality) {
-    var insertId = _a.insertId;
+var insertHelperReview = function (connection, _a, _b) {
+    var stars = _a.stars, review_content = _a.review_content, helper_idx = _a.helper_idx, question_idx = _a.question_idx, category_idx = _a.category_idx;
+    var user_idx = _b.user_idx;
     return new Promise(function (resolve, reject) {
-        var value = [];
-        lodash_1.default.forEach(personality, function (element) {
-            value.push([insertId, element]);
-        });
-        var query = "\n      INSERT INTO\n        question_personality (question_idx, personality_idx)\n      VALUES\n        ?\n    ";
-        connection.query(query, [value], function (err, result) {
-            err ? reject(err) : resolve(result);
+        //const value = _.map(body, (v) => v)
+        var query = "\n\t\tINSERT INTO\n\t\t\treview(\n\t\t\t\tstars, \n\t\t\t\treview_content,\n\t\t\t\thelper_idx,\n\t\t\t\tuser_idx,\n\t\t\t\tquestion_idx,\n\t\t\t\tcategory_idx\n\t\t\t\t)\n\t\t\tVALUES (?,?,?,?,?,?)\n\t\t\t";
+        connection.query(query, [stars, review_content, helper_idx, user_idx, question_idx, category_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
         });
     });
 };
-exports.default = {
-    insertQuestionPersonality: insertQuestionPersonality,
+exports.insertHelperReview = insertHelperReview;
+var updateHelperReviewCount = function (connection, _a) {
+    var helper_idx = _a.helper_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tUPDATE\n\t\t\thelper\n\t\tSET\n\t\t\treview_count = review_count+1\n\t\tWHERE\n\t\t\thelper_idx = ?\n\t\t";
+        connection.query(query, [helper_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
 };
+exports.updateHelperReviewCount = updateHelperReviewCount;
+var selectAvgStars = function (connection, _a) {
+    var helper_idx = _a.helper_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT\n\t\t\tROUND(avg(stars), 2) AS stars\n\t\tFROM\n\t\t\treview\n\t\tWHERE\n\t\t\thelper_idx = ?\n\t\t";
+        connection.query(query, [helper_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.selectAvgStars = selectAvgStars;
+var updateAvgStars = function (connection, _a, _b) {
+    var stars = _a.stars;
+    var helper_idx = _b.helper_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tUPDATE\n\t\t\thelper\n\t\tSET\n\t\t\tstars = ?\n\t\tWHERE\n\t\t\thelper_idx = ?\n\t\t";
+        connection.query(query, [stars, helper_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.updateAvgStars = updateAvgStars;
+var updateReview = function (connection, _a, _b, _c, _d) {
+    var stars = _a.stars;
+    var review_content = _b.review_content;
+    var review_idx = _c.review_idx;
+    var user_idx = _d.user_idx;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tUPDATE\n\t\t\treview\n\t\tSET\n\t\t\tstars = ?,\n\t\t\treview_content = ?\n\t\tWHERE\n\t\t\treview_idx = ?\n\t\t\tand user_idx = ?\n\t\t";
+        connection.query(query, [stars, review_content, review_idx, user_idx], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.updateReview = updateReview;
 
 
 /***/ }),
 
-/***/ "./src/models/question.model.ts":
-/*!**************************************!*\
-  !*** ./src/models/question.model.ts ***!
-  \**************************************/
+/***/ "./src/models/signin.ts":
+/*!******************************!*\
+  !*** ./src/models/signin.ts ***!
+  \******************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
-var insertQuestion = function (connection, question, _a) {
-    var user_idx = _a.user_idx;
+var selectUserEmail = function (connection, _a) {
+    var email = _a.email;
     return new Promise(function (resolve, reject) {
-        var q = lodash_1.default.map(question, function (value) { return value; });
-        q.push(user_idx);
-        var query = "\n      INSERT INTO\n        question (\n          weight,\n          content,\n          helper_gender,\n          emotion,\n          advise,\n          experience,\n          categoryList_idx,\n          agreement,\n          user_idx\n        ) values (?,?,?,?,?,?,?,?,?)\n  ";
-        connection.query(query, q, function (err, result) {
-            err ? reject(err) : resolve(result);
+        var query = "\n\t\tSELECT email, salt\n\t\tFROM user\n\t\tWHERE email = ?\n\t\t";
+        connection.query(query, [email], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
         });
     });
 };
-var selectUserQuestion = function (connection) {
+exports.selectUserEmail = selectUserEmail;
+var selectUserPassword = function (connection, _a) {
+    var password = _a.password;
     return new Promise(function (resolve, reject) {
-        var query = "\n      SELECT\n        *\n      FROM\n        question as Q\n      INNER JOIN\n        user as U on Q.user_idx = U.user_idx\n      INNER JOIN\n        categoryList as CL on Q.categoryList_idx = CL.categoryList_idx\n      INNER JOIN\n        category as C on C.category_idx = CL.category_idx\n      WHERE\n        Q.status = 'wait'\n    ";
-        connection.query(query, function (err, result) {
-            console.log('access question insert');
-            err ? reject(err) : resolve(result);
+        var query = "\n\t\tSELECT password, user_idx\n\t\tFROM user\n\t\tWHERE password = ?\n\t\t";
+        connection.query(query, [password], function (err, result) {
+            if (err)
+                reject(err);
+            console.log('result', result);
+            resolve(result);
         });
     });
 };
-exports.default = {
-    insertQuestion: insertQuestion,
-    selectUserQuestion: selectUserQuestion
+exports.selectUserPassword = selectUserPassword;
+
+
+/***/ }),
+
+/***/ "./src/models/signup.ts":
+/*!******************************!*\
+  !*** ./src/models/signup.ts ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var insertUserInfo = function (connection, _a) {
+    var nickname = _a.nickname, gender = _a.gender, age = _a.age, email = _a.email, password = _a.password, device_token = _a.device_token, salt = _a.salt;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tINSERT INTO \n\t\t\tuser(\n\t\t\t\tnickname,\n\t\t\t\tgender,\n\t\t\t\tage, \n\t\t\t\temail,\n\t\t\t\tpassword,\n\t\t\t\tdevice_token,\n\t\t\t\tsalt\n\t\t\t)\n\t\tVALUES(?,?,?,?,?,?,?)\n\t\t";
+        connection.query(query, [nickname, gender, age, email, password, device_token, salt], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
 };
+exports.insertUserInfo = insertUserInfo;
+var selectCheckEmail = function (connection, _a) {
+    var email = _a.email;
+    return new Promise(function (resolve, reject) {
+        var query = "\n\t\tSELECT EXISTS\n\t\t\t(SELECT *FROM user WHERE email = ? ) as success\n\t\t";
+        connection.query(query, [email], function (err, result) {
+            if (err)
+                reject(err);
+            resolve(result);
+        });
+    });
+};
+exports.selectCheckEmail = selectCheckEmail;
+
+
+/***/ }),
+
+/***/ "./src/modules/cryptoPassword.ts":
+/*!***************************************!*\
+  !*** ./src/modules/cryptoPassword.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+var _this = this;
+Object.defineProperty(exports, "__esModule", { value: true });
+var crypto = __webpack_require__(/*! crypto-promise */ "./node_modules/crypto-promise/index.js");
+var cryptoPassword = {};
+exports.cryptoPassword = cryptoPassword;
+//랜덤 함수로 salt값 생성하기
+cryptoPassword.salt = function () { return __awaiter(_this, void 0, void 0, function () {
+    var saltBuffer, salt, err_1;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, crypto.randomBytes(32)];
+            case 1:
+                saltBuffer = _a.sent();
+                salt = saltBuffer.toString('base64');
+                return [2 /*return*/, salt];
+            case 2:
+                err_1 = _a.sent();
+                console.log(err_1);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
+cryptoPassword.hashedPassword = function (password, salt) { return __awaiter(_this, void 0, void 0, function () {
+    var hashedPasswordBuffer, hashedPassword, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                return [4 /*yield*/, crypto.pbkdf2(password, salt, 1000, 32, 'SHA512')];
+            case 1:
+                hashedPasswordBuffer = _a.sent();
+                hashedPassword = hashedPasswordBuffer.toString('base64');
+                return [2 /*return*/, hashedPassword];
+            case 2:
+                err_2 = _a.sent();
+                console.log(err_2);
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); };
 
 
 /***/ }),
@@ -66173,6 +69912,17 @@ exports.default = app;
 /***/ (function(module, exports) {
 
 module.exports = require("buffer");
+
+/***/ }),
+
+/***/ "child_process":
+/*!********************************!*\
+  !*** external "child_process" ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = require("child_process");
 
 /***/ }),
 

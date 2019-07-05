@@ -42,8 +42,11 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const {params} = req
 			const {user} = req
 
+<<<<<<< HEAD
 			
 			
+=======
+>>>>>>> e4cb29638de52e48f22797b1aa303f158d83d98e
 			if (!body.stars || !body.review_content){
 				reject({
 					code: 204,
