@@ -1,7 +1,7 @@
 import dbConnection from "../../../lib/connection";
 import { UserWantInfo, UserWantInfo2, UserWantInfo3, Helper_idx, HelperInfo1, HelperInfo2} from '../../../models/helper'
 import { listenerCount } from "cluster";
-var mecab = require('mecab-ya');
+const  mecab = require('mecab-ya');
 
 const getListService = (req: any,res: any) => 
   new Promise(async (resolve, reject) => {

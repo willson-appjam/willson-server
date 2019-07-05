@@ -26,7 +26,7 @@ const insertUserQuestion = (connection: Connection, question : {}, { user_idx } 
   })
 }
 
-const select UserQuestion withe status = (connection: Connection) : Promise<Array<{}>> => {
+const selectUserQuestionWithStatus = (connection: Connection) : Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const query = `
       SELECT
@@ -49,6 +49,6 @@ const select UserQuestion withe status = (connection: Connection) : Promise<Arra
 }
 
 export default {
-  insertQuestion,
-  selectUserQuestion
+  insertUserQuestion,
+  selectUserQuestionWithStatus
 }
