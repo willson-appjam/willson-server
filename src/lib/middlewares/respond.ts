@@ -1,23 +1,26 @@
 import express from 'express';
 import _ from 'lodash';
 
-const respondBasic = (res: express.Response, code: number, data: object) => {
+const respondBasic = (res: express.Response, code: number, message: string, data: object) => {
   res
     .status(200)
     .send({
+      message,
       code,
       data,
   })
 }
 
-const respondOnError = (res: express.Response, code: any, status: number, result?: object) => {
+const respondOnError = (res: express.Response, code: number, message: string, status: number, result?: object) => {
 
-  console.error('STATUS => ', status)
-  console.error('CODE => ', code)
-  console.error('RESULT => ', result)
+  console.error('CODE: ', code)
+  console.error('STATUS: ', status)
+  console.error('MESSAGE: ', message)
+  console.error('DATA: ', result)
 
   res.status(status).send({
     code,
+    message: message,
     result,
   })
 }
@@ -49,7 +52,6 @@ const CustomError = class CustomError extends Error {
       data: this.data,
       logMessage: '',
     }
-
     const temp = _.defaultsDeep(customError, defaultOptions)
 
     // Object.keys(defaultOptions).forEach((key) => {
@@ -58,8 +60,12 @@ const CustomError = class CustomError extends Error {
   }
 }
 
+const resFormat = (req: any, res: any) => {
+  respondBasic(res, 12011, 'get Main list fail', {});
+}
 
 export {
+  resFormat,
   CustomError,
   respondBasic,
   respondOnError,
