@@ -1,10 +1,8 @@
 import express from 'express'
-import dbconnection from '../../../lib/connection'
-import serviceStatusCode from '../../../lib/serviceStatusCode'
-import token from '../../../lib/middlewares/token'
-
-import {selectUserEmail, selectUserPassword} from '../../../models/signin'
+import dbconnection from '../../../lib/connection';
+import {selectUserEmail, selectUserPassword} from '../../../models/signin';
 import {cryptoPassword} from '../../../modules/cryptoPassword'
+import token from '../../../lib/middlewares/token'
 import {key} from '../../../../secret/aesKey'
 
 
@@ -14,7 +12,10 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
       const {body} = req
       let userToken = null
       if(!body.email || !body.password) {
-        reject({})
+        reject({
+          code: 204,
+          message: 'body에 NULL값이 존재합니다.'
+        })
       }
 
       const connection = await dbconnection()      

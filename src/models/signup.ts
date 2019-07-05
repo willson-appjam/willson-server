@@ -24,7 +24,8 @@ const insertUserInfo = (connection: any, { nickname, gender, age, email, passwor
 const selectCheckEmail = (connection : any, {email} : any) : Promise<{}> => {
 	return new Promise((resolve, reject) : any => {
 		const query = `
-			SELECT * FROM user WHERE email = ?
+		SELECT EXISTS
+			(SELECT *FROM user WHERE email = ? ) as success
 		`
 		connection.query(query, [email], (err:Error, result: {}[]) => {
 			if(err) reject(err)
