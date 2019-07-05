@@ -70861,7 +70861,7 @@ var postReviewCtrl = function (req, res, next) { return __awaiter(_this, void 0,
                 })
                     .catch(function (e) {
                     console.log(e);
-                    respond_1.respondOnError(res, e.message, e.err, 500);
+                    respond_1.respondOnError(res, 300, 500);
                 })];
             case 1:
                 _a.sent();
@@ -70882,7 +70882,7 @@ var putReviewCtrl = function (req, res, next) { return __awaiter(_this, void 0, 
                 })
                     .catch(function (e) {
                     console.log(e);
-                    respond_1.respondOnError(res, e.message, e.err, 500);
+                    respond_1.respondOnError(res, 300, 500);
                 })];
             case 1:
                 _a.sent();
@@ -71130,7 +71130,7 @@ var getProfileCtrl = function (req, res, next) { return __awaiter(_this, void 0,
                 })
                     .catch(function (e) {
                     console.log(e);
-                    respond_1.respondOnError(res, e.message, e.err, 500);
+                    respond_1.respondOnError(res, 300, 500);
                 })];
             case 1:
                 _a.sent();
@@ -71330,7 +71330,7 @@ var postSigninCtrl = function (req, res, next) { return __awaiter(_this, void 0,
                 })
                     .catch(function (e) {
                     console.log(e);
-                    respond_1.respondOnError(res, e.message, e.err, 500);
+                    respond_1.respondOnError(res, 300, 500);
                 })];
             case 1:
                 _a.sent();
@@ -71393,9 +71393,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
+var token_1 = __importDefault(__webpack_require__(/*! ../../../lib/middlewares/token */ "./src/lib/middlewares/token.ts"));
 var signin_1 = __webpack_require__(/*! ../../../models/signin */ "./src/models/signin.ts");
 var cryptoPassword_1 = __webpack_require__(/*! ../../../modules/cryptoPassword */ "./src/modules/cryptoPassword.ts");
-var token_1 = __importDefault(__webpack_require__(/*! ../../../lib/middlewares/token */ "./src/lib/middlewares/token.ts"));
 var aesKey_1 = __webpack_require__(/*! ../../../../secret/aesKey */ "./secret/aesKey.ts");
 var postSigninService = function (req, res, next) {
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
@@ -71407,10 +71407,7 @@ var postSigninService = function (req, res, next) {
                     body = req.body;
                     userToken = null;
                     if (!body.email || !body.password) {
-                        reject({
-                            code: 204,
-                            message: 'body에 NULL값이 존재합니다.'
-                        });
+                        reject({});
                     }
                     return [4 /*yield*/, connection_1.default()];
                 case 1:
@@ -71513,20 +71510,24 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _this = this;
 Object.defineProperty(exports, "__esModule", { value: true });
 var signup_service_1 = __importDefault(__webpack_require__(/*! ./signup.service */ "./src/api/user/signup/signup.service.ts"));
+var signup_validation_1 = __webpack_require__(/*! ./signup.validation */ "./src/api/user/signup/signup.validation.ts");
+var serviceStatusCode_1 = __importDefault(__webpack_require__(/*! ../../../lib/serviceStatusCode */ "./src/lib/serviceStatusCode.ts"));
 var respond_1 = __webpack_require__(/*! ../../../lib/middlewares/respond */ "./src/lib/middlewares/respond.ts");
 var postSignupCtrl = function (req, res, next) { return __awaiter(_this, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {
-            case 0: return [4 /*yield*/, signup_service_1.default.postSignupService(req, res, next)
-                    .then(function (result) {
-                    res.status(200).send({
-                        message: '회원가입 성공'
-                    });
-                })
-                    .catch(function (e) {
-                    console.log(e);
-                    respond_1.respondOnError(res, e.message, e.err, 500);
-                })];
+            case 0:
+                if (!signup_validation_1.isValidCheck(req)) {
+                    respond_1.respondOnError(res, serviceStatusCode_1.default['SIGN_UP_VALIDATION_ERROR'], 500);
+                    return [2 /*return*/];
+                }
+                return [4 /*yield*/, signup_service_1.default.postSignupService(req, res, next)
+                        .then(function (result) {
+                        respond_1.respondBasic(res, serviceStatusCode_1.default['SIGN_UP_SUCCESS'], result);
+                    })
+                        .catch(function (e) {
+                        respond_1.respondOnError(res, e.code, 500);
+                    })];
             case 1:
                 _a.sent();
                 return [2 /*return*/];
@@ -71590,13 +71591,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var connection_1 = __importDefault(__webpack_require__(/*! ../../../lib/connection */ "./src/lib/connection.ts"));
 var signup_1 = __webpack_require__(/*! ../../../models/signup */ "./src/models/signup.ts");
 var cryptoPassword_1 = __webpack_require__(/*! ../../../modules/cryptoPassword */ "./src/modules/cryptoPassword.ts");
+var serviceStatusCode_1 = __importDefault(__webpack_require__(/*! ../../../lib/serviceStatusCode */ "./src/lib/serviceStatusCode.ts"));
 var postSignupService = function (req, res, next) {
     return new Promise(function (resolve, reject) { return __awaiter(_this, void 0, void 0, function () {
         var body, _a, _b, connection, checkOverlapedEmail, userInfo, e_1;
         return __generator(this, function (_c) {
             switch (_c.label) {
                 case 0:
-                    _c.trys.push([0, 8, , 9]);
+                    _c.trys.push([0, 6, , 7]);
                     body = req.body;
                     _a = body;
                     return [4 /*yield*/, cryptoPassword_1.cryptoPassword.salt()];
@@ -71612,30 +71614,24 @@ var postSignupService = function (req, res, next) {
                     return [4 /*yield*/, signup_1.selectCheckEmail(connection, body)];
                 case 4:
                     checkOverlapedEmail = _c.sent();
-                    if (!body.nickname || !body.gender || !body.age || !body.email || !body.password || !body.device_token || !body.salt) {
-                        reject({
-                            code: 204,
-                            message: 'body에 NULL값이 존재합니다.'
-                        });
+                    if (checkOverlapedEmail.length == 1) {
+                        reject({ code: serviceStatusCode_1.default['SIGN_UP_DUPLICATE_DATA'] });
+                        return [2 /*return*/];
                     }
-                    if (!(checkOverlapedEmail[0].success == 1)) return [3 /*break*/, 5];
-                    reject({
-                        code: 400,
-                        message: '중복된 email 존재'
+                    return [4 /*yield*/, signup_1.insertUserInfo(connection, body)];
+                case 5:
+                    userInfo = _c.sent();
+                    resolve({
+                        code: serviceStatusCode_1.default['SIGN_UP_SUCCESS'],
+                        data: userInfo
                     });
                     return [3 /*break*/, 7];
-                case 5: return [4 /*yield*/, signup_1.insertUserInfo(connection, body)];
                 case 6:
-                    userInfo = _c.sent();
-                    resolve(userInfo);
-                    _c.label = 7;
-                case 7: return [3 /*break*/, 9];
-                case 8:
                     e_1 = _c.sent();
                     console.log(e_1);
                     reject(e_1);
-                    return [3 /*break*/, 9];
-                case 9: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     }); });
@@ -71643,6 +71639,36 @@ var postSignupService = function (req, res, next) {
 exports.default = {
     postSignupService: postSignupService,
 };
+
+
+/***/ }),
+
+/***/ "./src/api/user/signup/signup.validation.ts":
+/*!**************************************************!*\
+  !*** ./src/api/user/signup/signup.validation.ts ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
+var isValidCheck = function (_a) {
+    var body = _a.body;
+    var flag = true;
+    lodash_1.default.forEach(body, function (value) {
+        console.log(value);
+        if (!value) {
+            return flag = false;
+        }
+    });
+    return flag;
+};
+exports.isValidCheck = isValidCheck;
 
 
 /***/ }),
@@ -71784,7 +71810,7 @@ exports.default = (function (req, res, next) { return __awaiter(_this, void 0, v
                 return [3 /*break*/, 7];
             case 6:
                 e_1 = _b.sent();
-                respond_1.respondOnError(res, 100, 'token decode error', 500);
+                respond_1.respondOnError(res, 300, 500);
                 return [3 /*break*/, 7];
             case 7: return [2 /*return*/];
         }
@@ -71855,24 +71881,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var lodash_1 = __importDefault(__webpack_require__(/*! lodash */ "./node_modules/lodash/lodash.js"));
-var respondBasic = function (res, code, message, data) {
+var respondBasic = function (res, code, data) {
     res
         .status(200)
         .send({
-        message: message,
         code: code,
         data: data,
     });
 };
 exports.respondBasic = respondBasic;
-var respondOnError = function (res, code, message, status, result) {
-    console.error('CODE: ', code);
-    console.error('STATUS: ', status);
-    console.error('MESSAGE: ', message);
-    console.error('DATA: ', result);
+var respondOnError = function (res, code, status, result) {
+    console.error('STATUS => ', status);
+    console.error('CODE => ', code);
+    console.error('RESULT => ', result);
     res.status(status).send({
         code: code,
-        message: message,
         result: result,
     });
 };
@@ -71907,10 +71930,6 @@ var CustomError = /** @class */ (function (_super) {
     return CustomError;
 }(Error));
 exports.CustomError = CustomError;
-var resFormat = function (req, res) {
-    respondBasic(res, 12011, 'get Main list fail', {});
-};
-exports.resFormat = resFormat;
 
 
 /***/ }),
@@ -71958,6 +71977,36 @@ exports.default = {
     encode: encode,
     decode: decode,
 };
+
+
+/***/ }),
+
+/***/ "./src/lib/serviceStatusCode.ts":
+/*!**************************************!*\
+  !*** ./src/lib/serviceStatusCode.ts ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+/*
+회원가입 = 100,
+로그인 = 200 ,
+유저 프로필 보기 = 300,
+.
+.
+.
+*/
+var errorCode = (_a = {},
+    _a["SIGN_UP_SUCCESS"] = 101,
+    _a["SIGN_UP_DUPLICATE_DATA"] = 102,
+    _a["SIGN_UP_VALIDATION_ERROR"] = 103,
+    _a["SIGN_IN_SUCCESS"] = 200,
+    _a);
+exports.default = errorCode;
 
 
 /***/ }),
@@ -72409,7 +72458,7 @@ exports.insertUserInfo = insertUserInfo;
 var selectCheckEmail = function (connection, _a) {
     var email = _a.email;
     return new Promise(function (resolve, reject) {
-        var query = "\n\t\tSELECT EXISTS\n\t\t\t(SELECT *FROM user WHERE email = ? ) as success\n\t\t";
+        var query = "\n\t\t\tSELECT * FROM user WHERE email = ?\n\t\t";
         connection.query(query, [email], function (err, result) {
             if (err)
                 reject(err);

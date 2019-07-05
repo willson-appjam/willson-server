@@ -11,7 +11,7 @@ const postReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-		respondOnError(res, e.message, e.err, 500)		
+		respondOnError(res, 300, 500)		
 	})
 }
 
@@ -25,7 +25,7 @@ const putReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-		respondOnError(res, e.message, e.err, 500)
+		respondOnError(res, 300, 500)
 	})
 }
 
