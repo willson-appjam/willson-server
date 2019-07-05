@@ -20,7 +20,7 @@ const postUserQuestion = (req: any, res: any) => {
       const { question, feeling, personality, experience } = req.body
       const { user } = req
       
-      const qResult: any = await questionModel.insertQuestion(connection, question, user);
+      const qResult: any = await questionModel.insertUserQuestion(connection, question, user);
       
       qResult.affectedRows == 0 && reject({message: 'insert error'})
 
@@ -44,7 +44,7 @@ const getUserQuestion = (req: any, res: any) => {
     const connection = await dbConnection();
     
     try {
-      const qList : qList = await questionModel.selectUserQuestion(connection);
+      const qList : qList = await questionModel.selectUserQuestionWithStatus(connection);
       
       let user: {}[] = [];
       let question: {}[] = [];
