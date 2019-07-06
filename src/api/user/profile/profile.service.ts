@@ -1,5 +1,5 @@
 import express from 'express'
-import { CustomError, resFormat } from '../../../lib/middlewares/respond'
+import { respondOnError, respondBasic } from '../../../lib/middlewares/respond'
 import dbconnection from '../../../lib/connection'
 import { resolveCname } from 'dns';
 import profile from '../index';

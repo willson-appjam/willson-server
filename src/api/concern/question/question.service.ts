@@ -19,8 +19,8 @@ const postUserQuestion = (req: any, res: any) => {
       
       const { question, feeling, personality, experience } = req.body
       const { user } = req
-
-      const qResult: any = await questionModel.insertQuestion(connection, question, user);
+      
+      const qResult: any = await questionModel.insertUserQuestion(connection, question, user);
       
       qResult.affectedRows == 0 && reject({message: 'insert error'})
 
@@ -42,39 +42,39 @@ const postUserQuestion = (req: any, res: any) => {
 const getUserQuestion = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     const connection = await dbConnection();
-    
     try {
-      const qList : qList = await questionModel.selectUserQuestion(connection);
+      const { user } = req
+      const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
       
-      let user: {}[] = [];
-      let question: {}[] = [];
-      let category: {}[] = [];
+      let concernInfo: {}[] = [];
       
       _.forEach(qList, (value, index) => {
         
-        user.push({
+        const userInfo : User = {
           user_idx: value.user_idx,
           nickname: value.nickname,
           gender: value.gender,
           age: value.age,
-        })
+        }
 
-        question.push({
+        const questionInfo : Question = {
           title: value.content,
-        })
+        }
 
-        category.push({
+        const categoryInfo : Category = {
           category_idx: value.category_idx,
           category_name: value.category_name
+        }
+
+        concernInfo.push({
+          userInfo,
+          questionInfo,
+          categoryInfo,
         })
       })
+      
+      resolve({ concernInfo, size: qList.length })
 
-      resolve({
-          user,
-          question,
-          category,
-          size: qList.length,
-      })
     } catch (e) {
       reject(e)
     } finally {

@@ -15,6 +15,6 @@ export interface Question {
 
 export interface Category {
   category_idx: number,
-  category: String,
+  category_name: String,
 }
 

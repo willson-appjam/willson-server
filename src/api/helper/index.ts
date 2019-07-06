@@ -1,10 +1,18 @@
 import express from 'express';
-import {getListCtrl} from './review/review.ctrl';
-import { resFormat } from '../../lib/middlewares/respond';
+import registration from './registration'
+import profile from './profile';
+import story from './story';
+import selection from './selection';
+import list from './list';
 
 
-const review = express.Router()
+const helper = express.Router();
 
-review.get('/:helper_idx/review', getListCtrl);
 
-export default review
+helper.use('/registration', registration);
+helper.use('/profile', profile);
+helper.use('/story', story);
+helper.use('/selection', selection);
+helper.use('/list', list);
+
+export default helper
