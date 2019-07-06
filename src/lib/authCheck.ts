@@ -15,10 +15,9 @@ export default async (req: any, res: any, next: NextFunction) => {
     
     if (empty(webToken)) req.user = { user_id: 0 }
     else req.user = await token.decode(webToken, key)
-    
     await next()
     
   } catch (e) {
-    respondOnError(res, 100, 'token decode error', 500);
+    respondOnError(res, 100, 500);
   }
 }
