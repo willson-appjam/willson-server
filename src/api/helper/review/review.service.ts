@@ -1,9 +1,11 @@
 import express from 'express';
-import dbconnection from '../../../lib/connection'
-import {respondBasic, respondOnError} from '../../../lib/middlewares/respond'
-import {resolveCname} from 'dns';
+
 import profile from '../index'
+import dbconnection from '../../../lib/connection'
 import {selectReviewList} from '../../../models/reviewlist';
+import {respondBasic, respondOnError} from '../../../lib/middlewares/respond'
+
+
 
 
 const getListService = (req: any, res: any, next: any) : any => {

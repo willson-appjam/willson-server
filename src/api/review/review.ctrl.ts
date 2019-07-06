@@ -11,11 +11,7 @@ const postReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-<<<<<<< HEAD
-		respondOnError(res, e.message, e.err, 500)		
-=======
 		respondOnError(res, e.message, 500)		
->>>>>>> develop
 	})
 }
 
