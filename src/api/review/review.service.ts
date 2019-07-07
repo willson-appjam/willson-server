@@ -1,8 +1,9 @@
 import express from 'express'
-import {CustomError, resFormat} from '../../lib/middlewares/respond'
+import {CustomError} from '../../lib/middlewares/respond'
 import dbconnection from '../../lib/connection'
 import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview}
 from '../../models/review'
+import serviceStatusCode from '../../lib/serviceStatusCode'
 
 
 const postReviewService = (req: any, res: any, next: any) => {
@@ -10,13 +11,6 @@ const postReviewService = (req: any, res: any, next: any) => {
 		try{
 			const {body} = req
 			const {user} = req
-
-			if (!body.stars || !body.review_content || !body.helper_idx || !user.user_idx || !body.category_idx || !body.question_idx) {
-				reject({
-					code: 204,
-					message: 'body에 NULL값이 존재합니다.'
-				})
-			}
 			
 			const connection = await dbconnection()
 			const uploadReview = await insertHelperReview(connection, body, user)			
@@ -40,20 +34,11 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const {params} = req
 			const {user} = req
 
-			if (!body.stars || !body.review_content){
-				reject({
-					code: 204,
-					message: 'body에 NULL값이 존재합니다.'
-				})
-			}
-
 			const connection = await dbconnection();
 			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
 			if (!idxFromReview[0]){
-				reject({
-					code: 403,
-					message: '작성한 사용자만 수정 및 삭제 가능'
-				})
+				reject({ code: serviceStatusCode['MODIFIED_REVIEW_PERMISSION_ERROR'] })
+				return
 				}else{
 					const updateReview: any = await updateHelperReview(connection, body, user)
 					resolve(updateReview)

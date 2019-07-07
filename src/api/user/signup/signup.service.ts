@@ -1,10 +1,9 @@
 import express from 'express'
 import { CustomError } from '../../../lib/middlewares/respond'
 import dbconnection from '../../../lib/connection'
-import signup from '../index';
 import { insertUserInfo, selectCheckEmail } from '../../../models/signup';
 import { cryptoPassword } from '../../../modules/cryptoPassword'
-import serviceStatusCode from '../../../lib/serviceStatusCode';
+import serviceStatusCode from '../../../lib/serviceStatusCode'
 
 
 const postSignupService = (req: any, res: any, next: any) : any => {
@@ -16,7 +15,7 @@ const postSignupService = (req: any, res: any, next: any) : any => {
 
 			const connection = await dbconnection();
 			const checkOverlapedEmail : any = await selectCheckEmail(connection, body)			
-			
+
 			if(checkOverlapedEmail.length == 1) {
         reject({ code: serviceStatusCode['SIGN_UP_DUPLICATE_DATA'] })
         return
@@ -24,10 +23,7 @@ const postSignupService = (req: any, res: any, next: any) : any => {
       
       const userInfo = await insertUserInfo(connection, body)
       
-      resolve({
-        code: serviceStatusCode['SIGN_UP_SUCCESS'],
-        data: userInfo
-      })
+      resolve(userInfo)
 
 		} catch(e) {
 			console.log(e)
