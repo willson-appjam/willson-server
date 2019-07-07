@@ -8,7 +8,7 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
 
   if(!isValidCheck(req)) {
     respondOnError(res, serviceStatusCode['SIGN_UP_VALIDATION_ERROR'], 500)
-    return;
+    return
   }
 
 	await signService.postSignupService(req, res, next)
