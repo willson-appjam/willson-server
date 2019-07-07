@@ -13,7 +13,7 @@ const postSigninCtrl = async (req: express.Request, res: express.Response, next:
   })
     .catch((e: any) => {
       console.log(e);
-      respondOnError(res, e.message, e.err, 500)
+      respondOnError(res, e.message, e.err)
     })
 
 }

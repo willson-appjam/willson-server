@@ -1,29 +1,36 @@
 import dbConnection from "../../../lib/connection";
-import { UserWantInfo, UserWantInfo2, UserWantInfo3, Helper_idx, HelperInfo1, HelperInfo2} from '../../../models/helper'
-import { listenerCount } from "cluster";
+import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality} from '../../../models/helper'
 const  mecab = require('mecab-ya');
+import serviceStatusCode from '../../../lib/serviceStatusCode';
 
-const getListService = (req: any,res: any) => 
-  new Promise(async (resolve, reject) => {
+const getListService = (req: any,res: any) => {
+
+  return new Promise(async (resolve, reject) => {
+    const connection: any = await dbConnection();
+
     try {
       const question_idx = req.params.question_idx;
-      const connection = await dbConnection();
+      
 
       //유저가 원하는 헬퍼 정보
-      let info: any = await UserWantInfo (connection, question_idx);
-      let experience_name: any = await UserWantInfo2 (connection, question_idx);
-      let personality_idx: any = await UserWantInfo3 (connection, question_idx);
+      let info: any = await selectUserInfo (connection, question_idx);
+      if (!info.length){
+        reject({code: serviceStatusCode["HELPER_LIST_QUESTION_DOES_NOT_EXIST"]})
+        return
+      }
+      let experience_name: any = await selectUserExperience (connection, question_idx);
+      let personality_idx: any = await selectUserPersonality (connection, question_idx);
 
       //유저 고민을 선택한 헬퍼들의 정보
-      const helpers_idx: any = await Helper_idx (connection, question_idx);
+      const helpers_idx: any = await selectHelper_idx (connection, question_idx);
       let helpers_arr: any = [];
       const helper_num = helpers_idx.length;
       for (let i=0; i< helper_num; i++){
         helpers_arr.push(helpers_idx[i].helper_idx);
       }
             
-      let helpers_info: any = await HelperInfo1(connection, helpers_arr);
-      let helpers_personality: any = await HelperInfo2 (connection, helpers_arr);
+      let helpers_info: any = await selectHelperInfo(connection, helpers_arr);
+      let helpers_personality: any = await selectHelperPersonality(connection, helpers_arr);
 
       //받은 헬퍼 요청이 3명 초과면 매칭 알고리즘 수행
       if (helper_num > 3){
@@ -132,11 +139,12 @@ const getListService = (req: any,res: any) =>
       }
 
     } catch (e){
-      
+      reject(e);
     } finally {
-      
+      connection.release();
     }
   })
+}
 
 export default {
   getListService

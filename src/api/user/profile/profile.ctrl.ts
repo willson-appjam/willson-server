@@ -12,7 +12,7 @@ const getProfileCtrl = async (req: any, res: any, next: any) => {
 	})
 .catch((e: any) => {
 	console.log(e);
-	respondOnError(res, e.message, e.err, 500)
+	respondOnError(res, e.message, e.err)
 	})
 }
 
