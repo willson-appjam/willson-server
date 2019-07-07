@@ -1,13 +1,9 @@
-const selectUserEmail = (connection: any, {email}: any) : Promise<{}> => {
+const selectUserInformation = (connection: any, {email}: any) : Promise<{}> => {
 	return new Promise((resolve, reject) : any => {
 		const query = `
-		SELECT
-			email,
-			salt
-		FROM
-			user
-		WHERE
-			email = ?
+		SELECT *
+		FROM user
+		WHERE email = ?
 		`
 		connection.query(query, [email], (err:Error, result: {}[]) => {
 			if(err) reject(err)
@@ -37,6 +33,6 @@ const selectUserPassword = (connection: any, {password}: any) : Promise<{}> => {
 }
 
 export{
-	selectUserEmail,
+	selectUserInformation,
 	selectUserPassword
 }

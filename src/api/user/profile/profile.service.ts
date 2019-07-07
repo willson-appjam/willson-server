@@ -1,8 +1,4 @@
-import express from 'express'
-import { CustomError } from '../../../lib/middlewares/respond'
 import dbconnection from '../../../lib/connection'
-import { resolveCname } from 'dns';
-import profile from '../index';
 import { selectUserProfileList, selectPersonality, selectFeeling, selectExperience, selectUserPersonality }
 from '../../../models/profile';
 import {getAge} from '../../../modules/getAge'
@@ -23,7 +19,7 @@ const getProfileService = (req: any, res: any, next: any) => {
 			if(userProfileList.length == 0){
 				reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
 			}
-			
+
 			const personality : any = await selectPersonality(connection, params)
 			const feeling : any = await selectFeeling(connection, params)
 			const experience : any = await selectExperience(connection, params)

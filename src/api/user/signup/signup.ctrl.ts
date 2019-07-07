@@ -1,6 +1,6 @@
 import express from 'express';
 import signService from './signup.service';
-import { isValidCheck } from './signup.validation'
+import { isValidCheck } from '../../../lib/isValidation';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 

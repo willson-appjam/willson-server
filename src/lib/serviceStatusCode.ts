@@ -24,7 +24,7 @@
 */
 
 
-const errorCode = {
+const serviceStatusCode = {
   //회원가입
   ["SIGN_UP_SUCCESS"] : 100,
   ["SIGN_UP_DUPLICATE_DATA"]: 101,
@@ -54,4 +54,4 @@ const errorCode = {
 
 }
 
-export default errorCode
+export default serviceStatusCode

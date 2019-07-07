@@ -1,9 +1,6 @@
 import express from 'express';
 import moment from 'moment';
 import dbconnection from '../../../lib/connection'
-import profile from '../index'
-import {CustomError} from '../../../lib/middlewares/respond'
-import {resolveCname} from 'dns';
 import {selectReviewList} from '../../../models/reviewlist'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 
