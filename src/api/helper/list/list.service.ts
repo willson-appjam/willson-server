@@ -22,16 +22,27 @@ const getListService = (req: any,res: any) => {
       let personality_idx: any = await selectUserPersonality (connection, question_idx);
 
       //유저 고민을 선택한 헬퍼들의 정보
-      const helpers_idx: any = await selectHelper_idx (connection, question_idx);
+      let helpers_idx: any = await selectHelper_idx (connection, question_idx);
       let helpers_arr: any = [];
-      const helper_num = helpers_idx.length;
+      let helper_num = helpers_idx.length;
       for (let i=0; i< helper_num; i++){
         helpers_arr.push(helpers_idx[i].helper_idx);
       }
             
       let helpers_info: any = await selectHelperInfo(connection, helpers_arr);
       let helpers_personality: any = await selectHelperPersonality(connection, helpers_arr);
+  
+      //헬퍼 후기 만족도 기준치 이상만 남김
+      for (let i=0; i< helper_num; i++){
+        if (parseInt(helpers_info[i].review_count) > 3 && parseFloat(helpers_info[i].stars) <= 2.5) {
+          helpers_idx.splice(i,1);
+          helpers_info.splice(i,1);
+          helpers_personality.splice(3*i,3);
+        }
+      }
 
+      helper_num = helpers_idx.length;
+      
       //받은 헬퍼 요청이 3명 초과면 매칭 알고리즘 수행
       if (helper_num > 3){
         //1. 나이 매칭
@@ -52,7 +63,7 @@ const getListService = (req: any,res: any) => {
           }
           age_match.push(score);
         }
-
+ 
         //2. 성격 매칭
         let personality_match = []
 
@@ -75,7 +86,7 @@ const getListService = (req: any,res: any) => {
           }
           personality_match.push(match_num);
         }
-
+   
         //3. 중분류 매칭
         let categoryList_match = []
         for (let i=0; i< helper_num; i++){
@@ -126,7 +137,7 @@ const getListService = (req: any,res: any) => {
           indices[i] = i;
         }
         indices.sort(function (a,b) {return total[a] < total[b] ? 1: total[a] > total[b] ? 1: 0;});
-        
+     
         let result = [];
         for (let i = 0; i<3; i++){
           result.push(helpers_info[indices[i]]);
