@@ -29,6 +29,7 @@ const postRegistrationService = (req: any,res: any, next: any) => {
       resolve({});
 
     } catch (e) {
+      console.log(e);
       reject(e)
     } finally {
       connection.release();

@@ -12,6 +12,7 @@ const postRegistrationCtrl = async (req: any, res: any, next: any) => {
 
   await registrationService.postRegistrationService(req, res, next)
   .then((result: any) => {
+    console.log(result);
     respondBasic(res, serviceStatusCode['HELPER_REGISTRATION_SUCCESS'], result)
   })
   .catch((e: any) => {
