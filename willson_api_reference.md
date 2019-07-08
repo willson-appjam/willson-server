@@ -37,14 +37,14 @@ header => <b> willson-token : jwt_token </b>
 
 ```java
 {
-	user: {
+	
   	nickname: String,
   	gender: Enum('남','여','모두')
   	age: int,
 	email: String,
 	password: String,
 	device_token:String
-  	}
+  	
 }
 ```
 
@@ -76,10 +76,10 @@ header => <b>willson-token : jwt_token</b>
 
 ```java
 {
-    user: {
+    
 		email: String,
 		password: String
-	}
+	
 }
 ```
 
@@ -692,13 +692,13 @@ header =>  <b>willson-token : jwt_token</b>
 
 ```java
 {
-	review: {
+	
 		stars : String,
 		review_content : String,
 		helper_idx : int,
 		category_idx : int,
 		question_idx : int
-	}
+	
 }
 ```
 
@@ -727,10 +727,10 @@ header => <b>willson-token : jwt_token</b>
 
 ```java
 {
-	review: {
+	
 		stars : String,
 		review_content : String,
-	}
+	
 }
 ```
 
