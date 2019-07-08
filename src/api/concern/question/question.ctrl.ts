@@ -12,14 +12,14 @@ const getUserQuestionList = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['GET_USER_QUESTION_LIST'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(res, e, e.code, 500);
   })
 }
 
 const postUserQuestion = async (req: any, res: any) => {
   const { body } = req
   if(!isValidCheck(body)) {
-    respondOnError(res, serviceStatusCode['POST_USER_QUESTION_VALIDATION_ERROR'], 500)
+    respondOnError(res, new Error('validation error'), serviceStatusCode['POST_USER_QUESTION_VALIDATION_ERROR'], 500)
     return;
   }
 
@@ -28,7 +28,7 @@ const postUserQuestion = async (req: any, res: any) => {
     respondBasic(res, 100, data);
   })
   .catch((e: any) => {
-    respondOnError(res, 100, 500);
+    respondOnError(res, e, 100, 500);
   })
 }
 

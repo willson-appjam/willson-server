@@ -12,7 +12,7 @@ const getPersonalityList = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['GET_PERSONALITY_SUCCESS'], result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e.code, 500);
+		respondOnError(res, e, e.code, 500);
 	})
 }
 

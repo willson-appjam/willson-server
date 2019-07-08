@@ -8,7 +8,6 @@ const getCategoryListService = (req: any, res: any) => {
     const connection = await dbConnection();
     try {
       const { category_idx } = req.params;
-
       const categoryList = await categoryModel.selectCategoryListWithId(connection, category_idx);
       
       resolve({ categoryList })

@@ -7,7 +7,7 @@ import serviceStatusCode from '../../lib/serviceStatusCode'
 const postReviewCtrl = async (req: any, res: any, next: any) => {
 
 	if(!isValidCheck(req)) {
-    respondOnError(res, serviceStatusCode['REVIEW_VALIDATION_ERROR'], 500)
+    respondOnError(res, new Error('validation error'), serviceStatusCode['REVIEW_VALIDATION_ERROR'], 500)
     return
 	}
 	
@@ -17,14 +17,14 @@ const postReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-		respondOnError(res, e.message, 500)		
+		respondOnError(res, e, e.code, 500)		
 	})
 }
 
 const putReviewCtrl = async (req: any, res: any, next: any) => {
 
 	if(!isValidCheck(req)) {
-    respondOnError(res, serviceStatusCode['MODIFIED_REVIEW_VALIDATION_ERROR'], 500)
+    respondOnError(res, new Error('validation Error'), serviceStatusCode['MODIFIED_REVIEW_VALIDATION_ERROR'], 500)
     return
 	}
 
@@ -34,7 +34,7 @@ const putReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-		respondOnError(res, e.code, 500)
+		respondOnError(res, e, e.code, 500)
 	})
 }
 

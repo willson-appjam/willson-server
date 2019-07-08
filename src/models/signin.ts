@@ -26,7 +26,6 @@ const selectUserPassword = (connection: any, {password}: any) : Promise<{}> => {
 
 		connection.query(query, [password], (err: Error, result: {}[]) => {
 			if(err) reject(err)
-			console.log('result', result);
 			resolve(result)
 		})
 	})

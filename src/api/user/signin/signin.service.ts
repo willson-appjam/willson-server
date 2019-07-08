@@ -1,6 +1,7 @@
 import express from 'express'
 import dbconnection from '../../../lib/connection';
 import {selectUserInformation, selectUserPassword } from '../../../models/signin';
+import { CustomError } from '../../../lib/middlewares/respond';
 import {cryptoPassword} from '../../../modules/cryptoPassword'
 import token from '../../../lib/middlewares/token'
 import {key} from '../../../../secret/aesKey'
@@ -12,29 +13,32 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
     try {
       const {body} = req
       let userToken = null
+
       if(!body.email || !body.password) {
-        reject({ code: serviceStatusCode['SIGN_IN_VALIDATION_ERROR'] })
+        reject(new CustomError(null, serviceStatusCode['SIGN_IN_VALIDATION_ERROR'], { body }))
         return
       }
 
       const connection = await dbconnection()
       const [userInfo] : any = await selectUserInformation(connection, body)
       if(!userInfo){
-        reject({
-          code: 401,
-          message: '아이디 or 비밀번호 값이 일치하지 않습니다.'
-        })
+        reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], body))
+        
       } else if(userInfo.email) {
+
         body.password = await cryptoPassword.hashedPassword(userInfo.salt, body.password)
         const [userInfoPassword] : any = await selectUserPassword(connection, body)
+        
         if(!userInfoPassword){
-          reject({ code: serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'] })
+          reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], body))
         }
+
         userToken = await token.encode(key , userInfo)
       }
 
       resolve({
-        Token: userToken});
+        Token: userToken
+      })
 
     } catch(e){
       console.log(e)

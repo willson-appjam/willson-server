@@ -26,16 +26,17 @@
 */
 
 
-const serviceStatusCode = {
+
+const serviceStatusCode: any = {
   //회원가입
-  ["SIGN_UP_SUCCESS"] : 100,
+  100: "SIGN_UP_SUCCESS",
   ["SIGN_UP_DUPLICATE_DATA"]: 101,
   ["SIGN_UP_VALIDATION_ERROR"]: 102,
 
   //로그인
   ["SIGN_IN_SUCCESS"]: 200,
   ["SIGN_IN_VALIDATION_ERROR"]: 201,
-  ["SIGN_IN_AUTHENTICATION_ERROR"]: 202,
+  202: "SIGN_IN_AUTHENTICATION_ERROR",
 
   //유저 프로필 보기
   ["GET_USER_PROFILE_LIST_SUCCESS"]: 300,

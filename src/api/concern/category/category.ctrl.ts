@@ -9,7 +9,7 @@ const getCategoryList = async (req: any, res: any) => {
   const { category_idx } = req.params;
 
   if(!category_idx) {
-    respondOnError(res, serviceStatusCode['GET_CATEGORY_LIST_VALIDATION_ERROR'], 500);
+    respondOnError(res, new Error('validation error'), serviceStatusCode['GET_CATEGORY_LIST_VALIDATION_ERROR'], 500);
     return;
   }
 
@@ -18,7 +18,8 @@ const getCategoryList = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['GET_CATEGORY_LIST_SUCCESS'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    console.log(e)
+    respondOnError(res, e, e.code, 500);
   })
 }
 
@@ -27,7 +28,7 @@ const postCategoryList = async (req: any, res: any) => {
   const { body } = req
 
   if(!isValidCheck(body)) {
-    respondOnError(res, serviceStatusCode['POST_CATEGORY_LIST_VALIDATION_ERROR'], 500);
+    respondOnError(res, new Error('validation error'), serviceStatusCode['POST_CATEGORY_LIST_VALIDATION_ERROR'], 500);
   }
 
   await categoryService.postCategoryListService(req, res)
@@ -35,7 +36,7 @@ const postCategoryList = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['POST_CATEGORY_LIST_SUCCESS'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(res, e, e.code, 500);
   })
 }
 

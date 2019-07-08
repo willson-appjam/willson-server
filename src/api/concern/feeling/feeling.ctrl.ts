@@ -12,7 +12,7 @@ const getFeelingList = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['GET_FEELING_LIST_SUCCESS'], result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e.code, 500);
+		respondOnError(res, e, e.code, 500);
 	})
 }
 
