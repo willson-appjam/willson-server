@@ -5,7 +5,6 @@ const insertUserQuestion = (connection: Connection, question : {}, { user_idx } 
   return new Promise((resolve, reject) => {
     const q : Array<any> = _.map(question, (value) => value)
     q.push(user_idx);
-
     const query = `
       INSERT INTO
         question (
@@ -43,7 +42,6 @@ const selectUserQuestionWithStatus = (connection: Connection, { gender, user_idx
 	    Q.helper_gender = ? AND Q.status = 'wait' AND C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ? ) 
       `
     const Query = connection.query(query, [gender, user_idx],(err, result) => {
-      console.log(Query.sql)
       err ? reject(err) : resolve(result)
     })
   })
