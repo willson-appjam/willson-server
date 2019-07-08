@@ -2,7 +2,7 @@ import express from 'express';
 import categoryService from './category.service';
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
-import { isValidCheck } from '../../../lib/isvalidation';
+import { isValidCheck } from '../../../lib/isValidation';
 
 const getCategoryList = async (req: any, res: any) => {
   
