@@ -10,7 +10,7 @@ const getListCtrl = async (req: any, res: any, next: any) => {
 	})
 	.catch((e: any) => {
 		console.log(e);
-		respondOnError(res, e.code, 500)
+		respondOnError(res, e, e.code, 500)
 	})
 }
 

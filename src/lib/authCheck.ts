@@ -18,6 +18,6 @@ export default async (req: any, res: any, next: NextFunction) => {
     await next()
     
   } catch (e) {
-    respondOnError(res, 100, 500);
+    respondOnError(res, e, 100, 500);
   }
 }

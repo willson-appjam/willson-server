@@ -9,7 +9,7 @@ const getProfileCtrl = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['GET_HELPER_PROFILE_SUCCESS'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(res, e, e.code, 500);
   })
 }
 
@@ -20,7 +20,7 @@ const putProfileCtrl = async (req: any, res: any) => {
     respondBasic(res, serviceStatusCode['UPDATE_HELPER_PROFILE_SUCCESS'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(res, e, e.code, 500);
   })
 }
 

@@ -7,8 +7,8 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 const postSignupCtrl = async (req: any, res: any, next: any ) => {
 
   if(!isValidCheck(req)) {
-    respondOnError(res, serviceStatusCode['SIGN_UP_VALIDATION_ERROR'], 500)
-    return
+    respondOnError(res, new Error('validation error'), serviceStatusCode['SIGN_UP_VALIDATION_ERROR'], 500)
+    return;
   }
 
 	await signService.postSignupService(req, res, next)
@@ -16,7 +16,7 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
     respondBasic(res, serviceStatusCode['SIGN_UP_SUCCESS'], result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e.code, 500);
+		respondOnError(res, e, e.code, 500);
 	})
 }
 

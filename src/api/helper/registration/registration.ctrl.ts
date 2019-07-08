@@ -6,7 +6,7 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 const postRegistrationCtrl = async (req: any, res: any, next: any) => {
 
   if(!isValidCheck(req)) {
-    respondOnError(res, serviceStatusCode['HELPER_REGISTRATION_VALIDATION_ERROR'], 500)
+    respondOnError(res, new Error('validation Error'), serviceStatusCode['HELPER_REGISTRATION_VALIDATION_ERROR'], 500)
     return;
   }
 
@@ -16,7 +16,7 @@ const postRegistrationCtrl = async (req: any, res: any, next: any) => {
     respondBasic(res, serviceStatusCode['HELPER_REGISTRATION_SUCCESS'], result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(res, e, e.code, 500);
   })
 }
 

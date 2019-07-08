@@ -1,12 +1,12 @@
 import _ from 'lodash'
+import { CustomError } from './middlewares/respond';
 
 const isValidCheck = ({ body } : any) => {
   let flag = true;
 
   _.forEach(body, (value, key) => {
-    console.log("key :", key, "value", value);
     if(!value) {
-      return flag = false
+      return false
     }
   })
   return flag;
