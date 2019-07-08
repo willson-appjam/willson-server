@@ -1,13 +1,15 @@
 import selectionService from './selection.service';
+import serviceStatusCode from '../../../lib/serviceStatusCode'
+import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
 const postSelectionCtrl = async (req: any, res: any) => {
 
   await selectionService.postSelectionService(req, res)
   .then((result: any) => {
-    res.status(200).send(result);
+    respondBasic(res, serviceStatusCode['HELPER_SELECTION_SUCCESS'], result)
   })
-  .catch((e: Error) => {
-    res.status(500).send(e);
+  .catch((e: any) => {
+    respondOnError(res, e.code, 500);
   })
 }
 
