@@ -1,13 +1,13 @@
 import express from 'express';
 import dbConnection from '../../../lib/connection';
-import feelingModel from '../../../models/feeling.model';
+import personalityModel from '../../../models/personality.model';
 
-const getfeelingService = (req: any, res: any) => {
+const getPersonalityList = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     let connection = await dbConnection();
     try {
-      const feelingList = await feelingModel.selectFeelingList(connection);
-      resolve({feelingList: feelingList})
+      const personnalitList = await personalityModel.selectPersonalityList(connection);
+      resolve({ personnalitList,})
     } catch (e) {
       reject(e)
     } finally {
@@ -17,5 +17,5 @@ const getfeelingService = (req: any, res: any) => {
 }
 
 export default {
-  getfeelingService,
+  getPersonalityList,
 }

@@ -1,6 +1,6 @@
 import express from 'express';
 import signService from './signup.service';
-import { isValidCheck } from './signup.validation';
+import { isValidCheck } from '../../../lib/isValidation';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
@@ -8,7 +8,7 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
 
   if(!isValidCheck(req)) {
     respondOnError(res, serviceStatusCode['SIGN_UP_VALIDATION_ERROR'], 500)
-    return;
+    return
   }
 
 	await signService.postSignupService(req, res, next)

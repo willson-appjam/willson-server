@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import { start } from 'repl';
+import { resolveCname } from 'dns';
 
 const insertHelperReview = (connection: any, {stars, review_content, helper_idx, question_idx, category_idx}: any, {user_idx}: any) :Promise<{}> => {
 	return new Promise((resolve, reject) : any  => {
-		//const value = _.map(body, (v) => v)
 		const query = `
 		INSERT INTO
 			review(
@@ -78,7 +78,26 @@ const updateAvgStars = (connection: any, {stars}: any, {helper_idx}: any) => {
 }
 
 
-const updateReview = (connection: any, {stars}: any, {review_content}: any, {review_idx}: any, {user_idx}: any) => {
+const selectIdxFromReview = (connection: any, {review_idx}: any, {user_idx}: any) => {
+	return new Promise((resolve, reject) => {
+		const query = `
+		SELECT
+			review_idx, user_idx
+		FROM
+			review
+		WHERE
+			review_idx = ? 
+			and user_idx = ?
+		`
+		connection.query(query, [review_idx, user_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err)
+			resolve(result)
+		})
+	})
+}
+
+
+const updateHelperReview = (connection: any, {stars, review_content}: any, {user_idx}: any ) => {
 	return new Promise((resolve, reject) => {
 		const query = `
 		UPDATE
@@ -87,12 +106,11 @@ const updateReview = (connection: any, {stars}: any, {review_content}: any, {rev
 			stars = ?,
 			review_content = ?
 		WHERE
-			review_idx = ?
-			and user_idx = ?
+			user_idx = ?
 		`
-		connection.query(query, [stars, review_content, review_idx, user_idx], (err: Error, result: {}[]) => {
-			if(err) reject(err);
-			resolve(result)
+		connection.query(query, [stars, review_content, user_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err)
+			resolve(err)
 		})
 	})
 }
@@ -102,5 +120,6 @@ export{
 	updateHelperReviewCount,
 	selectAvgStars,
 	updateAvgStars,
-	updateReview
+	selectIdxFromReview,
+	updateHelperReview
 }

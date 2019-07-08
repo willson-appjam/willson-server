@@ -26,23 +26,24 @@ const insertUserQuestion = (connection: Connection, question : {}, { user_idx } 
   })
 }
 
-const selectUserQuestionWithStatus = (connection: Connection) : Promise<Array<{}>> => {
+const selectUserQuestionWithStatus = (connection: Connection, { gender, user_idx }: any) : Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const query = `
-      SELECT
-        *
-      FROM
-        question as Q
-      INNER JOIN
-        user as U on Q.user_idx = U.user_idx
-      INNER JOIN
-        categoryList as CL on Q.categoryList_idx = CL.categoryList_idx
-      INNER JOIN
-        category as C on C.category_idx = CL.category_idx
-      WHERE
-        Q.status = 'wait'
-    `
-    connection.query(query, (err, result) => {
+    SELECT
+    	*
+    FROM
+	    question as Q
+    INNER JOIN
+	    user as U on Q.user_idx = U.user_idx
+    INNER JOIN
+	    categoryList as CL on CL.categoryList_idx = Q.categoryList_idx
+    INNER JOIN
+	    category as C on C.category_idx = CL.category_idx
+    WHERE
+	    Q.helper_gender = ? AND Q.status = 'wait' AND C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ? ) 
+      `
+    const Query = connection.query(query, [gender, user_idx],(err, result) => {
+      console.log(Query.sql)
       err ? reject(err) : resolve(result)
     })
   })

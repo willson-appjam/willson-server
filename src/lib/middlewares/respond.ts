@@ -6,7 +6,7 @@ const respondBasic = (res: express.Response, code: number, data: object) => {
     .status(200)
     .send({
       code,
-      data,
+      data: data || {},
   })
 }
 
@@ -19,6 +19,7 @@ const respondOnError = (res: express.Response, code: any, status: number, result
   res.status(status).send({
     code,
     result,
+    data: result || {},
   })
 }
 
