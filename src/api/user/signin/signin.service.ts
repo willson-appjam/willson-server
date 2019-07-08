@@ -20,13 +20,11 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
       const connection = await dbconnection()
       const [userInfo] : any = await selectUserInformation(connection, body)
       if(!userInfo){
-        reject({
-          code: 401,
-          message: '아이디 or 비밀번호 값이 일치하지 않습니다.'
-        })
+        reject({ code: serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'] })
       } else if(userInfo.email) {
         body.password = await cryptoPassword.hashedPassword(userInfo.salt, body.password)
         const [userInfoPassword] : any = await selectUserPassword(connection, body)
+        
         if(!userInfoPassword){
           reject({ code: serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'] })
         }
@@ -34,7 +32,8 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
       }
 
       resolve({
-        Token: userToken});
+        Token: userToken
+      })
 
     } catch(e){
       console.log(e)

@@ -1,22 +1,25 @@
-import { rejects } from "assert";
-import { resolve } from "path";
-
-const selectRegistrationCategorylist = (connection: any, categoryList_name: any) => {
+//헬퍼 등록
+const selectRegistrationCategory = (connection: any, category_name: any) => {
   return new Promise ((resolve, reject) => {
-    const query = `
-    SELECT categoryList_idx AS idx FROM categoryList WHERE categoryList_name = ?`
+    const query = `SELECT category_idx FROM category WHERE category_name = (?)`
   
-    connection.query(query, categoryList_name, (err: any, result: any) => {
+    connection.query(query, category_name, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
 }
 
-const insertRegistrationCategorylist = (connection: any, { categoryList_name }:any) => {
+const insertRegistrationCategoryList = (connection: any, [categoryList_name, categoryList_idx]: any) => {
   return new Promise ((resolve, reject) => {
     const query = `
-    INSERT INTO categoryList (categoryList_name) VALUES (?)`
-    connection.query(query, [categoryList_name], (err: any, result: any) => {
+    INSERT INTO 
+	    categoryList (categoryList_name, category_idx, count)
+    VALUES 
+	    (?,?,1)
+    ON DUPLICATE KEY UPDATE
+      count = count + 1`
+  
+    connection.query(query, [categoryList_name, categoryList_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -24,28 +27,24 @@ const insertRegistrationCategorylist = (connection: any, { categoryList_name }:a
 
 const insertRegistrationHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject) => {
-    const query  = `INSERT INTO helper (title, content, category_idx, user_idx, categoryList_idx) VALUES (?,?,?,?,?)
+    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)
     `;
     connection.query(query, helper , (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
-};
+}
 
 const selectRegistrationExperience = (connection: any, experience_name: any) => {
   return new Promise((resolve, reject) => {
-    const query = `SELECT experience_idx AS idx FROM experience where experience_name = (?)`
-    connection.query(query, [experience_name], (err: any, result: any) => {
-      
-      err ? reject(err) : resolve(result)
-    })
-  })
-}
-
-const selectLastInsert = (connection: any) => {
-  return new Promise((resolve, reject) => {
-    const query = `SELECT LAST_INSERT_ID() AS idx`
-    connection.query(query, (err: any, result: any) => {
+    const query = `
+    INSERT INTO 
+    experience (experience_name)
+  VALUES 
+    (?)
+  ON DUPLICATE KEY UPDATE
+  count = count + 1`
+    connection.query(query, experience_name, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -61,19 +60,8 @@ const insertRegistrationHelper_experience = (connection: any, helper_arr: any) =
   )
 }
 
-const insertRegistrationExperience = (connection: any, experience_name: any) => {
-  return new Promise((resolve, reject) => {
-    const query = 'insert into experience (experience_name) values (?)';
-    connection.query(query, experience_name, (err: any, result: any) => {
-      
-      err ? reject(err) : resolve(result)
-    })
-  }
-  )
-}
-
 //승낙 헬퍼 리스트
-const UserWantInfo = (connection: any, question_idx: any) => {
+const selectUserInfo = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -91,7 +79,7 @@ const UserWantInfo = (connection: any, question_idx: any) => {
   })
 }
 
-const UserWantInfo2 = (connection: any, question_idx: any) => {
+const selectUserExperience = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -109,7 +97,7 @@ const UserWantInfo2 = (connection: any, question_idx: any) => {
   })
 }
 
-const UserWantInfo3 = (connection: any, question_idx: any) => {
+const selectUserPersonality = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -125,7 +113,7 @@ const UserWantInfo3 = (connection: any, question_idx: any) => {
   })
 }
 
-const Helper_idx = (connection: any, question_idx: any) => {
+const selectHelper_idx = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -140,7 +128,7 @@ const Helper_idx = (connection: any, question_idx: any) => {
     })
   })
 }
-const HelperInfo1 = (connection: any, helper_arr: any) => {
+const selectHelperInfo = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -153,13 +141,12 @@ const HelperInfo1 = (connection: any, helper_arr: any) => {
       helper_idx IN (?)`;
 
     const Query = connection.query(query, [helper_arr], (err: any, result: any) => {
-      console.log(Query.sql);
       err ? reject(err) : resolve(result)
     })
   })
 }
 
-const HelperInfo2 = (connection: any, helper_arr: any) => {
+const selectHelperPersonality = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
@@ -177,16 +164,18 @@ const HelperInfo2 = (connection: any, helper_arr: any) => {
   })
 }
 
-//헬퍼 프로필
+//헬퍼 프로필 보기
 const selectProfileHelper = (connection: any, helper_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      category_idx, title, stars, review_count, content
+      nickname, gender, age, category_name, title, content, stars, review_count
     FROM
       helper as H
     INNER JOIN
       user as U ON H.user_idx = U.user_idx
+    INNER JOIN
+      category as C ON C.category_idx = H.category_idx
     WHERE
       helper_idx = (?)`;
 
@@ -213,33 +202,39 @@ const selectProfileExperience = (connection: any, helper_idx: any) => {
       })
   })
 }
+
+const selectProfilePersonality = (connection: any, helper_idx: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      personality_name
+    FROM
+      personality as P
+    INNER JOIN 
+      user_personality as U ON P.personality_idx = U.personality_idx
+    INNER JOIN 
+      helper as H ON H.user_idx = U.user_idx
+    WHERE
+      helper_idx = (?)`;
+
+      connection.query(query, helper_idx, (err: any, result: any) => {
+        err ? reject(err) : resolve(result)
+      })
+  })
+}
+
+//헬퍼 프로필 수정
 const updateProfileHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     UPDATE 
       helper
     SET
-      title = ?, content = ?, category_idx = ?, categoryList_idx = ?
+      category_idx = ?, categoryList_idx = ?, title = ?, content = ?
     WHERE
       user_idx = (?)`;
   
       connection.query(query, helper, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
-  })
-}
-
-const getProfileHelper_experience_idx = (connection: any, helper_idx: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
-    SELECT 
-      helper_experience_idx
-    FROM
-      helper_experience
-    WHERE
-      helper_idx = (?)`;
-    
-      connection.query(query, helper_idx, (err: any, result: any) => {
         err ? reject(err) : resolve(result)
       })
   })
@@ -253,9 +248,9 @@ const updateProfileHelper_experience = (connection: any, arr: any) => {
     SET
       experience_idx = (?)
     WHERE
-      experience_idx = (?)`;
+      helper_experience_idx = (?)`;
     
-      connection.query(query, arr, (err: any, result: any) => {
+      let q = connection.query(query, arr, (err: any, result: any) => {
         err ? reject(err) : resolve(result)
       })
   })
@@ -264,13 +259,12 @@ const selectProfileHelper_experience = (connection: any, helper_idx: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     SELECT
-      experience_idx
+      helper_experience_idx
     FROM
       helper_experience
     WHERE
       helper_idx = (?)`;
     connection.query(query, helper_idx, (err: any, result: any) => {
-     
         err ? reject(err) : resolve(result)
       })
   })
@@ -295,11 +289,13 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     SELECT
-      category_idx, title, nickname
+      nickname, category_name, content
     FROM
-      helper_story
+      helper_story AS H
+    INNER JOIN
+      category AS C ON H.category_idx = C.category_idx
     WHERE
-      category_idx = (?)
+      C.category_idx = (?)
     ORDER BY RAND() LIMIT 1
   `;
     
@@ -310,40 +306,49 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
 }
 
 //요청 보내기
-const insertSelectionSelected_question = (connection: any, {helper_idx, question_idx}: any) => {
+const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
+  return new Promise((resolve, reject)=> {
+    const query=` SELECT question_idx from question WHERE question_idx = (?)`;
+    connection.query(query, question_idx, (err: any, result: any) => {
+        err ? reject(err) : resolve(result)
+      })
+  })
+}
+const insertSelectionSelected_question = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     INSERT INTO
       selected_question (helper_idx, question_idx) VALUES (?, ?)
   `;
     
-    connection.query(query, [helper_idx, question_idx], (err: any, result: any) => {
+    connection.query(query, question_idx, (err: any, result: any) => {
         err ? reject(err) : resolve(result)
       })
   })
 }
 
   export {
-    selectRegistrationCategorylist,
-    insertRegistrationCategorylist,
+    selectRegistrationCategory,
+    insertRegistrationCategoryList,
     insertRegistrationHelper,
     selectRegistrationExperience,
-    selectLastInsert,
-    insertRegistrationExperience,
-    selectProfileHelper,
-    updateProfileHelper,
-    selectProfileExperience,
-    getProfileHelper_experience_idx,
     insertRegistrationHelper_experience,
+
+    selectProfileHelper,
+    selectProfileExperience,
+    selectProfilePersonality,
+    updateProfileHelper,
+    selectProfileHelper_idx,
+    selectProfileHelper_experience,
     updateProfileHelper_experience,
     selectStoryHelper,
     insertSelectionSelected_question,
-    selectProfileHelper_experience,
-    selectProfileHelper_idx,
-    UserWantInfo,
-    UserWantInfo2,
-    UserWantInfo3,
-    Helper_idx,
-    HelperInfo1,
-    HelperInfo2
+    selectSelectionQuestion_idx,
+    
+    selectUserInfo,
+    selectUserExperience,
+    selectUserPersonality,
+    selectHelper_idx,
+    selectHelperInfo,
+    selectHelperPersonality
   }

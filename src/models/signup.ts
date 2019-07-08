@@ -21,7 +21,8 @@ const insertUserInfo = (connection: any, {nickname, gender, age, email, password
 	})
 }
 
-const selectCheckEmail = (connection : any, {email} : any) : Promise<{}> => {
+const selectCheckEmail = (connection : any, {email} : any) : Promise<{}> => 
+{
 	return new Promise((resolve, reject) : any => {
 		const query = `
 		SELECT *
