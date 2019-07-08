@@ -2,6 +2,10 @@ import express from 'express';
 import _ from 'lodash';
 
 const respondBasic = (res: express.Response, code: number, data: object) => {
+  
+  console.log('code => ', code)
+  console.log('data => ', data)
+
   res
     .status(200)
     .send({
