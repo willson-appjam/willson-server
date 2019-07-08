@@ -20,7 +20,21 @@ const insertQuestionPersonality = (connection: Connection, { insertId }: any , p
   })
 }
 
+const selectPersonalityList = (connection: Connection): Promise<Array<{}>> => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT
+        *
+      FROM
+        personality
+    `
+    connection.query(query, (err, result) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
 
 export default {
   insertQuestionPersonality,
+  selectPersonalityList,
 }
