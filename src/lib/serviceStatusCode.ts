@@ -90,6 +90,9 @@ const serviceStatusCode = {
   ["MODIFIED_REVIEW_VALIDATION_ERROR"]: 1701,
   ["MODIFIED_REVIEW_PERMISSION_ERROR"]: 1702,
 
+  ["GET_PERSONALITY_SUCCESS"]: 1800,
+  ["GET_PERSONALITY_ERROR_ANYWAY"]: 1801
+
 }
 
 export default serviceStatusCode
