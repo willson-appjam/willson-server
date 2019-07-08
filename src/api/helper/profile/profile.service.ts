@@ -1,6 +1,7 @@
 import dbConnection from "../../../lib/connection";
 import { selectProfileHelper_idx, selectProfileHelper_experience, selectProfileHelper, selectRegistrationCategory, updateProfileHelper_experience, selectProfileExperience, selectRegistrationExperience, insertRegistrationCategoryList, insertRegistrationHelper_experience, updateProfileHelper, selectProfilePersonality } from '../../../models/helper'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
+import {getAge} from '../../../modules/getAge';
 
 const getProfileService = (req: any,res: any) => {
   return new Promise(async (resolve, reject) => {
@@ -16,6 +17,7 @@ const getProfileService = (req: any,res: any) => {
       const experience = await selectProfileExperience(connection, helper_idx.helper_idx);
       const personality = await selectProfilePersonality(connection, helper_idx.helper_idx);
 
+      helper[0].age = await getAge(helper[0].age);
       resolve({helper, experience, personality});
     } catch (e){
       reject(e);   

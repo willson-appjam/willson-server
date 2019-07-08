@@ -299,7 +299,9 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
     ORDER BY RAND() LIMIT 1
   `;
     
-    connection.query(query, category_idx, (err: any, result: any) => {
+    let q = connection.query(query, category_idx, (err: any, result: any) => {
+      console.log(q.sql);
+      console.log(err);
         err ? reject(err) : resolve(result)
       })
   })

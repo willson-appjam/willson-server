@@ -4,6 +4,7 @@ var mecab = require('mecab-ya');
 var request = require('request-promise-native');
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import helper from "../index";
+import {getAge} from "../../../modules/getAge";
 
 const getListService = (req: any, res: any) => {
 
@@ -159,6 +160,7 @@ const getListService = (req: any, res: any) => {
 
                   let result = [];
                   for (let i = 0; i < 3; i++) {
+                    helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
                     result.push(helpers_info[indices[i]]);
                   }
                   resolve(result);

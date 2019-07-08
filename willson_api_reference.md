@@ -22,6 +22,7 @@ BaseUrl =>  <b>host:port/api</b>
 |         후기 수정         |       /review/:review_id        |  PUT   |  body  |
 |         후기 삭제         |       /review/:review_id        | DELETE |  body  |
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
+|       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
 
 
 
@@ -421,7 +422,7 @@ header:  willson-token : jwt_token
 		"helper":[
 		{ "nickname": String,
 			"gender": String,
-			"age": int,
+			"age": String,
 			"category_name": String,
 			"content": String,
 			"stars": String,
@@ -465,7 +466,7 @@ header:  willson-token : jwt_token
 		{ 
 			"nickname": String,
 			"gender": String,
-			"age": int,
+			"age": String,
 			"category_name": String,
 			"content": String,
 			"stars": String,
@@ -1030,6 +1031,41 @@ result: {
 - 헬퍼가 아닌 유저가 선택하였을 때 
 {
     "code": 1402
+}
+```
+
+### 유저의 헬퍼 결정하기
+
+url : /user/selection
+
+method : POST
+
+header: "willson-token" : jwt_token
+
+> Request
+
+```
+{
+  "helper_idx" : int,
+  "question_idx" : int
+}
+```
+
+
+
+> Response
+
+```
+성공 = 200
+{
+    "code": 1900,
+    "data": {}
+}
+
+실패 = 500
+- 유효성 검사 오류
+{
+    "code": 1901
 }
 ```
 
