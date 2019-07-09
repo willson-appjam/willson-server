@@ -95,7 +95,10 @@ const putUserQuestionStatus = (req: any, res: any) => {
     const connection = await dbConnection();
     try {
 
-      await questionModel.updateQuestionStatus(connection, body, user)
+      const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
+      if(statusResult.affectedRows == 0) {
+        reject(new CustomError(null, 2203, body ))
+      }
       resolve({})
       
     } catch (e) {
