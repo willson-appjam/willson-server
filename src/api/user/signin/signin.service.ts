@@ -14,23 +14,17 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
       const {body} = req
       let userToken = null
 
-      if(!body.email || !body.password) {
-        reject(new CustomError(null, serviceStatusCode['SIGN_IN_VALIDATION_ERROR'], { body }))
-        return
-      }
-
       const connection = await dbconnection()
       const [userInfo] : any = await selectUserInformation(connection, body)
       if(!userInfo){
-        reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], { body }))
-        
+        reject(new CustomError(null, 202, body))        
       } else if(userInfo.email) {
 
         body.password = await cryptoPassword.hashedPassword(userInfo.salt, body.password)
         const [userInfoPassword] : any = await selectUserPassword(connection, body)
         
         if(!userInfoPassword){
-          reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], { body }))
+          reject(new CustomError(null, 202, body))
         }
 
         userToken = await token.encode(key , userInfo)

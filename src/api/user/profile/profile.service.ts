@@ -10,7 +10,7 @@ const getProfileService = (req: any, res: any, next: any) => {
 		try {
 			const {params} = req
 			if (!params.question_idx) {
-				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
+				reject(new CustomError(null, 301, { params }))
         return
 			}
 
@@ -18,7 +18,7 @@ const getProfileService = (req: any, res: any, next: any) => {
 			const userProfileList : any = await selectUserProfileList(connection, params)
 
 			if(userProfileList.length == 0){
-				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
+				reject(new CustomError(null, 301, { params }))
         return
 			}
 

@@ -1,7 +1,9 @@
 import express from 'express';
+
+import categoryModel from './category.model';
 import dbConnection from '../../../lib/connection';
-import categoryModel from '../../../models/category.model';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
+import { CustomError } from '../../../lib/middlewares/respond';
 
 const getCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
@@ -38,11 +40,11 @@ const postCategoryListService = (req: any, res: any) => {
         categoryList = await categoryModel.updateCategoryListCount(connection, resultCategory[0])
       }
 
-      if(categoryList[0].affectedRows === 0) {
-        reject({ code: serviceStatusCode['POST_CATEGORY_LIST_ERROR_ANYWAY'] })
+      if(categoryList.affectedRows === 0) {
+        reject(new CustomError(null, 501, body))
       }
 
-      resolve(categoryList);
+      resolve({});
 
     } catch (e) {
       reject(e);

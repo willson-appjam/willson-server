@@ -18,16 +18,17 @@ const postSignupService = (req: any, res: any, next: any) : any => {
 
 			if(checkOverlapedEmail.length == 1) {
 				delete body.salt
-				reject(new CustomError(null, serviceStatusCode['SIGN_UP_DUPLICATE_DATA'], { body } ))
+				console.log(3)
+				reject(new CustomError(null, 101, { body } ))
         return
       }
       
       const userInfo = await insertUserInfo(connection, body)
       
-      resolve(userInfo)
+      resolve({})
 
 		} catch(e) {
-			console.log(e)
+			console.log('mmmm', e, 'mmmm')
 			reject(e)
 		}
 	})

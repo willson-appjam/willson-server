@@ -7,7 +7,7 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 const postSignupCtrl = async (req: any, res: any, next: any ) => {
 
   if(!isValidCheck(req)) {
-		respondOnError(res, {}, 102, 500)
+		respondOnError(res, new Error('validation error'), 102, 500)
     return
   }
 
@@ -16,7 +16,8 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
 		respondBasic(res, 100, result)    
 	})
 	.catch((e: any) => {
-		respondOnError(res, e, 101, 500)
+		if(e instanceof CustomError) respondOnError(res, e, e.code)
+    else respondOnError(res, e, 103, 500);
 	})
 }
 

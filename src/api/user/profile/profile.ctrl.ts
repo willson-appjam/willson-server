@@ -9,7 +9,8 @@ const getProfileCtrl = async (req: any, res: any, next: any) => {
 		respondBasic(res, 300, result)
 	})
 .catch((e: any) => {
-	respondOnError(res, e, 301, 500)
+	if(e instanceof CustomError) respondOnError(res, e, e.code)
+  else respondOnError(res, e, 302);
 	})
 }
 
