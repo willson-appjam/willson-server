@@ -1,13 +1,13 @@
 import express from 'express';
 import signService from './signup.service';
-import { isValidCheck } from '../../../lib/isValidation';
+import { isValidCheck } from '../../../lib/isValidation'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
 const postSignupCtrl = async (req: any, res: any, next: any ) => {
 
   if(!isValidCheck(req)) {
-		respondOnError(res, req, 102, 500)
+		respondOnError(res, {}, 102, 500)
     return
   }
 
@@ -16,7 +16,7 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
 		respondBasic(res, 100, result)    
 	})
 	.catch((e: any) => {
-		respondOnError(res, e, 101, 500);
+		respondOnError(res, e, 101, 500)
 	})
 }
 

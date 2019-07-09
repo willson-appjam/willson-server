@@ -22,7 +22,7 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
       const connection = await dbconnection()
       const [userInfo] : any = await selectUserInformation(connection, body)
       if(!userInfo){
-        reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], body))
+        reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], { body }))
         
       } else if(userInfo.email) {
 
@@ -30,7 +30,7 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
         const [userInfoPassword] : any = await selectUserPassword(connection, body)
         
         if(!userInfoPassword){
-          reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], body))
+          reject(new CustomError(null, serviceStatusCode['SIGN_IN_AUTHENTICATION_ERROR'], { body }))
         }
 
         userToken = await token.encode(key , userInfo)

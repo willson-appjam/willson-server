@@ -15,8 +15,6 @@ const getListService = (req: any, res: any, next: any) : any => {
 			if (!params.helper_idx){
 				reject(new CustomError(null, serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'], { params }))
         return
-				//reject({ code: serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'] })
-				//return
 			}
 
 			const connection = await dbconnection();
@@ -25,7 +23,6 @@ const getListService = (req: any, res: any, next: any) : any => {
 			if(showReviewList.length == 0){
 				reject(new CustomError(null, serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'], { params }))
         return
-				//reject({ code: serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'] })
 			}
 
 			const reviewList = []
