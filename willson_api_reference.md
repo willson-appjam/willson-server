@@ -917,7 +917,8 @@ header: "willson-token" : jwt_token
 ```java
 {
   "helper_idx" : int,
-  "question_idx" : int
+  "question_idx" : int,
+  "status": "doing" : string,
 }
 ```
 
@@ -936,4 +937,39 @@ header: "willson-token" : jwt_token
 실패 = 500
   2101: "USER_SELECTION_VALIDATION_ERROR",
   2102: "USER_SELECTION_ERROR_ANYWAY"
+```
+
+### 상담 종료하기
+
+url : /concern/question
+
+method : PUT
+
+header: "willson-token" : jwt_token
+
+> Request
+
+```java
+{
+  "question_idx" : int,
+  "status": "compelete" : string,
+}
+```
+
+
+
+> Response
+
+```java
+성공 = 200
+{
+	message: ""USER_SELECTION_SUCCESS"",
+	code: 2200,
+  data: {},
+}
+
+실패 = 500
+  2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
+  2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
+  2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
 ```
