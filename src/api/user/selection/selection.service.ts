@@ -2,6 +2,7 @@ import express from 'express'
 import dbconnection from '../../../lib/connection';
 import token from '../../../lib/middlewares/token'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
+import { CustomError } from '../../../lib/middlewares/respond';
 import {insertUserSelection} from '../../../models/user_selection.model'
 
 
@@ -12,7 +13,7 @@ const postSelectionService = (req: any, res: any, next: any) => {
       const {user} = req
 
       if(!body.helper_idx || !body.question_idx) {
-        reject({ code: serviceStatusCode['USER_SELECTION_VALIDATION_ERROR'] })
+        reject(new CustomError(null, 1901 , body))
         return
       }
 
@@ -21,7 +22,6 @@ const postSelectionService = (req: any, res: any, next: any) => {
       resolve({});
       
     } catch(e){
-      console.log(e)
       reject(e)
     } 
   })

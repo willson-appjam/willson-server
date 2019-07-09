@@ -368,7 +368,7 @@ header:  willson-token : jwt_token
   	"category_name": String,
     "categoryList_name": String,
     "title": String,
-    "content": String,
+    "content": String
   }
   "experience": {
   	"experience_name": [String, String, String]
@@ -386,14 +386,7 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
-- 이미 헬퍼로 등록된 유저일 때
-{
-    "code": 901
-}
-- body에 null값이 존재할 때
-{
-    "code": 902
-}
+- body에 null값이 존재: 901
 ```
 
 
@@ -433,10 +426,7 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
-- 존재하지 않는 고민일 때 
-{
-    "code": 1001
-}
+- 존재하지 않는 고민: 1001
 ```
 
 
@@ -470,7 +460,7 @@ header:  willson-token : jwt_token
 			"category_name": String,
 			"content": String,
 			"stars": String,
-			"review_count": String 
+			"review_count": String
 			}
 		],
   "experience": [
@@ -499,10 +489,7 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
-- 선택한 헬퍼가 존재하지 않는 헬퍼일 때 
-{
-    "code": 1101
-}
+- 선택한 헬퍼가 존재하지 않는 헬퍼일 경우: 1101
 ```
 
 
@@ -523,7 +510,7 @@ header: "willson-token" : jwt_token
   	"category_name": String,
     "categoryList_name": String,
     "title": String,
-    "content": String,
+    "content": String
   }
   experience: {
   	experience_name: [String, String, String]
@@ -541,10 +528,7 @@ header: "willson-token" : jwt_token
 }
 
 실패 = 500
-- 헬퍼로 등록하지 않은 유저일 때 
-{
-    "code": 1201
-}
+- 헬퍼로 등록하지 않은 유저 : 1201
 ```
 
 
@@ -599,10 +583,7 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
-- 5개의 데이터 중 누락된 것이 존재할 떄
-{
-    "code": 1301
-}
+- 5개의 데이터 중 누락된 것이 존재: 1301
 ```
 
 
@@ -633,14 +614,8 @@ result: {
 }
 
 실패 = 500
-- 존재하지 않는 고민을 선택하였을 때
-{
-    "code": 1401
-}
-- 헬퍼가 아닌 유저가 선택하였을 때 
-{
-    "code": 1402
-}
+- 존재하지 않는 고민을 선택: 1401
+- 헬퍼가 아닌 유저가 선택: 1402
 ```
 
 
@@ -1034,7 +1009,6 @@ result: {
 }
 ```
 
-<<<<<<< HEAD
 ### 유저의 헬퍼 결정하기
 
 url : /user/selection
@@ -1064,11 +1038,6 @@ header: "willson-token" : jwt_token
 }
 
 실패 = 500
-- 유효성 검사 오류
-{
-    "code": 1901
-}
+- 유효성 검사 오류: 1901
 ```
 
-=======
->>>>>>> 1920e3e5ec044838f3601dd02b0719d1f2fbfbdf

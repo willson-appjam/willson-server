@@ -6,7 +6,7 @@ const postSelectionCtrl = async (req: any, res: any) => {
 
   await selectionService.postSelectionService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['HELPER_SELECTION_SUCCESS'], result)
+    respondBasic(res, 1400, result)
   })
   .catch((e: any) => {
     respondOnError(res, e, e.code, 500);

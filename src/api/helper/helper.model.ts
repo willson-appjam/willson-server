@@ -25,11 +25,11 @@ const insertRegistrationCategoryList = (connection: any, [categoryList_name, cat
   })
 }
 
-const insertRegistrationHelper = (connection: any, helper: any) => {
+const insertRegistrationHelper = (connection: any, {category_idx, categoryList_idx, title, content, emotion, advise, experience, user_idx}: any) => {
   return new Promise((resolve, reject) => {
-    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)
-    `;
-    connection.query(query, helper , (err: any, result: any) => {
+    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)`
+    let q = connection.query(query, [category_idx, categoryList_idx, title, content, emotion, advise, experience, user_idx] , (err: any, result: any) => {
+     console.log(q.sql);
       err ? reject(err) : resolve(result)
     })
   })
@@ -169,7 +169,7 @@ const selectProfileHelper = (connection: any, helper_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      nickname, gender, age, category_name, title, content, stars, review_count
+      nickname, gender, age, category_name, title, content, stars, review_count, emotion, advise, experience
     FROM
       helper as H
     INNER JOIN
@@ -224,17 +224,17 @@ const selectProfilePersonality = (connection: any, helper_idx: any) => {
 }
 
 //헬퍼 프로필 수정
-const updateProfileHelper = (connection: any, helper: any) => {
+const updateProfileHelper = (connection: any, {category_idx, categoryList_idx, title, content, emotion, advise, experience, user_idx}: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     UPDATE 
       helper
     SET
-      category_idx = ?, categoryList_idx = ?, title = ?, content = ?
+      category_idx = ?, categoryList_idx = ?, title = ?, content = ?, emotion = ?, advise = ?, experience = ?   
     WHERE
-      user_idx = (?)`;
+      user_idx = ?`;
   
-      connection.query(query, helper, (err: any, result: any) => {
+      connection.query(query, [category_idx, categoryList_idx, title, content, emotion, advise, experience, user_idx], (err: any, result: any) => {
         err ? reject(err) : resolve(result)
       })
   })

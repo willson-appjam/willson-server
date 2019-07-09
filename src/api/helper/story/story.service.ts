@@ -1,5 +1,6 @@
 import dbConnection from "../../../lib/connection";
-import {selectStoryHelper} from '../../../models/helper';
+import {selectStoryHelper} from '../helper.model';
+import { CustomError } from '../../../lib/middlewares/respond';
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import _ from 'lodash'
 
@@ -12,7 +13,7 @@ const getStoryService = (req: any,res: any) => {
       for (let i= 1; i<6; i++){
         const helper: any = await selectStoryHelper(connection, i);
         if (helper[0] == null){
-          reject({code: serviceStatusCode["MISSING_HELPER_STORY"]})
+          reject(new CustomError(null, 1301 , { helper, i }))
           return
         }
         result.push(helper[0]);
