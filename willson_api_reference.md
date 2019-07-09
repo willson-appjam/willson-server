@@ -38,9 +38,9 @@ header => <b> willson-token : jwt_token </b>
 ```java
 {
 	
-  nickname: String,
-  gender: Enum('남','여','모두')
-  age: int,
+  	nickname: String,
+  	gender: Enum('남','여','모두')
+  	age: int,
 	email: String,
 	password: String,
 	device_token:String
@@ -182,7 +182,6 @@ header =>  <b>willson-token : jwt_token</b>
 ```java
 result: {
   code: int,
-  message: String
   data: {
     categoryList: [{
     	categoryList_id: int,
@@ -190,9 +189,8 @@ result: {
   }]
 }
 
-400: "GET_CATEGORY_LIST_SUCCESS",
-401: "GET_CATEGORY_LIST_VALIDATION_ERROR",
-402: "GET_CATEGORY_LIST_ERROR_ANYWAY",
+성공: 400
+유효성 검사 오류 : 401  
 ```
 
 
@@ -205,7 +203,7 @@ method: <b>POST</b>
 
 header =>  <b>willson-token : jwt_token</b>
 
-> request
+> body
 
 ```java
 # request
@@ -215,19 +213,18 @@ header =>  <b>willson-token : jwt_token</b>
 }
 ```
 
-> response
+> Error_code
 
 ```react
 # response
 result: {
 	message: String,
 	code: int,
-  data: {},
 }
 
-500: "POST_CATEGORY_LIST_SUCCESS",
-501: "POST_CATEGORY_LIST_VALIDATION_ERROR",
-502: "POST_CATEGORY_LIST_ERROR_ANYWAY",
+성공: 500
+유효성 검사 오류: 501
+이름 모를 서버 오류: 502
 ```
 
 
@@ -252,23 +249,20 @@ header =>  <b>willson-token : jwt_token</b>
 # response
 result: {
 	code: int,
-	message: String,
 	data:
 		feelingList: [{
-			feeling_idx: int,
-			feeling_name: String,
+		feeling_idx: int,
+		feeling_name: String,
 	}]
 }
 
-
-600: "GET_FEELING_LIST_SUCCESS",
-601: "GET_FEELING_LIST_VALIDATION_ERROR",
-602: "GET_FEELING_LIST_ERROR_ANYWAY",  
+감정 리스트 가져오기 성공: 600,
+감정 리스트 유효성 검사 오류: 601,  
 ```
 
 
 
-### 사용자 질문 등록하기
+### 고민 질문 생성
 
 url => <b>/api/concern/question</b>
 
@@ -287,13 +281,13 @@ header =>  <b>willson-token : jwt_token</b>
     emotion: int,
     advise: int,
     experience: int,
-    agreement: ENUM('agree', 'disagree'),
+    agreement: ENUM('o', 'x'),
     categoryList_idx: int,
     helper_gender: Enum('남','여','모두'),
   }
-  feeling: [feeling_idx...],
- 	personality: [ personality_idx...],
- 	experience: [experience_idx...],
+  feeling: [feeling_idx, int, int], // 작성자가 느낀 감정
+ 	personality: [ personality_idx, int, int], // 원하는 헬퍼의 성격
+ 	experience: [experience_idx, int, int], // 원하는 헬퍼의 경험
 }
 ```
 
@@ -307,10 +301,9 @@ data: {
 	data: {},
 }
 
-700: "POST_USER_QUESTION_SUCCESS",
-701: "POST_USER_QUESTION_VALIDATION_ERROR",
-702: "POST_USER_QUESTION_ERROR_ANYWAY",
-703: "POST_USER_QUESTION_INSERT_ERROR",
+성공: 700
+유효성 검사 오류: 701
+이름 모를 서버 오류: 702
 ```
 
 
@@ -332,29 +325,28 @@ header =>  <b>willson-token : jwt_token</b>
 > Response
 
 ```java
-code: int,
-message: String,
 data: {
-  concernInfo: [{
-    user: {
-      user_idx: String,
-      nickname: String,
-      gender: String,
-      age: String,
-    },
-    questionInfo: {
-      title: String,
-    },
-    categoryInfo: {
-      category_id: int,
-      category_name: String,
-    },   
-  }, {...}]
   size: int,
+  data: {
+    concernInfo: [{
+   			user: {
+        	user_idx: String,
+	 	      nickname: String,
+	 	    	gender: String,
+   	    	age: String,
+        },
+        questionInfo: {
+          title: String,
+        },
+        categoryInfo: {
+          category_id: int,
+          category_name: String,
+        },   
+    }, {...}]
 }
 
-800: "GET_USER_QUESTION_LIST",
-801: "GET_USER_QUESTION_LIST_ERROR_ANYWAY",
+헬퍼 : 고민 리스트 가져오기 성공: 800
+헬퍼: 고민 리스트 가져오기 이름 모를 실패: 801
 ```
 
 
@@ -365,7 +357,7 @@ url : **/helper/registration**
 
 method : **POST**
 
-header:  <b>wilson-token : jwt_token</b>
+header:  willson-token : jwt_token
 
 > Request
 
@@ -464,7 +456,7 @@ header:  willson-token : jwt_token
 
 > Response
 
-```java
+```
 성공 = 200
 {
 	"code": 1100,
@@ -800,7 +792,7 @@ header: "willson-token" : jwt_token
     {
         "code": 902
     }
-
+    
 
 
 
@@ -1011,7 +1003,7 @@ url : <b>/helper/selection</b>
 
 method : <b>POST</b>
 
-header: <b>wilson-token : jwt_token</b>
+header: "willson-token" : jwt_token
 
 > Request
 
@@ -1039,88 +1031,5 @@ result: {
 {
     "code": 1402
 }
-```
-
-
-
-### 감정 상태 리스트 가져오기
-
-url => <b>/api/concern/personality</b>
-
-method => <b>POST</b>
-
-header =>  <b>wilson-token : jwt_token</b>
-
-> Request
-
-```java
-# request
-
-```
-
-> Response
-
-```java
-# response
-data: {
-	code: int,
-	message: String,
-	data: {
-		personalityList: [{
-			personality_idx: int,
-			personality_name: String
-		}]
-	},
-}
-
-2000: "GET_PERSONALITY_LIST_SUCCESS",
-2001: "GET_PERSONALITY_LIST_VALIDATION_ERROR",
-2002: "GET_PERSONALITY_LIST_ERROR_ANYWAY",
-```
-
-
-
-### 사용자 고민 리스트 받아오기
-
-url => <b>/api/concern/personality</b>
-
-method => <b>POST</b>
-
-header =>  <b>user_session : jwt_token</b>
-
-> Request
-
-```java
-# request
-
-```
-
-> Response
-
-```java
-# response
-{
-	code: int,
-	message: String,
-	data: {
-		concernInfo: [{
-			userInfo: {
-      	user_idx: 0,
-        nickname": "윌슨",
-        gender: "남",
-        age: 28
-      },
-      questionInfo: {
-      	title: "인간관계에 대해 고민이고 정확한 해결책을 얻고 싶다기 보다는 제  생각을 같이 얘기해보고 싶어요"
-      },
-      categoryInfo: {
-      	category_idx: 1,
-      	category_name: "연애"
-      }
-   },
-}
-
-1900: "GET_USER_QUESTION_LIST_SUCCESS",
-1901: "GET_USER_QUESTION_LIST_ERROR_ANYWAY",
 ```
 

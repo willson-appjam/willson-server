@@ -3,6 +3,7 @@ import serviceStatusCode from '../../lib/serviceStatusCode'
 import _ from 'lodash';
 
 const respondBasic = (res: express.Response, code: number, data: object) => {
+  
   console.log('code => ', code)
   console.log('message => ', serviceStatusCode[`${code}`])
   console.log('data => ', data)
