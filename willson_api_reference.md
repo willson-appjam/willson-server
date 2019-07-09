@@ -26,6 +26,8 @@ BaseUrl =>  <b>host:port/api</b>
 
 
 
+
+
 ### 회원가입
 
 url : <b>/api/user/signup</b>
@@ -52,9 +54,10 @@ header => <b> user_session : jwt_token </b>
 > Response
 
 ```java
+성공 = 200
 {
-	code: int,
-    message: String,
+	code: 100,
+    message: SIGN_UP_SUCCESS,
     data: {
         body: {
             nickname: String,
@@ -68,22 +71,29 @@ header => <b> user_session : jwt_token </b>
     }
 }
 
-성공
-	code: 100,
-    message: SIGN_UP_SUCCESS
+
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: {
+        body: {
+            nickname: String,
+            gender: String,
+            age: String,
+            email: String,
+            password: String,
+            device_token: String,
+            user_level: String
+        }
+    }
+}
     
-중복 검사 오류
-	code: 101,
-    message: SIGN_UP_DUPLICATE_DATA
-    
-유효성 검사 오류
-	code: 102,
-    message: SIGN_UP_VALIDATION_ERROR
-    
-내부 서버 오류
-	code: 103,
-	message: SIGN_UP_ERROR_ANYWAY
+ 101: SIGN_UP_DUPLICATE_DATA
+ 102: SIGN_UP_VALIDATION_ERROR
+ 103: SIGN_UP_ERROR_ANYWAY
 ```
+
 
 
 ### 로그인
@@ -100,38 +110,36 @@ header => <b>user_session : jwt_token</b>
 {
 		email: String,
 		password: String
-	
 }
 ```
 
 > Response
 
 ```java
+성공 = 200
 {
-    code: int,
-    message: String,
+    code: 200,
+    message: SIGN_IN_SUCCESS,
     data: {
         Token: String
     }
 }
 
-성공
-	code: 200,
-	message: SIGN_IN_SUCCESS
-    
-유효성 검사 오류
-	code: 201,
-	message: SIGN_IN_VALIDATION_ERROR
-    
-인증 검사 오류
-	code: 202,
-	message: SIGN_IN_AUTHENTICATION_ERROR
-	
-서버 내부 오류
-	code: 203,
-	message: SIGN_IN_ERROR_ANYWAY
-```
 
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: {
+        email: String,
+        password: String
+    }
+}
+
+ 201: SIGN_IN_VALIDATION_ERROR
+ 202: SIGN_IN_AUTHENTICATION_ERROR
+ 203: SIGN_IN_ERROR_ANYWAY
+```
 
 
 
@@ -152,9 +160,10 @@ header =>  <b>user_session : jwt_token</b>
 > Response
 
 ```java
+성공 = 200
 {
-    code: int,
-    message: String,
+    code: 300,
+    message: GET_USER_PROFILE_LIST_SUCCESS,
     data: {
         user: {
             nickname: String,
@@ -193,20 +202,21 @@ header =>  <b>user_session : jwt_token</b>
     }
 }
 
-성공
-	code: 300,
-	message: GET_USER_PROFILE_LIST_SUCCESS
-	
-유효성 검사 오류
-	code: 301,
-	message: USER_PROFILE_LIST_VALIDATION_ERROR
 
-서버 내부 오류
-	code: 302,
-	message: USER_PROFILE_LIST_ERROR_ANYWAY
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: {
+        params: {
+            question_idx: int
+        }
+    }
+}
+
+301: USER_PROFILE_LIST_VALIDATION_ERROR
+302: USER_PROFILE_LIST_ERROR_ANYWAY
 ```
-
-
 
 
 
@@ -718,8 +728,6 @@ result: {
     1403: "HELPER_SELECTION_ERROR_ANYWAY"
 ```
 
-
-
 ### 후기 목록 보기
 
 url : <b>/api/helper/:helper_idx/review</b>
@@ -737,9 +745,10 @@ header => <b>user_session : jwt_token</b>
 > Resonse
 
 ```java
+성공 = 200
 {
-    code: int,
-    message: String,
+    code: 1500,
+    message: GET_REVIEW_LIST_SUCCESS,
     data: [
         {
             review_idx: 1,
@@ -752,17 +761,20 @@ header => <b>user_session : jwt_token</b>
     ]
 }
 
-성공
-	code: 1500,
-	message: GET_REVIEW_LIST_SUCCESS
-	
-유효성 검사 오류
-	code: 1501,
-	message: USER_REVIEW_LIST_VALIDATION_ERROR
-	
-내부 서버 오류
-	code: 1502,
-	message: USER_REVIEW_LIST_ERROR_ANYWAY
+
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: {
+        params: {
+            helper_idx: int
+        }
+    }
+}
+
+1501: USER_REVIEW_LIST_VALIDATION_ERROR
+1502: USER_REVIEW_LIST_ERROR_ANYWAY
 ```
 
 
@@ -792,23 +804,23 @@ header =>  <b>user_session : jwt_token</b>
 > Response
 
 ```java
+성공 = 200
 {
-	code: int,
-    message: String,
+	code: 1600,
+    message: REVIEW_REGISTERED_SUCCESS,
     data: {}
 }
 
-성공	
-	code: 1600,
-	message: REVIEW_REGISTERED_SUCCESS
 
-유효성 검사 오류
-	code: 1601,
-	message: REVIEW_VALIDATION_ERROR
-	
-내부 서버 오류
-	code: 1602,
-	message: REVIEW_REGISTERED_ERROR_ANYWAY
+실패 = 500
+{
+    code: int,
+    message: String
+    data: {}
+}
+
+1601: REVIEW_VALIDATION_ERROR
+1602: REVIEW_REGISTERED_ERROR_ANYWAY
 ```
 
 
@@ -835,28 +847,26 @@ header => <b>user_session : jwt_token</b>
 > Response
 
 ```java
+성공 = 200
 {
-    code: int,
-    message: String,
+    code: 1700,
+    message: MODIFIED_REVIEW_SUCCESS,
     data: {}
 }
 
-성공
-	code: 1700,
-	message: MODIFIED_REVIEW_SUCCESS
-	
-유효성 검사 오류
-	code: 1701,
-	message: MODIFIED_REVIEW_VALIDATION_ERROR
-	
-권한 검사 오류
-	code: 1702,
-	message: MODIFIED_REVIEW_PERMISSION_ERROR
 
-내부 서버 오류
-	code: 1703,
-	message: MODIFIED_REVIEW_ERROR_ANYWAY
+실패 = 500
+{
+    code: 1700,
+    message: MODIFIED_REVIEW_SUCCESS,
+    data: {}
+}
+
+1701: MODIFIED_REVIEW_VALIDATION_ERROR
+1702: MODIFIED_REVIEW_PERMISSION_ERROR
+1703: MODIFIED_REVIEW_ERROR_ANYWAY
 ```
+
 
 
 ### 유저의 헬퍼 결정하기
