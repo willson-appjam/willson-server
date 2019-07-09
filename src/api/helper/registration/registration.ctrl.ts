@@ -6,17 +6,17 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 const postRegistrationCtrl = async (req: any, res: any, next: any) => {
 
   if(!isValidCheck(req)) {
-    respondOnError(res, new Error('validation Error'), 901, 500)
+    respondOnError(req, res, new Error('validation Error'), 901, 500)
     return;
   }
 
   await registrationService.postRegistrationService(req, res, next)
   .then((result: any) => {
-    respondBasic(res, 900, result)
+    respondBasic(req, res, 900, result)
   })
   .catch((e: any) => {
-    if (e.own === 'CustomError') respondOnError(res, e, e.code)
-		else respondOnError(res, e, 902, 500);
+    if (e.own === 'CustomError') respondOnError(req, res, e, e.code)
+		else respondOnError(req, res, e, 902, 500);
   })
 }
 

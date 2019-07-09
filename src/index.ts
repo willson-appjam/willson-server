@@ -3,11 +3,14 @@ import path from 'path';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import api from './api/index';
+import {prod} from './logger';
+import responseTime from 'response-time';
 
 class App {
 
   public app: express.Application;
-
+  
+ 
   constructor() {
     this.app =  express();
     
@@ -16,8 +19,9 @@ class App {
     this.app.use(express.static(path.join(__dirname, 'public')));
     this.app.use(bodyParser());
     this.app.use(bodyParser.urlencoded({ extended: true }));
+    this.app.use(function(req:any, res:any, next) { req.start = Date.now(); next(); });
+    this.app.use(prod);
     this.app.use('/api', api);
-    
     this.app.get('/check', (req: any, res: any, next: express.NextFunction) => {
         res.status(200).send("check success");
       });
