@@ -38,7 +38,20 @@ const putReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 }
 
+const getMainReviewCtrl = async (req: any, res: any, next: any) => {
+	await reviewService.getMainListService(req, res, next)
+	.then((result: any) => {
+		respondBasic(res, 2300, result)
+	})
+	.catch((e: any) => {
+		if(e.own === 'CustomError') respondOnError(res, e, e.code)
+    else respondOnError(res, e, 2301)
+	})
+}
+
+
 export{
 	postReviewCtrl,
-	putReviewCtrl
+	putReviewCtrl,
+	getMainReviewCtrl
 }
