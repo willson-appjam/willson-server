@@ -1,8 +1,10 @@
 import express from 'express';
 import moment from 'moment';
 import dbconnection from '../../../lib/connection'
-import {selectReviewList} from '../../../models/reviewlist'
+import {selectReviewList} from './reviewlist.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
+import { CustomError } from '../../../lib/middlewares/respond'
+
 
 
 const getListService = (req: any, res: any, next: any) : any => {
@@ -11,15 +13,16 @@ const getListService = (req: any, res: any, next: any) : any => {
 			const {params} = req
 
 			if (!params.helper_idx){
-				reject({ code: serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'] })
-				return
+				reject(new CustomError(null, 1501, { params }))
+        return
 			}
 
 			const connection = await dbconnection();
 			const showReviewList : any = await selectReviewList(connection, params)
 
 			if(showReviewList.length == 0){
-				reject({ code: serviceStatusCode['USER_REVIEW_LIST_VALIDATION_ERROR'] })
+				reject(new CustomError(null, 1501, { params }))
+        return
 			}
 
 			const reviewList = []

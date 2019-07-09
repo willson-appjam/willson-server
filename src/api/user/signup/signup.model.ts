@@ -1,4 +1,4 @@
-const insertUserInfo = (connection: any, {nickname, gender, age, email, password, device_token, salt}: any) : Promise<{}> => {
+ const insertUserInfo = (connection: any, {nickname, gender, age, email, password, device_token, salt}: any) : Promise<{}> => {
 	return new Promise((resolve, reject) : any => {
 		const query = `
 		INSERT INTO 

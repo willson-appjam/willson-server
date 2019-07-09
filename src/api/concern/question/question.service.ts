@@ -26,6 +26,7 @@ const postUserQuestion = (req: any, res: any) => {
       if(qResult.affectedRows == 0) {
         reject(new CustomError(null, 703, req.body))
       }
+      
 
       const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
       const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);
