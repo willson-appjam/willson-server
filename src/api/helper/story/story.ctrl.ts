@@ -6,10 +6,11 @@ const getStoryCtrl = async (req: any, res: any) => {
 
   await storyService.getStoryService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_HELPER_STORY_SUCCESS'], result)
+    respondBasic(res, 1300, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500);
+    if (e.own === 'CustomError') respondOnError(res, e, e.code)
+		else respondOnError(res, e, 1302, 500);
   })
 }
 

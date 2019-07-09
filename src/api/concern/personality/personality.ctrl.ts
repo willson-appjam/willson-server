@@ -13,7 +13,7 @@ const getPersonalityList = async (req: any, res: any) => {
 	})
 	.catch((e: any) => {
     console.log('12321', e)
-    if(e instanceof CustomError) respondOnError(res, e, e.code)
+    if(e.own === 'CustomError') respondOnError(res, e, e.code)
     else respondOnError(res, e, 2002);
 	})
 }

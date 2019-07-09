@@ -1,5 +1,5 @@
 import dbConnection from "../../../lib/connection";
-import { selectRegistrationCategory, insertRegistrationCategoryList, insertRegistrationHelper, selectRegistrationExperience, insertRegistrationHelper_experience, } from '../../../models/helper'
+import { selectRegistrationCategory, insertRegistrationCategoryList, insertRegistrationHelper, selectRegistrationExperience, insertRegistrationHelper_experience, } from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 
 const postRegistrationService = (req: any,res: any, next: any) => {
@@ -9,7 +9,7 @@ const postRegistrationService = (req: any,res: any, next: any) => {
     try {
       const { helper, experience } = req.body;
       const { user } = req;
-
+  
       //헬퍼 기본 정보 등록
       let category_idx: any = await selectRegistrationCategory(connection, helper.category_name);
       category_idx = category_idx[0].category_idx;
@@ -29,7 +29,6 @@ const postRegistrationService = (req: any,res: any, next: any) => {
       resolve({});
 
     } catch (e) {
-      console.log(e);
       reject(e)
     } finally {
       connection.release();

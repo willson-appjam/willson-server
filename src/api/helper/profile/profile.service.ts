@@ -1,6 +1,8 @@
 import dbConnection from "../../../lib/connection";
-import { selectProfileHelper_idx, selectProfileHelper_experience, selectProfileHelper, selectRegistrationCategory, updateProfileHelper_experience, selectProfileExperience, selectRegistrationExperience, insertRegistrationCategoryList, insertRegistrationHelper_experience, updateProfileHelper, selectProfilePersonality } from '../../../models/helper'
+import { selectProfileHelper_idx, selectProfileHelper_experience, selectProfileHelper, selectRegistrationCategory, updateProfileHelper_experience, selectProfileExperience, selectRegistrationExperience, insertRegistrationCategoryList, insertRegistrationHelper_experience, updateProfileHelper, selectProfilePersonality } from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
+import {getAge} from '../../../modules/getAge';
+import { CustomError } from '../../../lib/middlewares/respond';
 
 const getProfileService = (req: any,res: any) => {
   return new Promise(async (resolve, reject) => {
@@ -10,12 +12,13 @@ const getProfileService = (req: any,res: any) => {
       const helper_idx = req.params;
       const helper: any = await selectProfileHelper(connection, helper_idx.helper_idx);
       if (!helper.length){
-        reject({code: serviceStatusCode["PROFILE_HELPER_DOES_NOT_EXIST"]})
+        reject(new CustomError(null, 1101 , req.params))
         return
       }
       const experience = await selectProfileExperience(connection, helper_idx.helper_idx);
       const personality = await selectProfilePersonality(connection, helper_idx.helper_idx);
 
+      helper[0].age = await getAge(helper[0].age);
       resolve({helper, experience, personality});
     } catch (e){
       reject(e);   
@@ -44,7 +47,7 @@ const putProfileService = (req: any, res: any) => {
       //헬퍼 경험 프로필 수정
       let helper_idx : any = await selectProfileHelper_idx(connection, user.user_idx);
       if (!helper_idx.length){
-        reject({code: serviceStatusCode['USER_IS_NOT_HELPER']})
+        reject(new CustomError(null, 1201 , helper_idx))
         return;
       }
       const old_experience_idx: any =  await selectProfileHelper_experience(connection, helper_idx[0].helper_idx);

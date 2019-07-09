@@ -36,12 +36,14 @@ const CustomError = class CustomError extends Error {
   public code: number;
   public data: object
   public err: object;
-  
+  public own: string
+
   constructor(err: any, code: number, data: object) {
     super();
     this.code = code
     this.data = data
     this.err = err
+    this.own = "CustomError"
 
     const defaultOptions = {
       err: 'internal server error',
@@ -58,6 +60,9 @@ const CustomError = class CustomError extends Error {
       data: this.data,
       logMessage: '',
     }
+
+    const temp = _.defaultsDeep(customError, defaultOptions)
+
   }
 }
 

@@ -6,10 +6,11 @@ const getListCtrl = async(req:any, res:any) => {
   new Promise(async (resolve, reject) => {
     await listService.getListService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_HELPER_LIST_SUCCESS'], result)
+    respondBasic(res, 1000, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500);
+    if (e.own === 'CustomError') respondOnError(res, e, e.code)
+		else respondOnError(res, e, 1002, 500);
   })
   })
 };

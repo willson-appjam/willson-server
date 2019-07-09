@@ -27,9 +27,9 @@ const insertRegistrationCategoryList = (connection: any, [categoryList_name, cat
 
 const insertRegistrationHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject) => {
-    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)
-    `;
-    connection.query(query, helper , (err: any, result: any) => {
+    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)`
+    let q = connection.query(query, helper, (err: any, result: any) => {
+     console.log(q.sql);
       err ? reject(err) : resolve(result)
     })
   })
@@ -299,7 +299,9 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
     ORDER BY RAND() LIMIT 1
   `;
     
-    connection.query(query, category_idx, (err: any, result: any) => {
+    let q = connection.query(query, category_idx, (err: any, result: any) => {
+      console.log(q.sql);
+      console.log(err);
         err ? reject(err) : resolve(result)
       })
   })

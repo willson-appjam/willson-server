@@ -1,9 +1,11 @@
 import dbConnection from "../../../lib/connection";
-import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../../../models/helper'
+import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
 var mecab = require('mecab-ya');
 var request = require('request-promise-native');
 import serviceStatusCode from '../../../lib/serviceStatusCode';
+import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
+import {getAge} from "../../../modules/getAge";
 
 const getListService = (req: any, res: any) => {
 
@@ -17,11 +19,10 @@ const getListService = (req: any, res: any) => {
       //유저가 원하는 헬퍼 정보
       let info: any = await selectUserInfo(connection, question_idx);
       if (!info.length) {
-        reject({ code: serviceStatusCode["HELPER_LIST_QUESTION_DOES_NOT_EXIST"] })
+        reject(new CustomError(null, 1001 , {question_idx}))
         return
       }
       let experience_name: any = await selectUserExperience(connection, question_idx);
-      
       let personality_idx: any = await selectUserPersonality(connection, question_idx);
 
       //유저 고민을 선택한 헬퍼들의 정보
@@ -159,6 +160,7 @@ const getListService = (req: any, res: any) => {
 
                   let result = [];
                   for (let i = 0; i < 3; i++) {
+                    helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
                     result.push(helpers_info[indices[i]]);
                   }
                   resolve(result);
