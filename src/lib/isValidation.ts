@@ -8,12 +8,12 @@ const isValidCheck = ({ body } : any) => {
   _.forEach(body, (value, key) => {
     if(value instanceof Object) { 
       _.forEach(value, (v) => {
-        if(empty(v) || v == null || v  === '' || v === undefined) {
+        if(empty(v)) {
           flag = false;
         }
       })
     }
-    
+
     if(empty(value)) {
       flag = false;
     }
