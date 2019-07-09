@@ -181,7 +181,7 @@ header =>  <b>user_session : jwt_token</b>
 > Response
 
 ```java
-result: {
+{
   code: int,
   message: String
   data: {
@@ -220,7 +220,7 @@ header =>  <b>user_session : jwt_token</b>
 
 ```react
 # response
-result: {
+{
 	message: String,
 	code: int,
   data: {},
@@ -251,7 +251,7 @@ header =>  <b>user_session : jwt_token</b>
 
 ```java
 # response
-result: {
+{
 	code: int,
 	message: String,
 	data:
@@ -302,7 +302,7 @@ header =>  <b>user_session : jwt_token</b>
 
 ```java
 # response
-data: {
+{
 	message: String,
 	code: int,
 	data: {},
@@ -333,25 +333,26 @@ header =>  <b>user_session : jwt_token</b>
 > Response
 
 ```java
-code: int,
-message: String,
-data: {
-  concernInfo: [{
-    user: {
-      user_idx: String,
-      nickname: String,
-      gender: String,
-      age: String,
-    },
-    questionInfo: {
-      title: String,
-    },
-    categoryInfo: {
-      category_id: int,
-      category_name: String,
-    },   
-  }, {...}]
-  size: int,
+{
+  code: int,
+	message: String,
+	data: {
+    concernInfo: [{
+      user: {
+        user_idx: String,
+        nickname: String,
+        gender: String,
+        age: String,
+      },
+      questionInfo: {
+        title: String,
+      },
+      categoryInfo: {
+        category_id: int,
+        category_name: String,
+      },   
+    }, {...}]
+    size: int,
 }
 
 800: "GET_USER_QUESTION_LIST",
@@ -660,7 +661,7 @@ header => <b>willson-token : jwt_token</b>
 > Resonse
 
 ```java
-result: {
+{
     code: int,
     data: [
         {
@@ -704,7 +705,7 @@ header =>  <b>willson-token : jwt_token</b>
 > Response
 
 ```java
-result: {
+{
 	code: int
 }
 
@@ -790,7 +791,7 @@ header =>  <b>user_session : jwt_token</b>
 
 > Request
 
-```java
+​```java
 # request
 
 ```
@@ -799,7 +800,7 @@ header =>  <b>user_session : jwt_token</b>
 
 ```java
 # response
-data: {
+{
 	message: String,
 	code: int,
 	data: {
