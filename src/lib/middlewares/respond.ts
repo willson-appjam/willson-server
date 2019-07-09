@@ -31,18 +31,19 @@ const respondOnError = (res: express.Response, err: any, code: any, status : num
   })
 }
 
-const CustomError = class CustomError extends Error {
+class CustomError extends Error {
   
   public code: number;
   public data: object
   public err: object;
-  
+  public own: string
 
   constructor(err: any, code: number, data: object) {
     super();
     this.code = code
     this.data = data
     this.err = err
+    this.own = "CustomError"
 
     const defaultOptions = {
       err: 'internal server error',
@@ -62,9 +63,6 @@ const CustomError = class CustomError extends Error {
 
     const temp = _.defaultsDeep(customError, defaultOptions)
 
-    // Object.keys(defaultOptions).forEach((key) => {
-    //   this[key] = temp[key]
-    // })
   }
 }
 
