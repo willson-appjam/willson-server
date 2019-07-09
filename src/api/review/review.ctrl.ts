@@ -8,7 +8,6 @@ const postReviewCtrl = async (req: any, res: any, next: any) => {
 
 	if(!isValidCheck(req)) {
 		respondOnError(res, req, 1601, 500)
-    //respondOnError(res, new Error('validation error'), serviceStatusCode['REVIEW_VALIDATION_ERROR'], 500)
     return
 	}
 	

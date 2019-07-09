@@ -38,8 +38,6 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
 			if (!idxFromReview[0]){
 				reject(new CustomError(null, serviceStatusCode['MODIFIED_REVIEW_PERMISSION_ERROR'], body))
-				//reject({ code: serviceStatusCode['MODIFIED_REVIEW_PERMISSION_ERROR'] })
-				//return
 				}else{
 					const updateReview: any = await updateHelperReview(connection, body, user)
 					resolve(updateReview)

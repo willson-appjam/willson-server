@@ -12,8 +12,6 @@ const getProfileService = (req: any, res: any, next: any) => {
 			if (!params.question_idx) {
 				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
         return
-				//reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
-				//return
 			}
 
 			const connection = await dbconnection();
@@ -22,7 +20,6 @@ const getProfileService = (req: any, res: any, next: any) => {
 			if(userProfileList.length == 0){
 				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
         return
-				//reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
 			}
 
 			const personality : any = await selectPersonality(connection, params)
