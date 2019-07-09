@@ -44,7 +44,9 @@ const postCategoryListService = (req: any, res: any) => {
         reject(new CustomError(null, 501, body))
       }
 
-      resolve({});
+      resolve({
+        categoryList_idx: categoryList.insertId,
+      });
 
     } catch (e) {
       reject(e);
