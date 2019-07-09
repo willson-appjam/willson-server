@@ -17,7 +17,7 @@ const respondBasic = (res: express.Response, code: number, data: object) => {
   })
 }
 
-const respondOnError = (res: express.Response, err: any, code: any, status: number, result?: object) => {
+const respondOnError = (res: express.Response, err: any, code: any, status: number = 500, result?: object) => {
 
   console.error('STATUS => ', status)
   console.error('CODE => ', code)
