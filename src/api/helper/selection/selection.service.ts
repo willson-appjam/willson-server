@@ -1,6 +1,7 @@
 import dbConnection from "../../../lib/connection";
-import { insertSelectionSelected_question, selectProfileHelper_idx,selectSelectionQuestion_idx } from '../../../models/helper';
+import { insertSelectionSelected_question, selectProfileHelper_idx,selectSelectionQuestion_idx } from '../helper.model';
 import helper from "../index";
+import { CustomError } from '../../../lib/middlewares/respond';
 import serviceStatusCode from "../../../lib/serviceStatusCode"
 
 const postSelectionService = (req: any,res: any) => {
@@ -13,12 +14,12 @@ const postSelectionService = (req: any,res: any) => {
 
       let helper_idx: any = await selectProfileHelper_idx(connection, user.user_idx)
       if (!helper_idx.length){
-        reject({code:serviceStatusCode["SELECTION_HELPER_DOES_NOT_EXIST"]})
+        reject(new CustomError(null, 1401, {}))
         
       }
       let question: any = await selectSelectionQuestion_idx(connection, body.question_idx)
       if (!question.length){
-        reject({code:serviceStatusCode["HELPER_SELECTION_QUESTION_DOES_NOT_EXIST"]})
+        reject(new CustomError(null, 1402, body))
         
       }
       await insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx]);

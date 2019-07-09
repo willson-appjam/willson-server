@@ -1,15 +1,22 @@
 import selectionService from './selection.service';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
+import { isValidCheck } from '../../../lib/isValidation';
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
 const postSelectionCtrl = async (req: any, res: any) => {
 
+  if(!isValidCheck(req)) {
+    respondOnError(res, new Error('validation error'), serviceStatusCode['SIGN_UP_VALIDATION_ERROR'], 500)
+    return;
+  }
+
   await selectionService.postSelectionService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['HELPER_SELECTION_SUCCESS'], result)
+    respondBasic(res, 1400, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500);
+    if (e instanceof CustomError) respondOnError(res, e, e.code)
+		else respondOnError(res, e, 1403, 500);
   })
 }
 

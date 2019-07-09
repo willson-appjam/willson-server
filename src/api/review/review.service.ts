@@ -1,7 +1,9 @@
 import dbconnection from '../../lib/connection'
 import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview}
-from '../../models/review'
+from './review.model'
 import serviceStatusCode from '../../lib/serviceStatusCode'
+import { CustomError } from '../../lib/middlewares/respond'
+
 
 
 const postReviewService = (req: any, res: any, next: any) => {
@@ -16,7 +18,7 @@ const postReviewService = (req: any, res: any, next: any) => {
 			const avgStars : any = await selectAvgStars(connection, body)
 			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body)
 
-			resolve(uploadReview)
+			resolve({})
 		}catch(e){
 			console.log(e)
 			reject(e)
@@ -35,8 +37,7 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const connection = await dbconnection();
 			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
 			if (!idxFromReview[0]){
-				reject({ code: serviceStatusCode['MODIFIED_REVIEW_PERMISSION_ERROR'] })
-				return
+				reject(new CustomError(null, 1702, body))
 				}else{
 					const updateReview: any = await updateHelperReview(connection, body, user)
 					resolve(updateReview)

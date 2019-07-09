@@ -6,11 +6,11 @@ import serviceStatusCode from '../../../lib/serviceStatusCode'
 const getListCtrl = async (req: any, res: any, next: any) => {
 	await reviewService.getListService(req, res, next)
 	.then((result: any) => {
-		respondBasic(res, serviceStatusCode['GET_REVIEW_LIST_SUCCESS'], result)
+		respondBasic(res, 1500, result)
 	})
 	.catch((e: any) => {
-		console.log(e);
-		respondOnError(res, e, e.code, 500)
+		if(e instanceof CustomError) respondOnError(res, e, e.code)
+    else respondOnError(res, e, 1502);
 	})
 }
 

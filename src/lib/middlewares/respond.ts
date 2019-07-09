@@ -17,7 +17,7 @@ const respondBasic = (res: express.Response, code: number, data: object) => {
   })
 }
 
-const respondOnError = (res: express.Response, err: any, code: any, status : number = 500, result?: object) => {
+const respondOnError = (res: express.Response, err: any, code: any, status: number, result?: object) => {
 
   console.error('STATUS => ', status)
   console.error('CODE => ', code)
@@ -48,7 +48,7 @@ class CustomError extends Error {
     const defaultOptions = {
       err: 'internal server error',
       code: 10,
-      message: 'internal server error',
+      message: '',
       data: {},
       logMessage: 'Doesn\'t have any Message',
     }
@@ -56,7 +56,7 @@ class CustomError extends Error {
     const customError = {
       err: err || {},
       code,
-      message: serviceStatusCode[`${code}`],
+      message: JSON.stringify(''),
       data: this.data,
       logMessage: '',
     }
