@@ -793,13 +793,9 @@ header =>  <b>user_session : jwt_token</b>
 
 ```java
 {
-<<<<<<< HEAD
 	code: int,
     message: String,
     data: {}
-=======
-	code: int
->>>>>>> 1ba4f2f6d66a42050d807aa9c0dca8083042e682
 }
 
 성공	
@@ -867,7 +863,6 @@ header => <b>user_session : jwt_token</b>
 
 url : /user/selection
 
-<<<<<<< HEAD
 
 # 헬퍼
 
@@ -876,9 +871,6 @@ url : /user/selection
 url : <b>/helper/registration</b>
 
 method : <b>POST</b>
-=======
-method : POST
->>>>>>> 1ba4f2f6d66a42050d807aa9c0dca8083042e682
 
 header: "willson-token" : jwt_token
 
