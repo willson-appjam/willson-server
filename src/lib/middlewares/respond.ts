@@ -31,14 +31,14 @@ const respondOnError = (res: express.Response, err: any, code: any, status: numb
   })
 }
 
-const CustomError = class CustomError extends Error {
+const CustomError = class CustomError {
   
   public code: number;
   public data: object
   public err: object;
   
   constructor(err: any, code: number, data: object) {
-    super();
+  
     this.code = code
     this.data = data
     this.err = err
