@@ -16,6 +16,9 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
 		respondBasic(res, 100, result)    
 	})
 	.catch((e: any) => {
+		const t = new CustomError(null, 100, {})
+		console.log(e instanceof CustomError)
+    console.log(t instanceof CustomError)
 		if(e instanceof CustomError) respondOnError(res, e, e.code)
     else respondOnError(res, e, 103, 500);
 	})

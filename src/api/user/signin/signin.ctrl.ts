@@ -17,7 +17,7 @@ const postSigninCtrl = async (req: express.Request, res: express.Response, next:
   })
   .catch((e: any) => {
     if(e instanceof CustomError) respondOnError(res, e, e.code)
-    else respondOnError(res, e, 203);
+    else respondOnError(res, e, 203, 500);
   })
 }
 

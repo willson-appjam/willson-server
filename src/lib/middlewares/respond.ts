@@ -17,7 +17,7 @@ const respondBasic = (res: express.Response, code: number, data: object) => {
   })
 }
 
-const respondOnError = (res: express.Response, err: any, code: any, status: number, result?: object) => {
+const respondOnError = (res: express.Response, err: any, code: any, status: number = 500, result?: object) => {
 
   console.error('STATUS => ', status)
   console.error('CODE => ', code)
@@ -31,14 +31,14 @@ const respondOnError = (res: express.Response, err: any, code: any, status: numb
   })
 }
 
-const CustomError = class CustomError {
+const CustomError = class CustomError extends Error {
   
   public code: number;
   public data: object
   public err: object;
   
   constructor(err: any, code: number, data: object) {
-  
+    super();
     this.code = code
     this.data = data
     this.err = err
@@ -58,12 +58,6 @@ const CustomError = class CustomError {
       data: this.data,
       logMessage: '',
     }
-
-    const temp = _.defaultsDeep(customError, defaultOptions)
-
-    // Object.keys(defaultOptions).forEach((key) => {
-    //   this[key] = temp[key]
-    // })
   }
 }
 

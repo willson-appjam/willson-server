@@ -31,7 +31,7 @@ url : <b>/api/user/signup</b>
 
 method : <b>POST</b>
 
-header => <b> willson-token : jwt_token </b>
+header => <b> user_session : jwt_token </b>
 
 > Request
 
@@ -39,7 +39,7 @@ header => <b> willson-token : jwt_token </b>
 {
 	
   	nickname: String,
-  	gender: Enum('남','여','모두')
+  	gender: Enum('남','여')
   	age: int,
 	email: String,
 	password: String,
@@ -51,18 +51,39 @@ header => <b> willson-token : jwt_token </b>
 > Response
 
 ```java
-result: {
-	code: int
+{
+	code: int,
+    message: String,
+    data: {
+        body: {
+            nickname: String,
+            gender: String,
+            age: int,
+            email: String,
+            password: String,
+            device_token: String,
+            salt: String
+        }
+    }
 }
 
-성공: 100
-중복 검사 오류: 101
-유효성 검사 오류: 102
+성공
+	code: 100,
+    message: SIGN_UP_SUCCESS
+    
+중복 검사 오류
+	code: 101,
+    message: SIGN_UP_DUPLICATE_DATA
+    
+유효성 검사 오류
+	code: 102,
+    message: SIGN_UP_VALIDATION_ERROR
+    
+내부 서버 오류
+	code: 103,
+	message: SIGN_UP_ERROR_ANYWAY
 ```
 
-url : </b>/api/concern/category</b>
-
-method : </b>get</b>
 
 ### 로그인
 
@@ -70,13 +91,12 @@ url  :   <b>/api/user/signin</b>
 
 method : <b>POST</b>
 
-header => <b>willson-token : jwt_token</b>
+header => <b>user_session : jwt_token</b>
 
 > Request
 
 ```java
 {
-    
 		email: String,
 		password: String
 	
@@ -86,17 +106,31 @@ header => <b>willson-token : jwt_token</b>
 > Response
 
 ```java
-result: {
+{
     code: int,
+    message: String,
     data: {
         Token: String
     }
 }
 
-성공: 200
-유효성 검사 오류: 201
-인증 검사 오류: 202
+성공
+	code: 200,
+	message: SIGN_IN_SUCCESS
+    
+유효성 검사 오류
+	code: 201,
+	message: SIGN_IN_VALIDATION_ERROR
+    
+인증 검사 오류
+	code: 202,
+	message: SIGN_IN_AUTHENTICATION_ERROR
+	
+서버 내부 오류
+	code: 203,
+	message: SIGN_IN_ERROR_ANYWAY
 ```
+
 
 
 
@@ -106,7 +140,7 @@ url : <b>/api/user/profile/:question_idx</b>
 
 method : <b>GET</b>
 
-header =>  <b>willson-token : jwt_token</b>
+header =>  <b>user_session : jwt_token</b>
 
 > Request
 
@@ -117,8 +151,9 @@ header =>  <b>willson-token : jwt_token</b>
 > Response
 
 ```java
-result: {
+{
     code: int,
+    message: String,
     data: {
         user: {
             nickname: String,
@@ -157,9 +192,20 @@ result: {
     }
 }
 
-성공: 300
-유효성 검사 오류: 301
+성공
+	code: 300,
+	message: GET_USER_PROFILE_LIST_SUCCESS
+	
+유효성 검사 오류
+	code: 301,
+	message: USER_PROFILE_LIST_VALIDATION_ERROR
+
+서버 내부 오류
+	code: 302,
+	message: USER_PROFILE_LIST_ERROR_ANYWAY
 ```
+
+
 
 
 
@@ -658,7 +704,7 @@ url : <b>/api/helper/:helper_idx/review</b>
 
 method : <b>GET</b>
 
-header => <b>willson-token : jwt_token</b>
+header => <b>user_session : jwt_token</b>
 
 > Request
 
@@ -669,8 +715,9 @@ header => <b>willson-token : jwt_token</b>
 > Resonse
 
 ```java
-result: {
+{
     code: int,
+    message: String,
     data: [
         {
             review_idx: 1,
@@ -682,8 +729,18 @@ result: {
         }, {..}
     ]
 }
-성공: 1500
-유효성 검사 오류: 1501
+
+성공
+	code: 1500,
+	message: GET_REVIEW_LIST_SUCCESS
+	
+유효성 검사 오류
+	code: 1501,
+	message: USER_REVIEW_LIST_VALIDATION_ERROR
+	
+내부 서버 오류
+	code: 1502,
+	message: USER_REVIEW_LIST_ERROR_ANYWAY
 ```
 
 
@@ -694,31 +751,42 @@ url : <b>/api/review</b>
 
 method : <b>POST</b>
 
-header =>  <b>willson-token : jwt_token</b>
+header =>  <b>user_session : jwt_token</b>
 
 > Request
 
 ```java
 {
-	
+	review: {
 		stars : String,
 		review_content : String,
 		helper_idx : int,
 		category_idx : int,
 		question_idx : int
-	
+	}
 }
 ```
 
 > Response
 
 ```java
-result: {
-	code: int
+{
+	code: int,
+    message: String,
+    data: {}
 }
 
-성공: 1600
-유효성 검사 오류: 1601
+성공	
+	code: 1600,
+	message: REVIEW_REGISTERED_SUCCESS
+
+유효성 검사 오류
+	code: 1601,
+	message: REVIEW_VALIDATION_ERROR
+	
+내부 서버 오류
+	code: 1602,
+	message: REVIEW_REGISTERED_ERROR_ANYWAY
 ```
 
 
@@ -729,16 +797,16 @@ url : <b>/api/review/:review_idx</b>
 
 method : <b>PUT</b>
 
-header => <b>willson-token : jwt_token</b>
+header => <b>user_session : jwt_token</b>
 
 > Request
 
 ```java
 {
-	
+	review: {
 		stars : String,
 		review_content : String,
-	
+	}
 }
 ```
 
@@ -746,13 +814,28 @@ header => <b>willson-token : jwt_token</b>
 
 ```java
 {
-    code: int
+    code: int,
+    message: String,
+    data: {}
 }
 
-성공: 1700
-유효성 검사 오류: 1701
-권한 검사 오류: 1702
+성공
+	code: 1700,
+	message: MODIFIED_REVIEW_SUCCESS
+	
+유효성 검사 오류
+	code: 1701,
+	message: MODIFIED_REVIEW_VALIDATION_ERROR
+	
+권한 검사 오류
+	code: 1702,
+	message: MODIFIED_REVIEW_PERMISSION_ERROR
+
+내부 서버 오류
+	code: 1703,
+	message: MODIFIED_REVIEW_ERROR_ANYWAY
 ```
+
 
 
 
