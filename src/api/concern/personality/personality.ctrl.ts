@@ -9,10 +9,12 @@ const getPersonalityList = async (req: any, res: any) => {
 
   await personalityService.getPersonalityList(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_PERSONALITY_SUCCESS'], result)
+    respondBasic(res, 2000, result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e, e.code, 500);
+    console.log('12321', e)
+    if(e instanceof CustomError) respondOnError(res, e, e.code)
+    else respondOnError(res, e, 2002);
 	})
 }
 

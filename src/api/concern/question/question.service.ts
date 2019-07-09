@@ -2,12 +2,13 @@ import express from 'express';
 import _ from 'lodash';
 
 import dbConnection from '../../../lib/connection';
-import questionModel from '../../../models/question.model';
-import personalityModel from '../../../models/personality.model';
-import feelingModel from '../../../models/feeling.model';
+import questionModel from './question.model';
+import personalityModel from '../personality/personality.model';
+import feelingModel from '../feeling/feeling.model';
 import experienceModel from '../../../models/experience.model';
 
 import { qList, Question, User, Category } from './question.interface';
+import { CustomError } from '../../../lib/middlewares/respond';
 
 const postUserQuestion = (req: any, res: any) => {
   
@@ -22,7 +23,9 @@ const postUserQuestion = (req: any, res: any) => {
       
       const qResult: any = await questionModel.insertUserQuestion(connection, question, user);
       
-      qResult.affectedRows == 0 && reject({message: 'insert error'})
+      if(qResult.affectedRows == 0) {
+        reject(new CustomError(null, 703, req.body))
+      }
 
       const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
       const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);

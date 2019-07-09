@@ -16,7 +16,8 @@ const postSignupCtrl = async (req: any, res: any, next: any ) => {
     respondBasic(res, serviceStatusCode['SIGN_UP_SUCCESS'], result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e, e.code, 500);
+		if (e instanceof CustomError) respondOnError(res, e, e.code)
+		else respondOnError(res, e, 801, 500);
 	})
 }
 

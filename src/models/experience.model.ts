@@ -1,4 +1,4 @@
-import mysql, { Connection, MysqlError } from "mysql";
+import mysql, { Connection } from "mysql";
 import _ from 'lodash'
 
 const insertQuestionExperience = (connection: Connection, { insertId }: any , experience: Array<number>): Promise<Array<{}>> => {

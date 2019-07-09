@@ -9,7 +9,8 @@ const getListCtrl = async(req:any, res:any) => {
     respondBasic(res, 1000, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500);
+    if (e instanceof CustomError) respondOnError(res, e, e.code)
+		else respondOnError(res, e, 1002, 500);
   })
   })
 };

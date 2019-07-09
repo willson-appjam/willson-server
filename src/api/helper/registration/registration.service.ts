@@ -16,17 +16,7 @@ const postRegistrationService = (req: any,res: any, next: any) => {
       let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx]);
       categorylist_idx = categorylist_idx.insertId;
 
-      let helper_info = {
-        "category_idx": category_idx,
-        "categoryList_idx" : categorylist_idx,
-        "title": helper.title,
-        "content": helper.content,
-        "emotion": helper.emotion,
-        "advise": helper.advise,
-        "experience": helper.experience,
-        "user_idx": user.user_idx
-      }
-      let helper_idx: any = await insertRegistrationHelper(connection, helper_info);
+      let helper_idx: any = await insertRegistrationHelper(connection, [category_idx, categorylist_idx, helper.title, helper.content, user.user_idx]);
       helper_idx = helper_idx.insertId;
      
       //헬퍼의 경험 정보 등록

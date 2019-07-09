@@ -9,7 +9,8 @@ const getStoryCtrl = async (req: any, res: any) => {
     respondBasic(res, 1300, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500);
+    if (e instanceof CustomError) respondOnError(res, e, e.code)
+		else respondOnError(res, e, 1302, 500);
   })
 }
 

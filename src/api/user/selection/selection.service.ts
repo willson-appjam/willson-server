@@ -13,7 +13,7 @@ const postSelectionService = (req: any, res: any, next: any) => {
       const {user} = req
 
       if(!body.helper_idx || !body.question_idx) {
-        reject(new CustomError(null, 1901 , body))
+        reject(new CustomError(null, 2101 , body))
         return
       }
 

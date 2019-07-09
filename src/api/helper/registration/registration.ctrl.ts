@@ -1,6 +1,6 @@
 import registrationService from './registration.service';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
-import { isValidCheck } from './registration.validation';
+import { isValidCheck } from '../../../lib/isValidation';
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 
 const postRegistrationCtrl = async (req: any, res: any, next: any) => {
@@ -15,7 +15,8 @@ const postRegistrationCtrl = async (req: any, res: any, next: any) => {
     respondBasic(res, 900, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e, e.code, 500); 
+    if (e instanceof CustomError) respondOnError(res, e, e.code)
+		else respondOnError(res, e, 902, 500);
   })
 }
 

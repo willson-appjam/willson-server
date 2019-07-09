@@ -42,18 +42,7 @@ const putProfileService = (req: any, res: any) => {
       let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx]);
       categorylist_idx = categorylist_idx.insertId;
 
-      let helper_info = {
-        "category_idx": category_idx,
-        "categoryList_idx" : categorylist_idx,
-        "title": helper.title,
-        "content": helper.content,
-        "emotion": helper.emotion,
-        "advise": helper.advise,
-        "experience": helper.experience,
-        "user_idx": user.user_idx
-      }
-
-      await updateProfileHelper(connection,helper_info);
+      await updateProfileHelper(connection,[category_idx, categorylist_idx, helper.title, helper.content, user.user_idx]);
       
       //헬퍼 경험 프로필 수정
       let helper_idx : any = await selectProfileHelper_idx(connection, user.user_idx);

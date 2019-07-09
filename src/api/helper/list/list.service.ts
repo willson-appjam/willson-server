@@ -23,7 +23,6 @@ const getListService = (req: any, res: any) => {
         return
       }
       let experience_name: any = await selectUserExperience(connection, question_idx);
-      
       let personality_idx: any = await selectUserPersonality(connection, question_idx);
 
       //유저 고민을 선택한 헬퍼들의 정보
