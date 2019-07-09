@@ -10,7 +10,7 @@ const getProfileCtrl = async (req: any, res: any) => {
     respondBasic(res, 1100, result)
   })
   .catch((e: any) => {
-    if (e instanceof CustomError) respondOnError(res, e, e.code)
+    if (e.own === 'CustomError') respondOnError(res, e, e.code)
 		else respondOnError(res, e, 1102, 500);
   })
 }
@@ -27,7 +27,7 @@ const putProfileCtrl = async (req: any, res: any) => {
     respondBasic(res, 1200, result)
   })
   .catch((e: any) => {
-    if (e instanceof CustomError) respondOnError(res, e, e.code)
+    if (e.own === 'CustomError') respondOnError(res, e, e.code)
 		else respondOnError(res, e, 1202, 500);
   })
 }

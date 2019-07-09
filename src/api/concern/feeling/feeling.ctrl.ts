@@ -12,7 +12,7 @@ const getFeelingList = async (req: any, res: any) => {
     respondBasic(res, 600, result)
 	})
 	.catch((e: any) => {
-    if(e instanceof CustomError) respondOnError(res, e, e.code)
+    if(e.own === 'CustomError') respondOnError(res, e, e.code)
     else respondOnError(res, e, 602);
 	})
 }
