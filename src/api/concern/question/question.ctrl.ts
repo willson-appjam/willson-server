@@ -20,7 +20,7 @@ const getUserQuestionList = async (req: any, res: any) => {
 const postUserQuestion = async (req: any, res: any) => {
   const { body } = req
   
-  if(!isValidCheck(body)) {
+  if(!isValidCheck(req)) {
     respondOnError(res, new Error('validation error'), 701, 500)
     return;
   }

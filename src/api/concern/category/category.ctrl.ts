@@ -26,7 +26,7 @@ const postCategoryList = async (req: any, res: any) => {
 
   const { body } = req
 
-  if(!isValidCheck(body)) {
+  if(!isValidCheck(req)) {
     respondOnError(res, new Error('validation error'), 501);
   }
 
