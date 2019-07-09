@@ -23,7 +23,7 @@ BaseUrl =>  <b>host:port/api</b>
 |         후기 삭제         |       /review/:review_id        | DELETE |  body  |
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
 |       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
-|      감정상태리스트 가져오기  |        concern/personality         |  GET  | X |
+|      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
 
 
 
