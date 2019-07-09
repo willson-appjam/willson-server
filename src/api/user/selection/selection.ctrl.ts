@@ -10,7 +10,7 @@ const postSelectionCtrl = async (req: express.Request, res: express.Response, ne
   })
     .catch((e: any) => {
       if (e.own === 'CustomError') respondOnError(res, e, e.code)
-		else respondOnError(res, e, 2102, 500);
+		  else respondOnError(res, e, 2102, 500);
     })
 }
 

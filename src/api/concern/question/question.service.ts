@@ -87,7 +87,29 @@ const getUserQuestion = (req: any, res: any) => {
   })
 }
 
+
+const putUserQuestionStatus = (req: any, res: any) => {
+  return new Promise(async (resolve, reject) => {
+    
+    const { body, user } = req
+    const connection = await dbConnection();
+    try {
+
+      await questionModel.updateQuestionStatus(connection, body, user)
+      resolve({})
+      
+    } catch (e) {
+      console.log(e);
+      reject(e)
+    } finally {
+      connection.end();
+    }
+  })
+}
+
+
 export default {
   getUserQuestion,
   postUserQuestion,
+  putUserQuestionStatus,
 }

@@ -9,7 +9,7 @@ const postSelectionService = (req: any,res: any) => {
     const connection: any = await dbConnection();
 
     try {
-      const body = req.body;
+      const { body } = req;
       const {user} = req;
 
       let helper_idx: any = await selectProfileHelper_idx(connection, user.user_idx)
@@ -23,6 +23,7 @@ const postSelectionService = (req: any,res: any) => {
         
       }
       await insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx]);
+    
       resolve({});
     } catch (e){
       reject(e);

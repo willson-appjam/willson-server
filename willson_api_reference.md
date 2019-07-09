@@ -428,7 +428,7 @@ header:  willson-token : jwt_token
 
 > Request
 
-```
+```java
 {
   "helper": {
   	"category_name": String,
@@ -444,7 +444,7 @@ header:  willson-token : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 {
     "code": 900,
@@ -481,7 +481,7 @@ header:  willson-token : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 {
 	"code": 1000,
@@ -529,7 +529,7 @@ header:  willson-token : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 {
 	"code": 1100,
@@ -593,7 +593,7 @@ header: "willson-token" : jwt_token
 
 > Request
 
-```
+```java
 {
   helper: {
   	"category_name": String,
@@ -609,7 +609,7 @@ header: "willson-token" : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 {
     "code": 1200,
@@ -636,7 +636,7 @@ url : **/helper/story**
 
 method : **GET**
 
-header:  willson-token : jwt_token
+header: 
 
 > Request
 
@@ -646,7 +646,7 @@ header:  willson-token : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 {
     "code": 1300,
@@ -702,7 +702,7 @@ header: "willson-token" : jwt_token
 
 > Request
 
-```
+```java
 {
   "question_idx": int
 }
@@ -710,7 +710,7 @@ header: "willson-token" : jwt_token
 
 > Response
 
-```
+```java
 성공 = 200
 result: {
     "code": 1400,
@@ -869,53 +869,6 @@ header => <b>user_session : jwt_token</b>
 ```
 
 
-
-### 유저의 헬퍼 결정하기
-
-url : /user/selection
-
-
-# 헬퍼
-
-### 헬퍼 등록
-
-url : <b>/helper/registration</b>
-
-method : <b>POST</b>
-
-header: "willson-token" : jwt_token
-
-> Request
-
-```
-{
-  "helper_idx" : int,
-  "question_idx" : int
-}
-```
-
-
-
-> Response
-
-```
-성공 = 200
-{
-    "code": 1900,
-    "data": {}
-}
-
-실패 = 500
-{
-	message: String,
-	code: int,
-	data: {}
-}
-    1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
-    1402: "SELECTION_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
-    1403: "HELPER_SELECTION_ERROR_ANYWAY" 
-```
-
 ### 감정 상태 리스트 가져오기
 
 url => <b>/api/concern/personality</b>
@@ -924,9 +877,12 @@ method => <b>POST</b>
 
 header =>  <b>user_session : jwt_token</b>
 
+
 > Request
+
 ```
 ```
+
 > Response
 
 ```java
@@ -944,6 +900,76 @@ header =>  <b>user_session : jwt_token</b>
 
 2000: "GET_PERSONALITY_LIST_SUCCESS",
 2001: "GET_PERSONALITY_LIST_VALIDATION_ERROR",
-2002: "GET_PERSONALITY_LIST_ERROR_ANYWAY",
+2002: "GET_PERSONALITY_LIST_ERROR_ANYWAY"
 ```
 
+
+### 유저의 헬퍼 결정하기
+
+url : /user/selection
+
+method : POST
+
+header: "willson-token" : jwt_token
+
+> Request
+
+```java
+{
+  "helper_idx" : int,
+  "question_idx" : int,
+  "status": "doing" : string,
+}
+```
+
+
+
+> Response
+
+```java
+성공 = 200
+{
+	message: ""USER_SELECTION_SUCCESS"",
+	code: 2100,
+  data: {},
+}
+
+실패 = 500
+  2101: "USER_SELECTION_VALIDATION_ERROR",
+  2102: "USER_SELECTION_ERROR_ANYWAY"
+```
+
+### 상담 종료하기
+
+url : /concern/question
+
+method : PUT
+
+header: "willson-token" : jwt_token
+
+> Request
+
+```java
+{
+  "question_idx" : int,
+  "status": "compelete" : string,
+}
+```
+
+
+
+> Response
+
+```java
+성공 = 200
+{
+	message: ""USER_SELECTION_SUCCESS"",
+	code: 2200,
+  data: {},
+}
+
+실패 = 500
+  2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
+  2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
+  2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
+```
