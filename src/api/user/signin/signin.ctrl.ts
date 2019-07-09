@@ -7,7 +7,7 @@ const postSigninCtrl = async (req: express.Request, res: express.Response, next:
   
   await signService.postSigninService(req, res, next)
   .then((result: any) => {
-    respondBasic(res, 100, result)
+    respondBasic(res, 200, result)
   })
   .catch((e: any) => {
     respondOnError(res, e, 202, 500)

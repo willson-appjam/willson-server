@@ -1,6 +1,6 @@
 import express from 'express'
 import dbconnection from '../../../lib/connection';
-import {selectUserInformation, selectUserPassword } from '../../../models/signin';
+import {selectUserInformation, selectUserPassword } from './signin.model';
 import { CustomError } from '../../../lib/middlewares/respond';
 import {cryptoPassword} from '../../../modules/cryptoPassword'
 import token from '../../../lib/middlewares/token'

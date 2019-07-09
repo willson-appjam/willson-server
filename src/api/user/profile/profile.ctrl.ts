@@ -6,10 +6,10 @@ import serviceStatusCode from '../../../lib/serviceStatusCode'
 const getProfileCtrl = async (req: any, res: any, next: any) => {
 	await profileService.getProfileService(req, res, next)
 	.then((result: any) => {
-		respondBasic(res, serviceStatusCode['GET_USER_PROFILE_LIST_SUCCESS'], result)
+		respondBasic(res, 300, result)
 	})
 .catch((e: any) => {
-	respondOnError(res, e, e.code, 500)
+	respondOnError(res, e, 301, 500)
 	})
 }
 

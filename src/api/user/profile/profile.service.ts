@@ -1,6 +1,7 @@
 import dbconnection from '../../../lib/connection'
 import { selectUserProfileList, selectPersonality, selectFeeling, selectExperience, selectUserPersonality }
-from '../../../models/profile';
+from './profile.model';
+import { CustomError } from '../../../lib/middlewares/respond'
 import {getAge} from '../../../modules/getAge'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 
@@ -9,15 +10,19 @@ const getProfileService = (req: any, res: any, next: any) => {
 		try {
 			const {params} = req
 			if (!params.question_idx) {
-				reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
-				return
+				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
+        return
+				//reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
+				//return
 			}
 
 			const connection = await dbconnection();
 			const userProfileList : any = await selectUserProfileList(connection, params)
 
 			if(userProfileList.length == 0){
-				reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
+				reject(new CustomError(null, serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'], { params }))
+        return
+				//reject({ code: serviceStatusCode['USER_PROFILE_LIST_VALIDATION_ERROR'] })
 			}
 
 			const personality : any = await selectPersonality(connection, params)
