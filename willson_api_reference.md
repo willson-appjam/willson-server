@@ -23,6 +23,7 @@ BaseUrl =>  <b>host:port/api</b>
 |         후기 삭제         |       /review/:review_id        | DELETE |  body  |
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
 |       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
+|      감정상태리스트 가져오기  |        concern/personality         |  GET  | X |
 
 
 
@@ -903,7 +904,7 @@ header: "willson-token" : jwt_token
     1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
     1402: "SELECTION_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
     1403: "HELPER_SELECTION_ERROR_ANYWAY" 
-
+```
 
 ### 감정 상태 리스트 가져오기
 
@@ -914,12 +915,8 @@ method => <b>POST</b>
 header =>  <b>user_session : jwt_token</b>
 
 > Request
-
-​```java
-# request
-
 ```
-
+```
 > Response
 
 ```java
