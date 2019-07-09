@@ -35,7 +35,26 @@ const postUserQuestion = async (req: any, res: any) => {
 	})
 }
 
+const putUserQuestion = async (req: any, res: any) => {
+  const { body } = req
+  
+  if(!isValidCheck(req)) {
+    respondOnError(res, new Error('validation error'), 2201, 500)
+    return;
+  }
+
+  await questionService.putUserQuestionStatus(req, res)
+  .then((result: any) => {
+    respondBasic(res, 2200, result)
+	})
+	.catch((e: any) => {
+    if(e.own === 'CustomError') respondOnError(res, e, e.code)
+    else respondOnError(res, e, 2202);
+  })
+  
+}
 export {
   getUserQuestionList,
   postUserQuestion,
+  putUserQuestion,
 }

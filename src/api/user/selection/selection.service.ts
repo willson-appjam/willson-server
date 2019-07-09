@@ -3,8 +3,8 @@ import dbconnection from '../../../lib/connection';
 import token from '../../../lib/middlewares/token'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import { CustomError } from '../../../lib/middlewares/respond';
-import {insertUserSelection} from '../../../models/user_selection.model'
-
+import { insertUserSelection } from '../../../models/user_selection.model'
+import questionModel from '../../concern/question/question.model'
 
 const postSelectionService = (req: any, res: any, next: any) => {
   return new Promise(async (resolve, reject) => {
@@ -19,6 +19,8 @@ const postSelectionService = (req: any, res: any, next: any) => {
 
       const connection = await dbconnection()
       const user_selection = await insertUserSelection(connection, body, user)
+      await questionModel.updateQuestionStatus(connection, body, user);
+      
       resolve({});
       
     } catch(e){
