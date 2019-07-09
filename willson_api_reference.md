@@ -390,6 +390,7 @@ header:  willson-token : jwt_token
 성공 = 200
 {
     "code": 900,
+    "message": "HELPER_REGISTRATION_SUCCESS",
     "data": {}
 }
 
@@ -421,6 +422,7 @@ header:  willson-token : jwt_token
 성공 = 200
 {
 	"code": 1000,
+    "message": "GET_HELPER_LIST_SUCCESS",
 	"data": {
 		"helper":[
 		{ "nickname": String,
@@ -463,6 +465,7 @@ header:  willson-token : jwt_token
 성공 = 200
 {
 	"code": 1100,
+    "message": "GET_HELPER_PROFILE_SUCCESS",
 	"data": {
 		"helper": [
 		{ 
@@ -537,6 +540,7 @@ header: "willson-token" : jwt_token
 성공 = 200
 {
     "code": 1200,
+    "message": "UPDATE_HELPER_PROFILE_SUCCESS",
     "data": {}
 }
 
@@ -568,6 +572,7 @@ header:  willson-token : jwt_token
 성공 = 200
 {
     "code": 1300,
+    "message": "GET_HELPER_STORY_SUCCESS",
     "data": [
         {
             "nickname": String,
@@ -626,6 +631,7 @@ header: "willson-token" : jwt_token
 성공 = 200
 result: {
     "code": 1400,
+    "message": "HELPER_SELECTION_SUCCESS",
     "data": {}
 }
 
