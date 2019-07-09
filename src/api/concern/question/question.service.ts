@@ -87,7 +87,32 @@ const getUserQuestion = (req: any, res: any) => {
   })
 }
 
+
+const putUserQuestionStatus = (req: any, res: any) => {
+  return new Promise(async (resolve, reject) => {
+    
+    const { body, user } = req
+    const connection = await dbConnection();
+    try {
+
+      const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
+      if(statusResult.affectedRows == 0) {
+        reject(new CustomError(null, 2203, body ))
+      }
+      resolve({})
+      
+    } catch (e) {
+      console.log(e);
+      reject(e)
+    } finally {
+      connection.end();
+    }
+  })
+}
+
+
 export default {
   getUserQuestion,
   postUserQuestion,
+  putUserQuestionStatus,
 }
