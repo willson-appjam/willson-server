@@ -396,6 +396,11 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     901: "HELPER_REGISTRATION_VALIDATION_ERROR" (body에 null값 존재)
     902: "HELPER_REGISTRATION_ERROR_ANYWAY"
 
@@ -439,6 +444,11 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1001: "HELPER_LIST_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
     1002: "GET_HELPER_LIST_ERROR_ANYWAY"
 
@@ -505,6 +515,11 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1101: "PROFILE_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
     1102: "GET_HELPER_PROFILE_ERROR_ANYWAY"
 ```
@@ -546,6 +561,11 @@ header: "willson-token" : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1201: "USER_IS_NOT_HELPER" (헬퍼로 등록되지 않은 유저)
     1202: "UPDATE_HELPER_PROFILE_ERROR_ANYWAY" 
     1203: "UPDATE_HELPER_PROFILE_VALIDATION_ERROR" (body에 null 값 존재)
@@ -604,6 +624,11 @@ header:  willson-token : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1301: "MISSING_HELPER_STORY" (누락된 헬퍼 스토리 존재 (5개가 아닐 때))
     1302: "GET_HELPER_STORY_ERROR_ANYWAY"
 ```
@@ -637,6 +662,11 @@ result: {
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 고민을 선택)
     1402: "SELECTION_HELPER_DOES_NOT_EXIST" (헬퍼가 아닌 유저가 선택)
     1403: "HELPER_SELECTION_ERROR_ANYWAY"
@@ -776,6 +806,11 @@ header: "willson-token" : jwt_token
 }
 
 실패 = 500
+{
+	message: String,
+	code: int,
+	data: {}
+}
     1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
     1402: "SELECTION_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
     1403: "HELPER_SELECTION_ERROR_ANYWAY" 
