@@ -36,7 +36,7 @@ url : <b>/api/user/signup</b>
 
 method : <b>POST</b>
 
-header => <b> user_session : jwt_token </b>
+header =>
 
 > Request
 
@@ -91,8 +91,8 @@ header => <b> user_session : jwt_token </b>
     }
 }
     
- 101: SIGN_UP_DUPLICATE_DATA
- 102: SIGN_UP_VALIDATION_ERROR
+ 101: SIGN_UP_DUPLICATE_DATA (중복된 email값이 존재할 때)
+ 102: SIGN_UP_VALIDATION_ERROR (body에 null값이 존재할 때)
  103: SIGN_UP_ERROR_ANYWAY
 ```
 
@@ -104,7 +104,7 @@ url  :   <b>/api/user/signin</b>
 
 method : <b>POST</b>
 
-header => <b>user_session : jwt_token</b>
+header => 
 
 > Request
 
@@ -138,8 +138,8 @@ header => <b>user_session : jwt_token</b>
     }
 }
 
- 201: SIGN_IN_VALIDATION_ERROR
- 202: SIGN_IN_AUTHENTICATION_ERROR
+ 201: SIGN_IN_VALIDATION_ERROR (body에 null값 존재)
+ 202: SIGN_IN_AUTHENTICATION_ERROR (없는 email이거나 비밀번호가 일치하지 않을 때)
  203: SIGN_IN_ERROR_ANYWAY
 ```
 
@@ -151,7 +151,7 @@ url : <b>/api/user/profile/:question_idx</b>
 
 method : <b>GET</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  
 
 > Request
 
@@ -216,7 +216,7 @@ header =>  <b>user_session : jwt_token</b>
     }
 }
 
-301: USER_PROFILE_LIST_VALIDATION_ERROR
+301: USER_PROFILE_LIST_VALIDATION_ERROR (question_idx가 없는 값일 때)
 302: USER_PROFILE_LIST_ERROR_ANYWAY
 ```
 
@@ -737,7 +737,7 @@ url : <b>/api/helper/:helper_idx/review</b>
 
 method : <b>GET</b>
 
-header => <b>user_session : jwt_token</b>
+header => 
 
 > Request
 
@@ -776,7 +776,7 @@ header => <b>user_session : jwt_token</b>
     }
 }
 
-1501: USER_REVIEW_LIST_VALIDATION_ERROR
+1501: USER_REVIEW_LIST_VALIDATION_ERROR (helper_idx가 없는 값일 때)
 1502: USER_REVIEW_LIST_ERROR_ANYWAY
 ```
 
@@ -822,7 +822,7 @@ header =>  <b>user_session : jwt_token</b>
     data: {}
 }
 
-1601: REVIEW_VALIDATION_ERROR
+1601: REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
 1602: REVIEW_REGISTERED_ERROR_ANYWAY
 ```
 
@@ -865,8 +865,8 @@ header => <b>user_session : jwt_token</b>
     data: {}
 }
 
-1701: MODIFIED_REVIEW_VALIDATION_ERROR
-1702: MODIFIED_REVIEW_PERMISSION_ERROR
+1701: MODIFIED_REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
+1702: MODIFIED_REVIEW_PERMISSION_ERROR (리뷰를 작성한 사람만 수정 가능, 권한 오류)
 1703: MODIFIED_REVIEW_ERROR_ANYWAY
 ```
 
