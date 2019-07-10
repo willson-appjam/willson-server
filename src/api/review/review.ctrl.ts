@@ -49,7 +49,6 @@ const getMainReviewCtrl = async (req: any, res: any, next: any) => {
 	})
 }
 
-
 export{
 	postReviewCtrl,
 	putReviewCtrl,

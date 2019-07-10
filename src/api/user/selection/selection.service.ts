@@ -3,7 +3,7 @@ import dbconnection from '../../../lib/connection';
 import token from '../../../lib/middlewares/token'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import { CustomError } from '../../../lib/middlewares/respond';
-import { insertUserSelection } from '../../../models/user_selection.model'
+import { insertUserSelection } from './user_selection.model'
 import questionModel from '../../concern/question/question.model'
 
 const postSelectionService = (req: any, res: any, next: any) => {

@@ -12,11 +12,12 @@ const insertHelperReview = (connection: any, {stars, review_content, helper_idx,
 				helper_idx,
 				user_idx,
 				question_idx,
-				category_idx
+				category_idx,
+				cr_user
 				)
-			VALUES (?,?,?,?,?,?)
+			VALUES (?,?,?,?,?,?,?)
 			`
-		connection.query(query, [stars, review_content, helper_idx, user_idx, question_idx, category_idx], (err: Error, result:{}[]) => {
+		connection.query(query, [stars, review_content, helper_idx, user_idx, question_idx, category_idx, user_idx], (err: Error, result:{}[]) => {
 			if(err) reject(err) 
 			resolve(result)
 		})

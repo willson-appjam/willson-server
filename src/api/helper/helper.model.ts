@@ -9,17 +9,17 @@ const selectRegistrationCategory = (connection: any, category_name: any) => {
   })
 }
 
-const insertRegistrationCategoryList = (connection: any, [categoryList_name, categoryList_idx]: any) => {
+const insertRegistrationCategoryList = (connection: any, [categoryList_name, categoryList_idx, user_idx]: any) => {
   return new Promise ((resolve, reject) => {
     const query = `
     INSERT INTO 
-	    categoryList (categoryList_name, category_idx, count)
+	    categoryList (categoryList_name, category_idx, count, cr_user)
     VALUES 
-	    (?,?,1)
+	    (?,?,1,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
   
-    connection.query(query, [categoryList_name, categoryList_idx], (err: any, result: any) => {
+    connection.query(query, [categoryList_name, categoryList_idx, user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -27,7 +27,7 @@ const insertRegistrationCategoryList = (connection: any, [categoryList_name, cat
 
 const insertRegistrationHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject) => {
-    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx) VALUES (?,?,?,?,?)`
+    const query  = `INSERT INTO helper (category_idx, categoryList_idx, title, content, user_idx, cr_user) VALUES (?,?,?,?,?,?)`
     let q = connection.query(query, helper, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
@@ -38,9 +38,9 @@ const selectRegistrationExperience = (connection: any, experience_name: any) => 
   return new Promise((resolve, reject) => {
     const query = `
     INSERT INTO 
-    experience (experience_name)
+    experience (experience_name, cr_user)
   VALUES 
-    (?)
+    (?,?)
   ON DUPLICATE KEY UPDATE
   count = count + 1`
     connection.query(query, experience_name, (err: any, result: any) => {
@@ -51,7 +51,7 @@ const selectRegistrationExperience = (connection: any, experience_name: any) => 
 
 const insertRegistrationHelper_experience = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
-    const query = 'INSERT INTO helper_experience (experience_idx, helper_idx) values (?,?)';
+    const query = 'INSERT INTO helper_experience (experience_idx, helper_idx, cr_user) values (?,?,?)';
     connection.query(query, helper_arr, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
@@ -313,14 +313,14 @@ const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
       })
   })
 }
-const insertSelectionSelected_question = (connection: any, question_idx: any) => {
+const insertSelectionSelected_question = (connection: any, arr : any) => {
   return new Promise((resolve, reject)=> {
     const query=`
     INSERT INTO
-      selected_question (helper_idx, question_idx) VALUES (?, ?)
+      selected_question (helper_idx, question_idx, cr_user) VALUES (?, ?, ?)
   `;
     
-    connection.query(query, question_idx, (err: any, result: any) => {
+    connection.query(query, arr, (err: any, result: any) => {
         err ? reject(err) : resolve(result)
       })
   })
