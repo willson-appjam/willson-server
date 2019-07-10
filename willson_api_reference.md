@@ -396,6 +396,7 @@ header =>  <b>user_session : jwt_token</b>
       },
       questionInfo: {
         title: String,
+        question_idx: int
       },
       categoryInfo: {
         category_idx: int,
