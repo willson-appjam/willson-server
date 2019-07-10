@@ -25,7 +25,7 @@ const insertQuestionFeeling = (connection: Connection, { insertId }: any, feelin
 
     const query = `
       INSERT INTO
-        question_feeling (question_idx, feeling_idx)
+        question_feeling (question_idx, feeling_idx, cr_user)
       VALUES
         ?
     `

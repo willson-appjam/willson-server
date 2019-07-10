@@ -65,7 +65,7 @@ const getMainListService = (req: any, res: any, next: any) : any => {
 			const mainReviewList = []
 			for(let i = 1; i < 6; i++){
 				const showMainReviewList : any = await selectMainReviewList(connection, i)
-				mainReviewList.push(showMainReviewList)
+				mainReviewList.push(showMainReviewList[0])
 			}
 
 			resolve(mainReviewList)

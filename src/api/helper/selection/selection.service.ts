@@ -22,7 +22,7 @@ const postSelectionService = (req: any,res: any) => {
         reject(new CustomError(null, 1402, body))
         
       }
-      await insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx]);
+      await insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx, user.user_idx]);
     
       resolve({});
     } catch (e){

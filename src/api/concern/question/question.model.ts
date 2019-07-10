@@ -16,10 +16,11 @@ const insertUserQuestion = (connection: Connection, question : {}, { user_idx } 
           experience,
           categoryList_idx,
           agreement,
-          user_idx
-        ) values (?,?,?,?,?,?,?,?,?)
+          user_idx,
+          cr_user
+        ) values (?,?,?,?,?,?,?,?,?,?)
   `
-    connection.query(query, q, (err, result) => {
+    connection.query(query, [q, user_idx], (err, result) => {
       err ? reject(err) : resolve(result)
     })
   })
