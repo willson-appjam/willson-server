@@ -9,8 +9,8 @@ import questionModel from '../../concern/question/question.model'
 const postSelectionService = (req: any, res: any, next: any) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const {body} = req
-      const {user} = req
+      const { body } = req
+      const { user } = req
 
       if(!body.helper_idx || !body.question_idx) {
         reject(new CustomError(null, 2101 , body))
