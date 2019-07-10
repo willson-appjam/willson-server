@@ -24,7 +24,7 @@ BaseUrl =>  <b>host:port/api</b>
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
 |       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
 |      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
-
+|      상담 종료하기         |        /concern/question         |  put  | X |
 
 
 
@@ -392,11 +392,11 @@ header =>  <b>user_session : jwt_token</b>
 ```java
 {
   code: int,
-	message: String,
-	data: {
+  message: String,
+  data: {
     concernInfo: [{
       user: {
-        user_idx: String,
+        user_idx: int,
         nickname: String,
         gender: String,
         age: String,
@@ -405,11 +405,12 @@ header =>  <b>user_session : jwt_token</b>
         title: String,
       },
       categoryInfo: {
-        category_id: int,
+        category_idx: int,
         category_name: String,
       },   
     }, {...}]
-    size: int,
+    size: int
+  }
 }
 
 800: "GET_USER_QUESTION_LIST",
@@ -917,25 +918,57 @@ header: "willson-token" : jwt_token
 ```java
 {
   "helper_idx" : int,
-  "question_idx" : int
+  "question_idx" : int,
+  "status": "doing" : string,
 }
 ```
-
-
 
 > Response
 
 ```java
 성공 = 200
 {
-	message: ""USER_SELECTION_SUCCESS"",
-	code: 2100,
+  message: ""USER_SELECTION_SUCCESS"",
+  code: 2100,
   data: {},
 }
 
 실패 = 500
   2101: "USER_SELECTION_VALIDATION_ERROR",
   2102: "USER_SELECTION_ERROR_ANYWAY"
+```
+
+
+### 상담 종료하기
+
+url : /concern/question
+
+method : PUT
+
+header: "willson-token" : jwt_token
+
+> Request
+
+```java
+{
+  "question_idx" : int,
+  "status": "compelete" : string,
+}
+```
+
+> Response
+
+```java
+성공 = 200
+{
+	message: "USER_SELECTION_SUCCESS",
+	code: 2200,
+    data: {}
+}
+실패 = 500
+  2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
+  2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
+  2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
 ```
 
 ### 메인: 질문자들의 후기
@@ -946,23 +979,13 @@ method : GET
 
 header: 
 
-> Request
-
-```java
-```
-
-
-
-> Response
-
 ```java
 성공 = 200
 {
-	message: "GET_MAIN_REVIEW_LIST_SUCCESS",
-	code: 2300,
+    message: "GET_MAIN_REVIEW_LIST_SUCCESS",
+    code: 2300,
     data: {},
 }
 
 실패 = 500
   2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
-```

@@ -1,12 +1,21 @@
 import express from 'express';
-import serviceStatusCode from '../../lib/serviceStatusCode'
 import _ from 'lodash';
+import moment from 'moment'
+import serviceStatusCode from '../../lib/serviceStatusCode'
+import { prod } from '../../logger';
 
-const respondBasic = (res: express.Response, code: number, data: object) => {
+
+const respondBasic = (req: any, res: any, code: number, data: object) => {
   
+  const time = Date.now() - req.start;
+  
+  console.log('')
+  console.log('[REQ] =>', req.method, req.originalUrl, 200, JSON.stringify(req.body), '-', time +'ms');
+  console.log('')
   console.log('code => ', code)
   console.log('message => ', serviceStatusCode[`${code}`])
   console.log('data => ', data)
+  console.log('')
 
   res
     .status(200)
@@ -17,12 +26,18 @@ const respondBasic = (res: express.Response, code: number, data: object) => {
   })
 }
 
-const respondOnError = (res: express.Response, err: any, code: any, status: number = 500, result?: object) => {
+const respondOnError = (req: any, res: any, err: any, code: any, status: number = 500, result?: object) => {
 
-  console.error('STATUS => ', status)
-  console.error('CODE => ', code)
-  console.error('RESULT => ', result || {})
+  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  const time = Date.now() - req.start;  
+
+  console.log('')
+  console.log('[Req] =>', req.method, fullUrl, status, JSON.stringify(req.body), '-', time +'ms');
+  console.log('code => ', code)
+  console.log('message => ', serviceStatusCode[`${code}`])
+  console.log('data => ', result)
   console.error('ERROR STACK => ', err)
+  console.log('')
 
   res.status(status).send({
     code,

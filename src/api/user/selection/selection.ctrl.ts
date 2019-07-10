@@ -6,11 +6,11 @@ import serviceStatusCode from '../../../lib/serviceStatusCode'
 const postSelectionCtrl = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
   await selectionService.postSelectionService(req, res, next)
     .then((result: any) => {
-      respondBasic(res, 2100, result)
+      respondBasic(req, res, 2100, result)
   })
     .catch((e: any) => {
-      if (e.own === 'CustomError') respondOnError(res, e, e.code)
-		else respondOnError(res, e, 2102, 500);
+      if (e.own === 'CustomError') respondOnError(req, res, e, e.code)
+		  else respondOnError(req, res, e, 2102, 500);
     })
 }
 

@@ -1,8 +1,9 @@
 import dbconnection from '../../lib/connection'
-import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview}
+import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview, selectMainReviewList}
 from './review.model'
 import serviceStatusCode from '../../lib/serviceStatusCode'
 import { CustomError } from '../../lib/middlewares/respond'
+import moment from 'moment'
 
 
 
@@ -50,7 +51,28 @@ const putReviewService = (req: any, res: any, next: any) => {
 }
 
 
+const getMainListService = (req: any, res: any, next: any) : any => {
+	return new Promise(async (resolve, reject ) : Promise<any> => {
+		try{
+			
+			const connection = await dbconnection();
+			
+			const mainReviewList = []
+			for(let i = 1; i < 6; i++){
+				const showMainReviewList : any = await selectMainReviewList(connection, i)
+				mainReviewList.push(showMainReviewList)
+			}
+
+			resolve(mainReviewList)
+	}catch(e){
+		console.log(e)
+		reject(e)
+		}
+	})
+}
+
 export default{
 	postReviewService,
-	putReviewService
+	putReviewService,
+	getMainListService
 }
