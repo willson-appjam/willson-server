@@ -61,15 +61,7 @@ header =>
 	code: 100,
     message: SIGN_UP_SUCCESS,
     data: {
-        body: {
-            nickname: String,
-            gender: String,
-            age: int,
-            email: String,
-            password: String,
-            device_token: String,
-            salt: String
-        }
+        body: { }
     }
 }
 
