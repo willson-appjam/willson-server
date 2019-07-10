@@ -171,6 +171,7 @@ header =>
         ],
         question: {
             category_name: String,
+            categoryList_name: String,
             weight: int,
             content: String,
             helper_gender: String,

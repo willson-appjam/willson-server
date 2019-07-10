@@ -10,11 +10,11 @@ import serviceStatusCode from '../../../lib/serviceStatusCode'
 
 const postSigninService = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   return new Promise(async (resolve, reject) => {
+    const connection = await dbconnection()
     try {
       const {body} = req
       let userToken = null
 
-      const connection = await dbconnection()
       const [userInfo] : any = await selectUserInformation(connection, body)
       if(!userInfo){
         reject(new CustomError(null, 202, body))        
@@ -37,7 +37,9 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
     } catch(e){
       console.log(e)
       reject(e)
-    } 
+    }finally{
+      connection.end()
+    }
   })
 }
 
