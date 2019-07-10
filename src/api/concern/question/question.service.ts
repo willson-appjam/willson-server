@@ -1,5 +1,6 @@
 import express from 'express';
 import _ from 'lodash';
+import moment from 'moment';
 
 import dbConnection from '../../../lib/connection';
 import questionModel from './question.model';
@@ -10,6 +11,7 @@ import {getAge} from '../../../modules/getAge';
 
 import { qList, Question, User, Category } from './question.interface';
 import { CustomError } from '../../../lib/middlewares/respond';
+import { create } from 'domain';
 
 const postUserQuestion = (req: any, res: any) => {
   
@@ -62,9 +64,12 @@ const getUserQuestion = (req: any, res: any) => {
           age: String(getAge(value.age))
         }
 
+        let currentTime = moment(value.create_time).add(9, 'hours').format('YYYY-MM-DD hh:mm:ss');
+       
         const questionInfo : Question = {
           title: value.content,
-          question_idx: value.question_idx
+          question_idx: value.question_idx,
+          create_time: currentTime
         }
 
         const categoryInfo : Category = {
@@ -118,3 +123,7 @@ export default {
   postUserQuestion,
   putUserQuestionStatus,
 }
+
+
+
+

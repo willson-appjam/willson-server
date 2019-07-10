@@ -11,7 +11,8 @@ export interface User {
 
 export interface Question {
   title: string,
-  question_idx: number
+  question_idx: number,
+  create_time: string
 }
 
 export interface Category {
