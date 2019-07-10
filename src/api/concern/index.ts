@@ -11,7 +11,7 @@ import authCheck from '../../lib/authCheck'
 const concern = express.Router();
 
 concern.get('/category/:category_idx', authCheck, getCategoryList);
-concern.post('/category', postCategoryList);
+concern.post('/category', authCheck, postCategoryList);
 
 concern.get('/feeling', getFeelingList);
 
