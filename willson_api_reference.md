@@ -937,3 +937,32 @@ header: "willson-token" : jwt_token
   2101: "USER_SELECTION_VALIDATION_ERROR",
   2102: "USER_SELECTION_ERROR_ANYWAY"
 ```
+
+### 메인: 질문자들의 후기
+
+url : /review/story
+
+method : GET
+
+header: 
+
+> Request
+
+```java
+```
+
+
+
+> Response
+
+```java
+성공 = 200
+{
+	message: "GET_MAIN_REVIEW_LIST_SUCCESS",
+	code: 2300,
+    data: {},
+}
+
+실패 = 500
+  2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
+```
