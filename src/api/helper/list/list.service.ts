@@ -56,7 +56,13 @@ const getListService = (req: any, res: any) => {
         for (let i = 0; i < helper_num; i++) {
           //나이 알고리즘 고치기 
           let score = 10;
-          const difference = helpers_info[i].age - user_age - 5;
+          let difference = 0;
+          if (user_age > 31){
+            difference = helpers_info[i].age - user_age - (36 - helpers_info[i].age);
+          }else{
+            difference = helpers_info[i].age - user_age - 5;
+          }
+          
           if (difference >= 0 && difference <= 10) {
             score = score - difference;
           }

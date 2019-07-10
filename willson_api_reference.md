@@ -24,7 +24,8 @@ BaseUrl =>  <b>host:port/api</b>
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
 |       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
 |      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
-|      상담 종료하기         |        /concern/question         |  put  | X |
+|      상담 종료하기         |        /concern/question         |  PUT | X |
+|      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
 
 
 
@@ -35,7 +36,7 @@ url : <b>/api/user/signup</b>
 
 method : <b>POST</b>
 
-header => <b> user_session : jwt_token </b>
+header =>
 
 > Request
 
@@ -60,15 +61,7 @@ header => <b> user_session : jwt_token </b>
 	code: 100,
     message: SIGN_UP_SUCCESS,
     data: {
-        body: {
-            nickname: String,
-            gender: String,
-            age: int,
-            email: String,
-            password: String,
-            device_token: String,
-            salt: String
-        }
+        body: { }
     }
 }
 
@@ -90,8 +83,8 @@ header => <b> user_session : jwt_token </b>
     }
 }
     
- 101: SIGN_UP_DUPLICATE_DATA
- 102: SIGN_UP_VALIDATION_ERROR
+ 101: SIGN_UP_DUPLICATE_DATA (중복된 email값이 존재할 때)
+ 102: SIGN_UP_VALIDATION_ERROR (body에 null값이 존재할 때)
  103: SIGN_UP_ERROR_ANYWAY
 ```
 
@@ -103,7 +96,7 @@ url  :   <b>/api/user/signin</b>
 
 method : <b>POST</b>
 
-header => <b>user_session : jwt_token</b>
+header => 
 
 > Request
 
@@ -137,8 +130,8 @@ header => <b>user_session : jwt_token</b>
     }
 }
 
- 201: SIGN_IN_VALIDATION_ERROR
- 202: SIGN_IN_AUTHENTICATION_ERROR
+ 201: SIGN_IN_VALIDATION_ERROR (body에 null값 존재)
+ 202: SIGN_IN_AUTHENTICATION_ERROR (없는 email이거나 비밀번호가 일치하지 않을 때)
  203: SIGN_IN_ERROR_ANYWAY
 ```
 
@@ -150,7 +143,7 @@ url : <b>/api/user/profile/:question_idx</b>
 
 method : <b>GET</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  
 
 > Request
 
@@ -215,7 +208,7 @@ header =>  <b>user_session : jwt_token</b>
     }
 }
 
-301: USER_PROFILE_LIST_VALIDATION_ERROR
+301: USER_PROFILE_LIST_VALIDATION_ERROR (question_idx가 없는 값일 때)
 302: USER_PROFILE_LIST_ERROR_ANYWAY
 ```
 
@@ -392,11 +385,11 @@ header =>  <b>user_session : jwt_token</b>
 ```java
 {
   code: int,
-	message: String,
-	data: {
+  message: String,
+  data: {
     concernInfo: [{
       user: {
-        user_idx: String,
+        user_idx: int,
         nickname: String,
         gender: String,
         age: String,
@@ -405,11 +398,12 @@ header =>  <b>user_session : jwt_token</b>
         title: String,
       },
       categoryInfo: {
-        category_id: int,
+        category_idx: int,
         category_name: String,
       },   
     }, {...}]
-    size: int,
+    size: int
+  }
 }
 
 800: "GET_USER_QUESTION_LIST",
@@ -735,7 +729,7 @@ url : <b>/api/helper/:helper_idx/review</b>
 
 method : <b>GET</b>
 
-header => <b>user_session : jwt_token</b>
+header => 
 
 > Request
 
@@ -774,7 +768,7 @@ header => <b>user_session : jwt_token</b>
     }
 }
 
-1501: USER_REVIEW_LIST_VALIDATION_ERROR
+1501: USER_REVIEW_LIST_VALIDATION_ERROR (helper_idx가 없는 값일 때)
 1502: USER_REVIEW_LIST_ERROR_ANYWAY
 ```
 
@@ -820,7 +814,7 @@ header =>  <b>user_session : jwt_token</b>
     data: {}
 }
 
-1601: REVIEW_VALIDATION_ERROR
+1601: REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
 1602: REVIEW_REGISTERED_ERROR_ANYWAY
 ```
 
@@ -863,8 +857,8 @@ header => <b>user_session : jwt_token</b>
     data: {}
 }
 
-1701: MODIFIED_REVIEW_VALIDATION_ERROR
-1702: MODIFIED_REVIEW_PERMISSION_ERROR
+1701: MODIFIED_REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
+1702: MODIFIED_REVIEW_PERMISSION_ERROR (리뷰를 작성한 사람만 수정 가능, 권한 오류)
 1703: MODIFIED_REVIEW_ERROR_ANYWAY
 ```
 
@@ -922,15 +916,13 @@ header: "willson-token" : jwt_token
 }
 ```
 
-
-
 > Response
 
 ```java
 성공 = 200
 {
-	message: ""USER_SELECTION_SUCCESS"",
-	code: 2100,
+  message: ""USER_SELECTION_SUCCESS"",
+  code: 2100,
   data: {},
 }
 
@@ -938,6 +930,7 @@ header: "willson-token" : jwt_token
   2101: "USER_SELECTION_VALIDATION_ERROR",
   2102: "USER_SELECTION_ERROR_ANYWAY"
 ```
+
 
 ### 상담 종료하기
 
@@ -956,20 +949,36 @@ header: "willson-token" : jwt_token
 }
 ```
 
-
-
 > Response
 
 ```java
 성공 = 200
 {
-	message: ""USER_SELECTION_SUCCESS"",
+	message: "USER_SELECTION_SUCCESS",
 	code: 2200,
-  data: {},
+    data: {}
 }
-
 실패 = 500
   2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
   2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
   2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
 ```
+
+### 메인: 질문자들의 후기
+
+url : /review/story
+
+method : GET
+
+header: 
+
+```java
+성공 = 200
+{
+    message: "GET_MAIN_REVIEW_LIST_SUCCESS",
+    code: 2300,
+    data: {},
+}
+
+실패 = 500
+  2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"

@@ -6,6 +6,6 @@ const review = express.Router()
 
 review.post('/', authCheck, postReviewCtrl);
 review.put('/:review_idx', authCheck, putReviewCtrl);
-review.get('/',getMainReviewCtrl);
+review.get('/story',getMainReviewCtrl);
 
 export default review
