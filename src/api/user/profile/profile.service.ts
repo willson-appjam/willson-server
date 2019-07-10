@@ -4,17 +4,17 @@ from './profile.model';
 import { CustomError } from '../../../lib/middlewares/respond'
 import {getAge} from '../../../modules/getAge'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
+import user from '../index';
 
 const getProfileService = (req: any, res: any, next: any) => {
 	return new Promise(async(resolve, reject) => {
+		const connection = await dbconnection()
 		try {
 			const {params} = req
 			if (!params.question_idx) {
 				reject(new CustomError(null, 301, { params }))
         return
 			}
-
-			const connection = await dbconnection();
 			const userProfileList : any = await selectUserProfileList(connection, params)
 
 			if(userProfileList.length == 0){
@@ -37,6 +37,7 @@ const getProfileService = (req: any, res: any, next: any) => {
 				user_personality: userPersonality,
 				question : {
 					category_name : userProfileList[0].category_name,
+					categoryList_name : userProfileList[0].categoryList_name,
 					weight : userProfileList[0].weight,
 					content : userProfileList[0].content,
 					helper_gender : userProfileList[0].helper_gender,
@@ -51,6 +52,8 @@ const getProfileService = (req: any, res: any, next: any) => {
 		}catch(e){
 			console.log(e)
 			reject(e)
+		}finally{
+			connection.end()
 		}
 	}) 
 }

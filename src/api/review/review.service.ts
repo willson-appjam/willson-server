@@ -53,6 +53,8 @@ const putReviewService = (req: any, res: any, next: any) => {
 
 const getMainListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
+
+		const connection = await dbconnection()
 		try{
 			
 			const connection = await dbconnection();
@@ -67,6 +69,8 @@ const getMainListService = (req: any, res: any, next: any) : any => {
 	}catch(e){
 		console.log(e)
 		reject(e)
+		} finally{
+			connection.end()
 		}
 	})
 }

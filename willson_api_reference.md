@@ -171,6 +171,7 @@ header =>
         ],
         question: {
             category_name: String,
+            categoryList_name: String,
             weight: int,
             content: String,
             helper_gender: String,
@@ -398,6 +399,7 @@ header =>  <b>user_session : jwt_token</b>
       },
       questionInfo: {
         title: String,
+        question_idx: int
       },
       categoryInfo: {
         category_idx: int,

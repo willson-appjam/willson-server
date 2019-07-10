@@ -80,6 +80,7 @@ const getUserQuestion = (req: any, res: any) => {
 
         const questionInfo : Question = {
           title: value.content,
+          question_idx: value.question_idx
         }
 
         const categoryInfo : Category = {
