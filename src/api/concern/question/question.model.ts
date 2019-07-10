@@ -53,8 +53,28 @@ const updateQuestionStatus = (connection: Connection, { question_idx, status }: 
   })
 }
 
+
+const selectUserQuestionSelected = (connection: Connection, question_idx: any, user_idx: any) : Promise<Array<{}>> => {
+  return new Promise((resolve, reject) => {
+    const query = `
+      SELECT
+        *
+      FROM
+        selected_question as S
+      INNER JOIN
+	      helper as H on H.helper_idx = S.helper_idx
+      WHERE
+        S.question_idx = ? and H.user_idx = ?
+      `
+    const Query = connection.query(query, [question_idx, user_idx],(err, result) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+
 export default {
   insertUserQuestion,
   selectUserQuestionWithStatus,
   updateQuestionStatus,
+  selectUserQuestionSelected
 }

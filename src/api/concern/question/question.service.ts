@@ -68,27 +68,35 @@ const getUserQuestion = (req: any, res: any) => {
       const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
       
       let concernInfo: {}[] = [];
+
+      for (let i =0 ; i<qList.length; i++){
       
-      _.forEach(qList, (value, index) => {
         
         const userInfo : User = {
-          user_idx: value.user_idx,
-          nickname: value.nickname,
-          gender: value.gender,
-          age: String(getAge(value.age))
+          user_idx: qList[i].user_idx,
+          nickname: qList[i].nickname,
+          gender: qList[i].gender,
+          age: String(getAge(qList[i].age))
         }
 
-        let currentTime = moment(value.create_time).add(9, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        let currentTime = moment(qList[i].create_time).add(9, 'hours').format('YYYY-MM-DD hh:mm:ss');
+        let status = 'x'
+
+        let statusCheck: any = await questionModel.selectUserQuestionSelected(connection, qList[i].question_idx, user.user_idx);
+        if (statusCheck.length){
+          status= 'o'
+        }
        
         const questionInfo : Question = {
-          title: value.content,
-          question_idx: value.question_idx,
-          create_time: currentTime
+          title: qList[i].content,
+          question_idx: qList[i].question_idx,
+          create_time: currentTime,
+          status: status
         }
 
         const categoryInfo : Category = {
-          category_idx: value.category_idx,
-          category_name: value.category_name
+          category_idx: qList[i].category_idx,
+          category_name: qList[i].category_name
         }
 
         concernInfo.push({
@@ -96,8 +104,8 @@ const getUserQuestion = (req: any, res: any) => {
           questionInfo,
           categoryInfo,
         })
-      })
-      
+    }
+
       resolve({ concernInfo, size: qList.length })
 
     } catch (e) {

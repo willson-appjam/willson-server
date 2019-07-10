@@ -4,6 +4,7 @@ import profile from './profile';
 import story from './story';
 import selection from './selection';
 import list from './list';
+import myprofile from './myprofile';
 import {getListCtrl} from './review/review.ctrl';
 
 
@@ -11,6 +12,7 @@ const helper = express.Router();
 
 
 helper.use('/registration', registration);
+helper.use('/myprofile', myprofile);
 helper.use('/profile', profile);
 helper.use('/story', story);
 helper.use('/selection', selection);
