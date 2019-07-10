@@ -5,8 +5,7 @@ export WILLSON=$HOME/deploy/willson
 
 NODE_ENV=src
 
-yarn build:dev
-
 pm2 delete willson
+yarn build:dev
 pm2 start --name willson $WILLSON/config/dist/bundle.js
 

@@ -10,11 +10,11 @@ const respondBasic = (req: any, res: any, code: number, data: object) => {
   const time = Date.now() - req.start;
   
   console.log('')
-  console.log('[REQ] =>', req.method, req.originalUrl, 200, JSON.stringify(req.body), '-', time +'ms');
+  console.log('[REQ] =>', moment().format('YYYY-MM-DD HH:mm:ss'), req.method, req.originalUrl, 200, JSON.stringify(req.body), '-', time +'ms');
   console.log('')
   console.log('code => ', code)
   console.log('message => ', serviceStatusCode[`${code}`])
-  console.log('data => ', data)
+  // console.log('data => ', data)
   console.log('')
 
   res
@@ -32,7 +32,7 @@ const respondOnError = (req: any, res: any, err: any, code: any, status: number 
   const time = Date.now() - req.start;  
 
   console.log('')
-  console.log('[Req] =>', req.method, fullUrl, status, JSON.stringify(req.body), '-', time +'ms');
+  console.log('[Req] =>',  moment().format('YYYY-MM-DD HH:mm:ss'), req.method, fullUrl, status, JSON.stringify(req.body), '-', time +'ms');
   console.log('code => ', code)
   console.log('message => ', serviceStatusCode[`${code}`])
   console.log('data => ', result)
