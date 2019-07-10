@@ -17,7 +17,7 @@ const postSelectionService = (req: any, res: any, next: any) => {
         return
       }
 
-      const connection = await dbconnection()
+      const connection: any = await dbconnection()
       const user_selection = await insertUserSelection(connection, body, user)
       await questionModel.updateQuestionStatus(connection, body, user);
       

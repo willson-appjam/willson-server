@@ -15,7 +15,7 @@ const postUserQuestion = (req: any, res: any) => {
   
   return new Promise(async (resolve, reject) => {
     
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     
     try {
       
@@ -55,14 +55,14 @@ const postUserQuestion = (req: any, res: any) => {
       console.log(e);
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }
 
 const getUserQuestion = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
       const { user } = req
       const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
@@ -100,7 +100,7 @@ const getUserQuestion = (req: any, res: any) => {
     } catch (e) {
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }
@@ -110,7 +110,7 @@ const putUserQuestionStatus = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     
     const { body, user } = req
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
 
       const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
@@ -123,7 +123,7 @@ const putUserQuestionStatus = (req: any, res: any) => {
       console.log(e);
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }

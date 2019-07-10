@@ -8,7 +8,7 @@ import user from '../index';
 
 const getProfileService = (req: any, res: any, next: any) => {
 	return new Promise(async(resolve, reject) => {
-		const connection = await dbconnection()
+		const connection: any = await dbconnection()
 		try {
 			const {params} = req
 			if (!params.question_idx) {
@@ -53,7 +53,7 @@ const getProfileService = (req: any, res: any, next: any) => {
 			console.log(e)
 			reject(e)
 		}finally{
-			connection.end()
+			connection.release()
 		}
 	}) 
 }

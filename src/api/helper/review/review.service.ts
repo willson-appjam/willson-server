@@ -11,7 +11,7 @@ import dbConnection from '../../../lib/connection';
 const getListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
 
-		const connection = await dbconnection();
+		const connection: any = await dbconnection();
 		try{
 			const {params} = req
 
@@ -43,7 +43,7 @@ const getListService = (req: any, res: any, next: any) : any => {
 		console.log(e)
 		reject(e)
 		} finally{
-			connection.end()
+			connection.release()
 		}
 	})
 }
