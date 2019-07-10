@@ -171,6 +171,7 @@ header =>
         ],
         question: {
             category_name: String,
+            categoryList_name: String,
             weight: int,
             content: String,
             helper_gender: String,
@@ -273,7 +274,9 @@ header =>  <b>user_session : jwt_token</b>
 {
 	message: String,
 	code: int,
-  data: {},
+  data: {
+    categoryList_idx: int
+  },
 }
 
 500: "POST_CATEGORY_LIST_SUCCESS",
@@ -355,7 +358,9 @@ header =>  <b>user_session : jwt_token</b>
 {
 	message: String,
 	code: int,
-	data: {},
+	data: {
+    question_idx: int,
+  },
 }
 
 700: "POST_USER_QUESTION_SUCCESS",

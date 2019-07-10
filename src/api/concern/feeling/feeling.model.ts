@@ -23,8 +23,6 @@ const insertQuestionFeeling = (connection: Connection, { insertId }: any, feelin
       value.push([insertId, element])
     })
 
-    console.log(value);
-
     const query = `
       INSERT INTO
         question_feeling (question_idx, feeling_idx)

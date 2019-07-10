@@ -13,7 +13,7 @@ const postReviewService = (req: any, res: any, next: any) => {
 			const {body} = req
 			const {user} = req
 			
-			const connection = await dbconnection()
+			const connection: any = await dbconnection()
 			const uploadReview = await insertHelperReview(connection, body, user)			
 			const modifiedReviewCount = await updateHelperReviewCount(connection, body)		
 			const avgStars : any = await selectAvgStars(connection, body)
@@ -35,7 +35,7 @@ const putReviewService = (req: any, res: any, next: any) => {
 			const {params} = req
 			const {user} = req
 
-			const connection = await dbconnection();
+			const connection: any = await dbconnection();
 			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
 			if (!idxFromReview[0]){
 				reject(new CustomError(null, 1702, body))
@@ -53,10 +53,9 @@ const putReviewService = (req: any, res: any, next: any) => {
 
 const getMainListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
+
+		const connection: any = await dbconnection()
 		try{
-			
-			const connection = await dbconnection();
-			
 			const mainReviewList = []
 			for(let i = 1; i < 6; i++){
 				const showMainReviewList : any = await selectMainReviewList(connection, i)
@@ -67,6 +66,8 @@ const getMainListService = (req: any, res: any, next: any) : any => {
 	}catch(e){
 		console.log(e)
 		reject(e)
+		} finally{
+			connection.release()
 		}
 	})
 }

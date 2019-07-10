@@ -4,11 +4,14 @@ import dbconnection from '../../../lib/connection'
 import {selectReviewList} from './reviewlist.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import { CustomError } from '../../../lib/middlewares/respond'
+import dbConnection from '../../../lib/connection';
 
 
 
 const getListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
+
+		const connection: any = await dbconnection();
 		try{
 			const {params} = req
 
@@ -16,8 +19,6 @@ const getListService = (req: any, res: any, next: any) : any => {
 				reject(new CustomError(null, 1501, { params }))
         return
 			}
-
-			const connection = await dbconnection();
 			const showReviewList : any = await selectReviewList(connection, params)
 
 			if(showReviewList.length == 0){
@@ -41,6 +42,8 @@ const getListService = (req: any, res: any, next: any) : any => {
 	}catch(e){
 		console.log(e)
 		reject(e)
+		} finally{
+			connection.release()
 		}
 	})
 }
