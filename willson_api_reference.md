@@ -221,7 +221,7 @@ url : /api/concern/category/:category_id
 
 method : get
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -255,7 +255,7 @@ url : <b>/api/concern/category</b>
 
 method: <b>POST</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > request
 
@@ -292,7 +292,7 @@ url : <b>/api/concern/feeling</b>
 
 method: <b>GET</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -328,7 +328,7 @@ url => <b>/api/concern/question</b>
 
 method => <b>POST</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -377,7 +377,7 @@ url : <b>/api/concern/list</b>
 
 method: <b>GET</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -787,7 +787,7 @@ url : <b>/api/review</b>
 
 method : <b>POST</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -833,7 +833,7 @@ url : <b>/api/review/:review_idx</b>
 
 method : <b>PUT</b>
 
-header => <b>user_session : jwt_token</b>
+header => <b>willson-token : jwt_token</b>
 
 > Request
 
@@ -876,7 +876,7 @@ url => <b>/api/concern/personality</b>
 
 method => <b>POST</b>
 
-header =>  <b>user_session : jwt_token</b>
+header =>  <b>willson-token : jwt_token</b>
 
 
 > Request
