@@ -4,16 +4,17 @@ from './review.model'
 import serviceStatusCode from '../../lib/serviceStatusCode'
 import { CustomError } from '../../lib/middlewares/respond'
 import moment from 'moment'
+import dbConnection from '../../lib/connection';
 
 
 
 const postReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any>=>{
+		const connection = await dbconnection()
 		try{
 			const {body} = req
 			const {user} = req
 			
-			const connection = await dbconnection()
 			const uploadReview = await insertHelperReview(connection, body, user)			
 			const modifiedReviewCount = await updateHelperReviewCount(connection, body)		
 			const avgStars : any = await selectAvgStars(connection, body)
@@ -23,6 +24,8 @@ const postReviewService = (req: any, res: any, next: any) => {
 		}catch(e){
 			console.log(e)
 			reject(e)
+		} finally{
+			connection.end()
 		}
 	})
 }
@@ -30,12 +33,12 @@ const postReviewService = (req: any, res: any, next: any) => {
 
 const putReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any> => {
+		const connection = await dbconnection()
 		try{
 			const {body} = req
 			const {params} = req
 			const {user} = req
-
-			const connection = await dbconnection();
+			
 			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
 			if (!idxFromReview[0]){
 				reject(new CustomError(null, 1702, body))
@@ -46,6 +49,8 @@ const putReviewService = (req: any, res: any, next: any) => {
 			}catch(e){
 			console.log(e)
 			reject(e)
+		} finally{
+			connection.end()
 		}
 	})
 }
