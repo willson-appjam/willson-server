@@ -48,14 +48,15 @@ const selectUserQuestionWithStatus = (connection: Connection, { gender, user_idx
 }
 
 const updateQuestionStatus = (connection: Connection, { question_idx, status }: any , { user_idx } : any) : Promise<Array<{}>> => {
+  console.log('ttt', user_idx)
   return new Promise((resolve, reject) => {
     const query = `
       UPDATE
-        question
+        question q, user u
       SET
         status = ?
       WHERE
-        question_idx = ? and user_idx = ?
+        q.question_idx = ? and u.user_idx = ?
       `
     const Query = connection.query(query, [status, question_idx, user_idx],(err, result) => {
       err ? reject(err) : resolve(result)

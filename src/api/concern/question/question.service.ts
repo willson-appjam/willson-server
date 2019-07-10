@@ -28,12 +28,28 @@ const postUserQuestion = (req: any, res: any) => {
         reject(new CustomError(null, 703, req.body))
       }
       
-
       const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
       const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);
-      const eResult = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+      
+      // 해당 이름을 갖는 ID 들을 찾아서 
+      let experienceList = null;
+      let categoryList = null;
+      for(let i=0; i< experience.length; ++i) {
+        const experienceCheck = await experienceModel.selectQuestionExperience(connection, experience[i]);
 
-      resolve({})
+        if(experienceCheck.length === 0) {
+          categoryList = await experienceModel.insertExperienceList(connection, experience[i]);
+
+        } else {
+          categoryList = await experienceModel.updateCategoryListCount(connection, experience[i])
+        }
+      }
+      
+      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+
+      resolve({
+        question_idx: eResult.insertedId,
+      })
       
     } catch (e) {
       console.log(e);
