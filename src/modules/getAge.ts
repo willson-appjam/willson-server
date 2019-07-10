@@ -1,5 +1,4 @@
-const getAge = async(age: any) => {
-	try{
+const getAge = (age: any) => {
 		const ageModulo = age%10
 
 		if(age/10 >= 2){
@@ -16,12 +15,10 @@ const getAge = async(age: any) => {
 			} else if(ageModulo >= 4 && ageModulo <= 6){
 				return ('30대 중반')
 			}
-		}
-	}catch(err){
-		console.log(err)
+		} 
 	}
-}
 
-export{
+
+export {
 	getAge
 }
