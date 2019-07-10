@@ -992,3 +992,34 @@ header:
   2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
 
 ```
+
+### 사용자: 질문 등록하기
+
+url => <b>/api/helper/check</b>
+
+method => <b>GET</b>
+
+header =>  <b>willson-token : jwt_token</b>
+
+> Request
+
+```java
+# request
+
+```
+
+> Response
+
+```java
+# response
+{
+	message: String,
+	code: int,
+	data: {
+    status: boolean,
+  },
+}
+
+2400: "GET_HELPER_EXIST_CHECK_SUCCESS",
+2401: "GET_HELPER_EXIST_CHECK_ERROR_ANYWAY",
+```

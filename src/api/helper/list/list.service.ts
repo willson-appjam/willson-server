@@ -1,7 +1,8 @@
-import dbConnection from "../../../lib/connection";
-import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
 var mecab = require('mecab-ya');
 var request = require('request-promise-native');
+
+import dbConnection from "../../../lib/connection";
+import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
