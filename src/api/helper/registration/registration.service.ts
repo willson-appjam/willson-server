@@ -28,7 +28,7 @@ const postRegistrationService = (req: any,res: any, next: any) => {
         await insertRegistrationHelper_experience(connection, [experience_idx, helper_idx, user.user_idx]);
       };
 
-      resolve({});
+      resolve({helper_idx});
 
     } catch (e) {
       reject(e)

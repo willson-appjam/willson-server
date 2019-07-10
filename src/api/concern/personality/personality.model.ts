@@ -5,7 +5,7 @@ const insertQuestionPersonality = (connection: Connection, { insertId }: any , p
   return new Promise((resolve, reject) => {
     const value: number[][] = [];
     _.forEach(personality, (element) => {
-      value.push([insertId, element])
+      value.push([insertId, element, user_idx])
     })
 
     const query = `
