@@ -389,7 +389,7 @@ header =>  <b>user_session : jwt_token</b>
   data: {
     concernInfo: [{
       user: {
-        user_idx: int,
+        user_idx: String,
         nickname: String,
         gender: String,
         age: String,
@@ -852,8 +852,8 @@ header => <b>user_session : jwt_token</b>
 
 실패 = 500
 {
-    code: 1700,
-    message: MODIFIED_REVIEW_SUCCESS,
+    code: int,
+    message: String,
     data: {}
 }
 

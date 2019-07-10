@@ -6,7 +6,7 @@ export interface User {
   user_idx: string,
   nickname: string,
   gender: string,
-  age: number,
+  age: string,
 }
 
 export interface Question {

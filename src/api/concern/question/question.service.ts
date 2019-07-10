@@ -6,6 +6,7 @@ import questionModel from './question.model';
 import personalityModel from '../personality/personality.model';
 import feelingModel from '../feeling/feeling.model';
 import experienceModel from '../../../models/experience.model';
+import {getAge} from '../../../modules/getAge';
 
 import { qList, Question, User, Category } from './question.interface';
 import { CustomError } from '../../../lib/middlewares/respond';
@@ -58,7 +59,7 @@ const getUserQuestion = (req: any, res: any) => {
           user_idx: value.user_idx,
           nickname: value.nickname,
           gender: value.gender,
-          age: value.age,
+          age: String(getAge(value.age))
         }
 
         const questionInfo : Question = {
