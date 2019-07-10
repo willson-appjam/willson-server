@@ -39,7 +39,7 @@ const putProfileService = (req: any, res: any) => {
       //헬퍼 기본 프로필 업데이트
       let category_idx: any = await selectRegistrationCategory(connection, helper.category_name);
       category_idx = category_idx[0].category_idx;
-      let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx]);
+      let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx, user]);
       categorylist_idx = categorylist_idx.insertId;
 
       await updateProfileHelper(connection,[category_idx, categorylist_idx, helper.title, helper.content, user.user_idx]);
