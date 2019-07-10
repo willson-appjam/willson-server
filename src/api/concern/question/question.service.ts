@@ -46,9 +46,9 @@ const postUserQuestion = (req: any, res: any) => {
         }
       }
       
-      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience, user)
       resolve({
-        question_idx: eResult.insertId,
+        question_idx: qResult.insertId,
       })
       
     } catch (e) {

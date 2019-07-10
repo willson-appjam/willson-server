@@ -1,25 +1,14 @@
 import mysql, { Connection, MysqlError } from "mysql";
 import _ from 'lodash'
 
-const insertUserQuestion = (connection: Connection, question : {}, { user_idx } : any): Promise<Array<{}>> => {
+const insertUserQuestion = (connection: Connection, {weight, content, helper_gender, emotion, advise , experience , agreement, categoryList_idx }: any, { user_idx } : any): Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
-    const q : Array<any> = _.map(question, (value) => value)
-    q.push(user_idx);
     const query = `
       INSERT INTO
-        question (
-          weight,
-          content,
-          helper_gender,
-          emotion,
-          advise,
-          experience,
-          categoryList_idx,
-          agreement,
-          user_idx
-        ) values (?,?,?,?,?,?,?,?,?)
-  `
-    connection.query(query, q, (err, result) => {
+        question (weight, content, helper_gender, emotion, advise, experience, categoryList_idx, agreement, user_idx)
+      VALUES (?,?,?,?,?,?,?,?,?)
+    `
+    connection.query(query, [weight, content, helper_gender, emotion, advise , experience , categoryList_idx, agreement, user_idx], (err, result) => {
       err ? reject(err) : resolve(result)
     })
   })
