@@ -30,7 +30,7 @@ const postUserQuestion = (req: any, res: any) => {
         reject(new CustomError(null, 703, req.body))
       }
       
-      const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
+      const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling, user);
       const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);
       
       // 해당 이름을 갖는 ID 들을 찾아서 
