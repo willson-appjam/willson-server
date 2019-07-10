@@ -326,6 +326,25 @@ const insertSelectionSelected_question = (connection: any, arr : any) => {
   })
 }
 
+const selectHelperExist = (connection: any , { user_idx }: any) => {
+  return new Promise((resolve, reject)=> {
+    const query=`
+      SELECT
+        IF(helper_idx, 'true', 'false') as status
+      FROM
+        user u
+      LEFT JOIN
+        helper p on u.user_idx = p.user_idx
+      WHERE
+        u.user_idx = ?
+  `;
+    
+    connection.query(query, [user_idx], (err: any, result: any) => {
+        err ? reject(err) : resolve(result)
+      })
+  })
+}
+
   export {
     selectRegistrationCategory,
     insertRegistrationCategoryList,
@@ -349,5 +368,7 @@ const insertSelectionSelected_question = (connection: any, arr : any) => {
     selectUserPersonality,
     selectHelper_idx,
     selectHelperInfo,
-    selectHelperPersonality
+    selectHelperPersonality,
+
+    selectHelperExist,
   }
