@@ -62,7 +62,6 @@ const updateCategoryListCount = (connection: any, { categoryList_idx }: any): Pr
     `
     const Query = connection.query(query, [categoryList_idx],(err :Error, result: any) => {
       if(err) {
-        console.log(Query.sql);
         reject(err)
       }
       resolve(result)

@@ -43,9 +43,9 @@ header =>
 ```java
 {
 	
-  	nickname: String,
-  	gender: Enum('남','여')
-  	age: int,
+  nickname: String,
+  gender: Enum('남','여')
+  age: int,
 	email: String,
 	password: String,
 	device_token:String
@@ -876,6 +876,7 @@ header =>  <b>user_session : jwt_token</b>
 > Request
 
 ```
+
 ```
 
 > Response
@@ -983,3 +984,5 @@ header:
 
 실패 = 500
   2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
+
+```

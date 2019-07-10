@@ -33,7 +33,6 @@ const insertQuestionFeeling = (connection: Connection, { insertId }: any, feelin
     `
     const Query = connection.query(query, [value], (err, result) => {
       if(err) {
-        console.log(Query.sql);
         reject(err)
       }
       resolve(result)

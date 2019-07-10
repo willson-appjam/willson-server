@@ -14,7 +14,7 @@ const respondBasic = (req: any, res: any, code: number, data: object) => {
   console.log('')
   console.log('code => ', code)
   console.log('message => ', serviceStatusCode[`${code}`])
-  // console.log('data => ', data)
+  console.log('data => ', data)
   console.log('')
 
   res
