@@ -450,7 +450,7 @@ header:  willson-token : jwt_token
 {
     "code": 900,
     "message": "HELPER_REGISTRATION_SUCCESS",
-    "data": {}
+    "data": {"helper_idx": int}
 }
 
 실패 = 500

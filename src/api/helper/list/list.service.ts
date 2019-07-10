@@ -28,6 +28,7 @@ const getListService = (req: any, res: any) => {
 
       //유저 고민을 선택한 헬퍼들의 정보
       let helpers_idx: any = await selectHelper_idx(connection, question_idx);
+      console.log(helpers_idx);
       let helpers_arr: any = [];
       let helper_num = helpers_idx.length;
       for (let i = 0; i < helper_num; i++) {
