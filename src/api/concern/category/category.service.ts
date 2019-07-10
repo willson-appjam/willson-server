@@ -29,15 +29,16 @@ const postCategoryListService = (req: any, res: any) => {
     const connection: any = await dbConnection();
     
     try {
-      const { body } = req;
-      const resultCategory = await categoryModel.selectCategoryListWithName(connection, body);
+      const { body, user } = req;
 
+      const resultCategory: any = await categoryModel.selectCategoryListWithName(connection, body);
       let categoryList: any = null;
 
       if(resultCategory.length === 0) {
-        categoryList = await categoryModel.insertCategoryList(connection, body);
+        categoryList = await categoryModel.insertCategoryList(connection, body, user);
       } else {
         categoryList = await categoryModel.updateCategoryListCount(connection, resultCategory[0])
+        categoryList.insertId = resultCategory[0].categoryList_idx;
       }
 
       if(categoryList.affectedRows === 0) {

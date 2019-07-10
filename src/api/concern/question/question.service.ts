@@ -11,7 +11,6 @@ import {getAge} from '../../../modules/getAge';
 
 import { qList, Question, User, Category } from './question.interface';
 import { CustomError } from '../../../lib/middlewares/respond';
-import { create } from 'domain';
 
 const postUserQuestion = (req: any, res: any) => {
   
