@@ -13,7 +13,6 @@ const isValidCheck = ({ body } : any) => {
         }
       })
     }
-
     if(empty(value)) {
       flag = false;
     }
