@@ -1,16 +1,16 @@
 import mysql, { Connection } from "mysql";
 import _ from 'lodash'
 
-const insertQuestionExperience = (connection: Connection, { insertId }: any , experience: Array<number>): Promise<Array<{}>> => {
+const insertQuestionExperience = (connection: Connection, { insertId }: any , experience: Array<number>, { user_idx }: any): Promise<Array<{}>> => {
   return new Promise((resolve, reject) => {
     const value: number[][] = [];
     _.forEach(experience, (element) => {
-      value.push([insertId, element])
+      value.push([insertId, element, user_idx])
     })
 
     const query = `
       INSERT INTO
-        question_experience (question_idx, experience_idx)
+        question_experience (question_idx, experience_idx, cr_user)
       VALUES
         ?
     `

@@ -11,7 +11,6 @@ import {getAge} from '../../../modules/getAge';
 
 import { qList, Question, User, Category } from './question.interface';
 import { CustomError } from '../../../lib/middlewares/respond';
-import { create } from 'domain';
 
 const postUserQuestion = (req: any, res: any) => {
   
@@ -47,9 +46,9 @@ const postUserQuestion = (req: any, res: any) => {
         }
       }
       
-      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience, user)
       resolve({
-        question_idx: eResult.insertId,
+        question_idx: qResult.insertId,
       })
       
     } catch (e) {

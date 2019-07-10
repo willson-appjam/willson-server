@@ -15,6 +15,7 @@ export default async (req: any, res: any, next: NextFunction) => {
 
     if (empty(webToken)) req.user = { user_id: 0 }
     else req.user = await token.decode(webToken, key)
+    console.log('USER_SESSION=> ', req.user)
     await next()
     
   } catch (e) {
