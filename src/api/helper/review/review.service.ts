@@ -10,8 +10,7 @@ import dbConnection from '../../../lib/connection';
 
 const getListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
-
-		const connection: any = await dbconnection();
+		const connection: any = await dbconnection()
 		try{
 			const {params} = req
 
@@ -32,7 +31,7 @@ const getListService = (req: any, res: any, next: any) : any => {
 					review_idx : showReviewList[i].review_idx,
 					stars : showReviewList[i].stars,
 					review_content : showReviewList[i].review_content,
-					write_date : moment(showReviewList[i].write_date).format('YYYY.MM.DD'),
+					write_date : moment(showReviewList[i].write_date).add(9, 'hours').format('YYYY.MM.DD'),
 					category_name : showReviewList[i].category_name,
 					nickname : showReviewList[i].nickname
 				})
