@@ -10,11 +10,12 @@ import dbConnection from '../../lib/connection';
 
 const postReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any>=>{
-		const connection = await dbconnection()
+		const connection: any = await dbconnection()
 		try{
 			const {body} = req
 			const {user} = req
 			
+			const connection: any = await dbconnection()
 			const uploadReview = await insertHelperReview(connection, body, user)			
 			const modifiedReviewCount = await updateHelperReviewCount(connection, body)		
 			const avgStars : any = await selectAvgStars(connection, body)
@@ -25,7 +26,7 @@ const postReviewService = (req: any, res: any, next: any) => {
 			console.log(e)
 			reject(e)
 		} finally{
-			connection.end()
+			connection.release()
 		}
 	})
 }
@@ -33,7 +34,7 @@ const postReviewService = (req: any, res: any, next: any) => {
 
 const putReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any> => {
-		const connection = await dbconnection()
+		const connection: any = await dbconnection()
 		try{
 			const {body} = req
 			const {params} = req
@@ -50,7 +51,7 @@ const putReviewService = (req: any, res: any, next: any) => {
 			console.log(e)
 			reject(e)
 		} finally{
-			connection.end()
+			connection.release()
 		}
 	})
 }
@@ -59,11 +60,8 @@ const putReviewService = (req: any, res: any, next: any) => {
 const getMainListService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject ) : Promise<any> => {
 
-		const connection = await dbconnection()
+		const connection: any = await dbconnection()
 		try{
-			
-			const connection = await dbconnection();
-			
 			const mainReviewList = []
 			for(let i = 1; i < 6; i++){
 				const showMainReviewList : any = await selectMainReviewList(connection, i)
@@ -75,7 +73,7 @@ const getMainListService = (req: any, res: any, next: any) : any => {
 		console.log(e)
 		reject(e)
 		} finally{
-			connection.end()
+			connection.release()
 		}
 	})
 }

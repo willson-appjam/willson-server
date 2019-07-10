@@ -15,7 +15,7 @@ const postUserQuestion = (req: any, res: any) => {
   
   return new Promise(async (resolve, reject) => {
     
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     
     try {
       
@@ -28,25 +28,40 @@ const postUserQuestion = (req: any, res: any) => {
         reject(new CustomError(null, 703, req.body))
       }
       
-
       const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling);
       const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality);
-      const eResult = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+      
+      // 해당 이름을 갖는 ID 들을 찾아서 
+      let experienceList = null;
+      let categoryList = null;
+      for(let i=0; i< experience.length; ++i) {
+        const experienceCheck = await experienceModel.selectQuestionExperience(connection, experience[i]);
 
-      resolve({})
+        if(experienceCheck.length === 0) {
+          categoryList = await experienceModel.insertExperienceList(connection, experience[i]);
+
+        } else {
+          categoryList = await experienceModel.updateCategoryListCount(connection, experience[i])
+        }
+      }
+      
+      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience)
+      resolve({
+        question_idx: eResult.insertId,
+      })
       
     } catch (e) {
       console.log(e);
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }
 
 const getUserQuestion = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
       const { user } = req
       const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
@@ -84,7 +99,7 @@ const getUserQuestion = (req: any, res: any) => {
     } catch (e) {
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }
@@ -94,7 +109,7 @@ const putUserQuestionStatus = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     
     const { body, user } = req
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
 
       const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
@@ -107,7 +122,7 @@ const putUserQuestionStatus = (req: any, res: any) => {
       console.log(e);
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }

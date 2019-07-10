@@ -51,11 +51,11 @@ const updateQuestionStatus = (connection: Connection, { question_idx, status }: 
   return new Promise((resolve, reject) => {
     const query = `
       UPDATE
-        question
+        question q, user u
       SET
         status = ?
       WHERE
-        question_idx = ? and user_idx = ?
+        q.question_idx = ? and u.user_idx = ?
       `
     const Query = connection.query(query, [status, question_idx, user_idx],(err, result) => {
       err ? reject(err) : resolve(result)

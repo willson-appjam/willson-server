@@ -7,7 +7,7 @@ import { CustomError } from '../../../lib/middlewares/respond';
 
 const getCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
       const { category_idx } = req.params;
       const categoryList = await categoryModel.selectCategoryListWithId(connection, category_idx);
@@ -17,7 +17,7 @@ const getCategoryListService = (req: any, res: any) => {
     } catch (e) {
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }
@@ -26,7 +26,7 @@ const getCategoryListService = (req: any, res: any) => {
 const postCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     
-    const connection = await dbConnection();
+    const connection: any = await dbConnection();
     
     try {
       const { body } = req;
@@ -51,7 +51,7 @@ const postCategoryListService = (req: any, res: any) => {
     } catch (e) {
       reject(e);
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }

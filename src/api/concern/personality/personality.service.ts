@@ -4,7 +4,7 @@ import personalityModel from './personality.model';
 
 const getPersonalityList = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
-    let connection = await dbConnection();
+    const connection: any = await dbConnection();
     try {
       const personalityList = await personalityModel.selectPersonalityList(connection);
       resolve({
@@ -12,11 +12,10 @@ const getPersonalityList = (req: any, res: any) => {
         size: personalityList.length,
       })
     } catch (e) {
-      console.log("========================");
       console.log(e);
       reject(e)
     } finally {
-      connection.end();
+      connection.release();
     }
   })
 }

@@ -274,7 +274,9 @@ header =>  <b>user_session : jwt_token</b>
 {
 	message: String,
 	code: int,
-  data: {},
+  data: {
+    categoryList_idx: int
+  },
 }
 
 500: "POST_CATEGORY_LIST_SUCCESS",

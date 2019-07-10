@@ -8,17 +8,16 @@ import serviceStatusCode from '../../../lib/serviceStatusCode'
 
 const postSignupService = (req: any, res: any, next: any) : any => {
 	return new Promise(async (resolve, reject) : Promise<any> => {
-		const connection = await dbconnection()
+		const connection: any = await dbconnection()
 		try{
 			const { body } = req
 			body.salt = await cryptoPassword.salt()
 			body.password = await cryptoPassword.hashedPassword(body.salt, body.password)
 
-			const checkOverlapedEmail : any = await selectCheckEmail(connection, body)			
+			const checkOverlapedEmail : any = await selectCheckEmail(connection, body)
 
 			if(checkOverlapedEmail.length == 1) {
 				delete body.salt
-				console.log(3)
 				reject(new CustomError(null, 101, { body } ))
         return
       }
@@ -28,10 +27,9 @@ const postSignupService = (req: any, res: any, next: any) : any => {
       resolve({})
 
 		} catch(e) {
-			console.log('mmmm', e, 'mmmm')
 			reject(e)
-		}finally{
-			connection.end()
+		} finally{
+			connection.release()
 		}
 	})
 }
