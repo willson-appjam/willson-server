@@ -1,39 +1,32 @@
-import express from 'express'
-<<<<<<< HEAD
-import {CustomError, resFormat} from '../../lib/middlewares/respond'
-=======
-import {CustomError} from '../../lib/middlewares/respond'
->>>>>>> develop
 import dbconnection from '../../lib/connection'
-import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, updateReview} from '../../models/review'
-import review from './index';
+import {insertHelperReview,updateHelperReviewCount, selectAvgStars, updateAvgStars, selectIdxFromReview, updateHelperReview, selectMainReviewList}
+from './review.model'
+import serviceStatusCode from '../../lib/serviceStatusCode'
+import { CustomError } from '../../lib/middlewares/respond'
+import moment from 'moment'
+import dbConnection from '../../lib/connection';
+
 
 
 const postReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any>=>{
+		const connection: any = await dbconnection()
 		try{
 			const {body} = req
 			const {user} = req
-
-			console.log('this is user', user)
-
-			if (!body.stars || !body.review_content || !body.helper_idx || !user.user_idx || !body.category_idx || !body.question_idx) {
-				reject({
-					code: 204,
-					message: 'body에 NULL값이 존재합니다.'
-				})
-			}
 			
-			const connection = await dbconnection();
-			const uploadReview = await insertHelperReview(connection, body, user);			
-			const modifiedReviewCount = await updateHelperReviewCount(connection, body);		
-			const avgStars : any = await selectAvgStars(connection, body);
-			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body);
-			
-			resolve(uploadReview);
+			const connection: any = await dbconnection()
+			const uploadReview = await insertHelperReview(connection, body, user)			
+			const modifiedReviewCount = await updateHelperReviewCount(connection, body)		
+			const avgStars : any = await selectAvgStars(connection, body)
+			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body)
+
+			resolve({})
 		}catch(e){
 			console.log(e)
 			reject(e)
+		} finally{
+			connection.release()
 		}
 	})
 }
@@ -41,30 +34,52 @@ const postReviewService = (req: any, res: any, next: any) => {
 
 const putReviewService = (req: any, res: any, next: any) => {
 	return new Promise(async (resolve, reject) : Promise<any> => {
+		const connection: any = await dbconnection()
 		try{
 			const {body} = req
 			const {params} = req
 			const {user} = req
-
-			if (!body.stars || !body.review_content){
-				reject({
-					code: 204,
-					message: 'body에 NULL값이 존재합니다.'
-				})
-			}
-
-			const connection = await dbconnection();
-			const modifiedReview: any = await updateReview(connection, body, body, params, user)
-
-			resolve(modifiedReview)
-		}catch(e){
+			
+			const idxFromReview: any = await selectIdxFromReview(connection, params, user)
+			if (!idxFromReview[0]){
+				reject(new CustomError(null, 1702, body))
+				}else{
+					const updateReview: any = await updateHelperReview(connection, body, user)
+					resolve(updateReview)
+				}						
+			}catch(e){
 			console.log(e)
 			reject(e)
+		} finally{
+			connection.release()
+		}
+	})
+}
+
+
+const getMainListService = (req: any, res: any, next: any) : any => {
+	return new Promise(async (resolve, reject ) : Promise<any> => {
+
+		const connection: any = await dbconnection()
+		try{
+			const mainReviewList = []
+			for(let i = 1; i < 6; i++){
+				const showMainReviewList : any = await selectMainReviewList(connection, i)
+				mainReviewList.push(showMainReviewList[0])
+			}
+
+			resolve(mainReviewList)
+	}catch(e){
+		console.log(e)
+		reject(e)
+		} finally{
+			connection.release()
 		}
 	})
 }
 
 export default{
 	postReviewService,
-	putReviewService
+	putReviewService,
+	getMainListService
 }

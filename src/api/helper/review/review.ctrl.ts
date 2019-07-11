@@ -1,18 +1,16 @@
-import express from 'express';
-import reviewService from './review.service';
-import {respondBasic, respondOnError, CustomError} from '../../../lib/middlewares/respond';
+import express from 'express'
+import reviewService from './review.service'
+import {respondBasic, respondOnError, CustomError} from '../../../lib/middlewares/respond'
+import serviceStatusCode from '../../../lib/serviceStatusCode'
 
 const getListCtrl = async (req: any, res: any, next: any) => {
 	await reviewService.getListService(req, res, next)
 	.then((result: any) => {
-		res.status(200).send({
-			message: '후기 목록 가져오기 성공',
-			data : result
-		})
+		respondBasic(req, res, 1500, result)
 	})
 	.catch((e: any) => {
-		console.log(e);
-		respondOnError(res, e.message, 500)
+		if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    else respondOnError(req, res, e, 1502);
 	})
 }
 

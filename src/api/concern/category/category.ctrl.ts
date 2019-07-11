@@ -2,23 +2,23 @@ import express from 'express';
 import categoryService from './category.service';
 import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
-import { isValidCheck } from '../../../lib/isvalidation';
+import { isValidCheck } from '../../../lib/isValidation';
 
 const getCategoryList = async (req: any, res: any) => {
   
   const { category_idx } = req.params;
 
   if(!category_idx) {
-    respondOnError(res, serviceStatusCode['GET_CATEGORY_LIST_VALIDATION_ERROR'], 500);
+    respondOnError(req, res, new Error('validation error'), 401, 500);
     return;
   }
 
   await categoryService.getCategoryListService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_CATEGORY_LIST_SUCCESS'], result)
+    respondBasic(req, res, 400, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    respondOnError(req, res, e, 402);
   })
 }
 
@@ -26,16 +26,17 @@ const postCategoryList = async (req: any, res: any) => {
 
   const { body } = req
 
-  if(!isValidCheck(body)) {
-    respondOnError(res, serviceStatusCode['POST_CATEGORY_LIST_VALIDATION_ERROR'], 500);
+  if(!isValidCheck(req)) {
+    respondOnError(req, res, new Error('validation error'), 501);
   }
 
   await categoryService.postCategoryListService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['POST_CATEGORY_LIST_SUCCESS'], result)
+    respondBasic(req, res, 500, result)
   })
   .catch((e: any) => {
-    respondOnError(res, e.code, 500);
+    if(e.own === 'CustomError') respondOnError(req, res, e.code, e.data)
+    else respondOnError(req, res, e, 502);
   })
 }
 

@@ -1,61 +1,83 @@
 import express from 'express';
 import _ from 'lodash';
+import moment from 'moment'
+import serviceStatusCode from '../../lib/serviceStatusCode'
+import { prod } from '../../logger';
 
-const respondBasic = (res: express.Response, code: number, data: object) => {
+
+const respondBasic = (req: any, res: any, code: number, data: object) => {
+  
+  const time = Date.now() - req.start;
+  
+  console.log('')
+  console.log('[REQ] =>', moment().format('YYYY-MM-DD HH:mm:ss'), req.method, req.originalUrl, 200, JSON.stringify(req.body), '-', time +'ms');
+  console.log('')
+  console.log('code => ', code)
+  console.log('message => ', serviceStatusCode[`${code}`])
+  console.log('data => ', data)
+  console.log('')
+
   res
     .status(200)
     .send({
       code,
+      message: serviceStatusCode[`${code}`],
       data: data || {},
   })
 }
 
-const respondOnError = (res: express.Response, code: any, status: number, result?: object) => {
+const respondOnError = (req: any, res: any, err: any, code: any, status: number = 500, result?: object) => {
 
-  console.error('STATUS => ', status)
-  console.error('CODE => ', code)
-  console.error('RESULT => ', result)
+  const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+  const time = Date.now() - req.start;  
+
+  console.log('')
+  console.log('[Req] =>',  moment().format('YYYY-MM-DD HH:mm:ss'), req.method, fullUrl, status, JSON.stringify(req.body), '-', time +'ms');
+  console.log('code => ', code)
+  console.log('message => ', serviceStatusCode[`${code}`])
+  console.log('data => ', result)
+  console.error('ERROR STACK => ', err)
+  console.log('')
 
   res.status(status).send({
     code,
-    result,
-    data: result || {},
+    message: serviceStatusCode[`${code}`],
+    data: err.data || {},
   })
 }
 
 const CustomError = class CustomError extends Error {
   
   public code: number;
-  public status: number;
   public data: object
+  public err: object;
+  public own: string
 
-  constructor(code: number, status: number, data: Object) {
+  constructor(err: any, code: number, data: object) {
     super();
     this.code = code
-    this.status = status
     this.data = data
+    this.err = err
+    this.own = "CustomError"
 
     const defaultOptions = {
+      err: 'internal server error',
       code: 10,
       message: '',
-      status: 500,
       data: {},
       logMessage: 'Doesn\'t have any Message',
     }
 
     const customError = {
+      err: err || {},
       code,
       message: JSON.stringify(''),
-      status: 500,
       data: this.data,
       logMessage: '',
     }
 
     const temp = _.defaultsDeep(customError, defaultOptions)
 
-    // Object.keys(defaultOptions).forEach((key) => {
-    //   this[key] = temp[key]
-    // })
   }
 }
 

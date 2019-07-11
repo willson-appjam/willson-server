@@ -12,12 +12,13 @@ export default async (req: any, res: any, next: NextFunction) => {
   const webToken: any = req.headers['willson-token'];
   
   try {
-    
+
     if (empty(webToken)) req.user = { user_id: 0 }
     else req.user = await token.decode(webToken, key)
+    console.log('USER_SESSION=> ', req.user)
     await next()
     
   } catch (e) {
-    respondOnError(res, 100, 500);
+    respondOnError(req, res, e, 100, 500);
   }
 }

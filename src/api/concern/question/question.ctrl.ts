@@ -3,36 +3,58 @@ import questionService from './question.service';
 
 import { isValidCheck } from '../../../lib/isValidation';
 import serviceStatusCode from '../../../lib/serviceStatusCode'
-import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond';
+import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewares/respond'
 
 const getUserQuestionList = async (req: any, res: any) => {
 
   await questionService.getUserQuestion(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_USER_QUESTION_LIST'], result)
-  })
-  .catch((e: any) => {
-    respondOnError(res, e.code, 500);
-  })
+    respondBasic(req, res, 800, result)
+	})
+	.catch((e: any) => {
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    else respondOnError(req, res, e, 801);
+	})
 }
 
 const postUserQuestion = async (req: any, res: any) => {
   const { body } = req
-  if(!isValidCheck(body)) {
-    respondOnError(res, serviceStatusCode['POST_USER_QUESTION_VALIDATION_ERROR'], 500)
+  
+  if(!isValidCheck(req)) {
+    respondOnError(req, res, new Error('validation error'), 701, 500)
     return;
   }
 
   await questionService.postUserQuestion(req, res)
-  .then((data: any) => {
-    respondBasic(res, 100, data);
-  })
-  .catch((e: any) => {
-    respondOnError(res, 100, 500);
-  })
+  .then((result: any) => {
+    respondBasic(req, res, 700, result)
+	})
+	.catch((e: any) => {
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    else respondOnError(req, res, e, 702);
+	})
 }
 
+const putUserQuestion = async (req: any, res: any) => {
+  const { body } = req
+  
+  if(!isValidCheck(req)) {
+    respondOnError(req, res, new Error('validation error'), 2201, 500)
+    return;
+  }
+
+  await questionService.putUserQuestionStatus(req, res)
+  .then((result: any) => {
+    respondBasic(req, res, 2200, result)
+	})
+	.catch((e: any) => {
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    else respondOnError(req, res, e, 2202);
+  })
+  
+}
 export {
   getUserQuestionList,
   postUserQuestion,
+  putUserQuestion,
 }

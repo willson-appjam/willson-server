@@ -6,11 +6,14 @@ export interface User {
   user_idx: string,
   nickname: string,
   gender: string,
-  age: number,
+  age: string,
 }
 
 export interface Question {
   title: string,
+  question_idx: number,
+  create_time: string,
+  selected: string, //'Y','N'
 }
 
 export interface Category {

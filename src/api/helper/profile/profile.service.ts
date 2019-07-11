@@ -1,65 +1,71 @@
 import dbConnection from "../../../lib/connection";
-import { selectProfileHelper_idx, selectProfileHelper_experience, selectProfileHelper, insertRegistrationCategorylist, updateProfileHelper_experience, selectProfileExperience, selectRegistrationExperience, insertRegistrationExperience, selectLastInsert,selectRegistrationCategorylist, updateProfileHelper } from '../../../models/helper'
+import { selectProfileHelper_idx, selectProfileHelper_experience, selectProfileHelper, selectRegistrationCategory, updateProfileHelper_experience, selectProfileExperience, selectRegistrationExperience, insertRegistrationCategoryList, insertRegistrationHelper_experience, updateProfileHelper, selectProfilePersonality } from '../helper.model'
+import serviceStatusCode from '../../../lib/serviceStatusCode';
+import {getAge} from '../../../modules/getAge';
+import { CustomError } from '../../../lib/middlewares/respond';
 
-const getProfileService = (req: any,res: any) => 
-  new Promise(async (resolve, reject) => {
+const getProfileService = (req: any,res: any) => {
+  return new Promise(async (resolve, reject) => {
+    const connection: any = await dbConnection();
+    
     try {
-       
       const helper_idx = req.params;
-      const connection = await dbConnection();
-      const helper = await selectProfileHelper(connection, helper_idx.helper_idx);
+      const helper: any = await selectProfileHelper(connection, helper_idx.helper_idx);
+      if (!helper.length){
+        reject(new CustomError(null, 1101 , req.params))
+        return
+      }
       const experience = await selectProfileExperience(connection, helper_idx.helper_idx);
-      
-      resolve({helper, experience});
+      const personality = await selectProfilePersonality(connection, helper_idx.helper_idx);
+
+      helper[0].age = await getAge(helper[0].age);
+      resolve({helper, experience, personality});
     } catch (e){
       reject(e);   
     } finally {
-      
+      connection.release();
     }
   })
+}
 
-const putProfileService = (req: any, res: any) =>
-  new Promise(async (resolve, reject) => {
+const putProfileService = (req: any, res: any) => {
+  return new Promise(async (resolve, reject) => {
+    const connection: any = await dbConnection();
+
     try{
       const { helper, experience } = req.body;
-      const connection = await dbConnection();
-
-      //카테고리 리스트 업데이트(categoryList_name을 받아서 업데이트)
-      let categorylist_idx: any = await selectRegistrationCategorylist(connection, helper.categoryList_name);
-      if (!categorylist_idx.length) {
-        await insertRegistrationCategorylist(connection, helper);
-        categorylist_idx = await selectLastInsert(connection);
-      }
+      const { user } = req;
       
-      helper.categorylist_idx = categorylist_idx[0].idx;
-      delete helper.categoryList_name;
-      let user_idx = helper.user_idx;
-      delete helper.user_idx;
-      helper.user_idx = user_idx;
+      //헬퍼 기본 프로필 업데이트
+      let category_idx: any = await selectRegistrationCategory(connection, helper.category_name);
+      category_idx = category_idx[0].category_idx;
+      let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx, user]);
+      categorylist_idx = categorylist_idx.insertId;
 
-      await updateProfileHelper(connection,Object.values(helper));
-
-      const helper_idx: any = await selectProfileHelper_idx(connection, helper.user_idx);
+      await updateProfileHelper(connection,[category_idx, categorylist_idx, helper.title, helper.content, user.user_idx]);
+      
+      //헬퍼 경험 프로필 수정
+      let helper_idx : any = await selectProfileHelper_idx(connection, user.user_idx);
+      if (!helper_idx.length){
+        reject(new CustomError(null, 1201 , helper_idx))
+        return;
+      }
       const old_experience_idx: any =  await selectProfileHelper_experience(connection, helper_idx[0].helper_idx);
       for (let i=0; i<3; i++){
-      let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i]);
-      if (!experience_idx.length){
-        await insertRegistrationExperience(connection, experience.experience_name[i])
-        experience_idx = await selectLastInsert(connection);
+        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user);
+        experience_idx = experience_idx.insertId;
+        await updateProfileHelper_experience(connection, [experience_idx, old_experience_idx[i].helper_experience_idx]);
       } 
-      await updateProfileHelper_experience(connection, [experience_idx[0].idx, old_experience_idx[i].experience_idx]);
+      resolve({}); 
     }
-    resolve({});
-  
-      
-    }
-
     catch (e){
-      
+      reject(e);
     }finally{
-
+      connection.release();
     }
   })
+}
+
 
 export default {
   getProfileService,

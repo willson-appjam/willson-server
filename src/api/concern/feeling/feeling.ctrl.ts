@@ -9,10 +9,11 @@ const getFeelingList = async (req: any, res: any) => {
 
   await feelingService.getfeelingService(req, res)
   .then((result: any) => {
-    respondBasic(res, serviceStatusCode['GET_FEELING_LIST_SUCCESS'], result)
+    respondBasic(req, res, 600, result)
 	})
 	.catch((e: any) => {
-		respondOnError(res, e.code, 500);
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    else respondOnError(req, res, e, 602);
 	})
 }
 

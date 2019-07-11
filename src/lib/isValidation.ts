@@ -1,13 +1,22 @@
 import _ from 'lodash'
+import empty from 'is-empty'
+import { CustomError } from './middlewares/respond';
 
 const isValidCheck = ({ body } : any) => {
   let flag = true;
-
+  
   _.forEach(body, (value, key) => {
-    console.log("key :", key, "value", value);
-    if(!value) {
-      return flag = false
+    if(value instanceof Object) { 
+      _.forEach(value, (v) => {
+        if(empty(v)) {
+          flag = false;
+        }
+      })
     }
+    if(empty(value)) {
+      flag = false;
+    }
+
   })
   return flag;
 }
