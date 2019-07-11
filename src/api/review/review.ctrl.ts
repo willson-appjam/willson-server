@@ -44,7 +44,7 @@ const getMainReviewCtrl = async (req: any, res: any, next: any) => {
 		respondBasic(req, res, 2300, result)
 	})
 	.catch((e: any) => {
-		if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+		if(e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
     else respondOnError(req, res, e, 2301)
 	})
 }

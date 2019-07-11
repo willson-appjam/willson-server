@@ -12,7 +12,7 @@ const getUserQuestionList = async (req: any, res: any) => {
     respondBasic(req, res, 800, result)
 	})
 	.catch((e: any) => {
-    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
     else respondOnError(req, res, e, 801);
 	})
 }
@@ -30,7 +30,7 @@ const postUserQuestion = async (req: any, res: any) => {
     respondBasic(req, res, 700, result)
 	})
 	.catch((e: any) => {
-    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
     else respondOnError(req, res, e, 702);
 	})
 }
@@ -48,7 +48,7 @@ const putUserQuestion = async (req: any, res: any) => {
     respondBasic(req, res, 2200, result)
 	})
 	.catch((e: any) => {
-    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
     else respondOnError(req, res, e, 2202);
   })
   

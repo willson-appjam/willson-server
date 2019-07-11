@@ -26,7 +26,7 @@ const respondBasic = (req: any, res: any, code: number, data: object) => {
   })
 }
 
-const respondOnError = (req: any, res: any, err: any, code: any, status: number = 500, result?: object) => {
+const respondOnError = (req: any, res: any, err: any, code: any, status: number = 200, result?: object) => {
 
   const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
   const time = Date.now() - req.start;  
