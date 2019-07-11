@@ -30,7 +30,9 @@ const selectUserQuestionWithStatus = (connection: Connection, { gender, user_idx
     WHERE
       Q.status = 'wait' AND
       (Q.helper_gender = ? OR Q.helper_gender = '모두') AND
-      C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ?); 
+      C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ?)
+    ORDER BY Q.cr_date desc
+    LIMIT 0, 20;
       `
     const Query = connection.query(query, [gender, user_idx],(err, result) => {
       console.log(Query.sql)
