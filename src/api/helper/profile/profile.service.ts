@@ -52,14 +52,14 @@ const putProfileService = (req: any, res: any) => {
       }
       const old_experience_idx: any =  await selectProfileHelper_experience(connection, helper_idx[0].helper_idx);
       for (let i=0; i<3; i++){
-        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i]);
+        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user);
         experience_idx = experience_idx.insertId;
         await updateProfileHelper_experience(connection, [experience_idx, old_experience_idx[i].helper_experience_idx]);
       } 
       resolve({}); 
     }
     catch (e){
-      reject(e);   
+      reject(e);
     }finally{
       connection.release();
     }

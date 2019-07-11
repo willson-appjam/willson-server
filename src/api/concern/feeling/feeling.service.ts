@@ -7,7 +7,10 @@ const getfeelingService = (req: any, res: any) => {
     const connection: any = await dbConnection();
     try {
       const feelingList = await feelingModel.selectFeelingList(connection);
-      resolve({feelingList})
+      resolve({
+        feelingList,
+        size: feelingList.length,
+      })
 
     } catch (e) {
       reject(e)

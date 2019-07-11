@@ -10,9 +10,12 @@ const getCategoryListService = (req: any, res: any) => {
     const connection: any = await dbConnection();
     try {
       const { category_idx } = req.params;
-      const categoryList = await categoryModel.selectCategoryListWithId(connection, category_idx);
+      const categoryList: any = await categoryModel.selectCategoryListWithId(connection, category_idx);
       
-      resolve({ categoryList })
+      resolve({
+        categoryList,
+        size: categoryList.length,
+      })
 
     } catch (e) {
       reject(e)

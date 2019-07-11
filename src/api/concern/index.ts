@@ -14,7 +14,6 @@ concern.get('/category/:category_idx', authCheck, getCategoryList);
 concern.post('/category', authCheck, postCategoryList);
 
 concern.get('/feeling', getFeelingList);
-
 concern.get('/personality', getPersonalityList);
 
 concern.post('/question', authCheck, postUserQuestion);

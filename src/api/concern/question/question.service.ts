@@ -91,7 +91,7 @@ const getUserQuestion = (req: any, res: any) => {
           title: qList[i].content,
           question_idx: qList[i].question_idx,
           create_time: currentTime,
-          selected: selected
+          selected,
         }
 
         const categoryInfo : Category = {

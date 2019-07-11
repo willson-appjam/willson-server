@@ -23,12 +23,12 @@ BaseUrl =>  <b>host:port/api</b>
 |         후기 삭제         |       /review/:review_id        | DELETE |  body  |
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
 |       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
-|      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
+|   감정 리스트 가져오기      |        /concern/personality         |  GET  | X |
 |      상담 종료하기         |        /concern/question         |  PUT | X |
-|      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
-|      헬퍼 등록상태 확인하기       |     /helper/check           |  GET  | X |
-|     매칭된 고민 상태 변경하기     |     /matching/:matching_idx |  PUT  | params |
-|      헬퍼의 마이프로필 보기      |        /helper/myprofile    |  GET  | X |
+|    메인: 질문자들의 후기    |        /review/story        |  GET  | X |
+|   헬퍼 등록상태 확인하기     |     /helper/check           |  GET  | X |
+|   매칭된 고민 상태 변경하기  |     /matching/:matching_idx |  PUT  | params |
+|    헬퍼의 마이프로필 보기   |        /helper/myprofile    |  GET  | X |
 
 
 
@@ -93,7 +93,7 @@ header =>
 
 ### 로그인
 
-url  :   <b>/api/user/signin</b>
+url : <b>/api/user/signin</b>
 
 method : <b>POST</b>
 
@@ -232,9 +232,11 @@ header =>  <b>willson-token : jwt_token</b>
   message: String
   data: {
     categoryList: [{
-    categoryList_id: int,
-    categoryList_name: String,
-  }]
+      categoryList_id: int,
+      categoryList_name: String,
+    }],
+    size: int
+  }
 }
 
 400: "GET_CATEGORY_LIST_SUCCESS",
@@ -306,7 +308,8 @@ header =>  <b>willson-token : jwt_token</b>
     feelingList: [{
       feeling_idx: int,
       feeling_name: String,
-    }]
+    }],
+    size: int,
   }
 }
 
@@ -859,7 +862,8 @@ header =>  <b>willson-token : jwt_token</b>
     personalityList: [{
       personality_idx: int,
       personality_name: String
-      }]
+      }],
+    size: int,
   },
 }
 
