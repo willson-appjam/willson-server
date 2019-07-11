@@ -61,7 +61,7 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
         reject(new CustomError(null, 202, body))  
       }
 
-      const userInfoResult = {
+        userInfo = {
         user_idx: userInfo.user_idx,
         nickname: userInfo.nickname,
         gender: userInfo.gender,
@@ -69,11 +69,11 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
         device_token: userInfo.device_token,
       }
 
-      const Token = await token.encode(key , userInfoResult)
+      const Token = await token.encode(key , userInfo)
       
       resolve({
         Token,
-        userInfoResult,
+        userInfo,
       })
 
     } catch(e){
