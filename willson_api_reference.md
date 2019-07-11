@@ -400,7 +400,7 @@ header =>  <b>willson-token : jwt_token</b>
         title: String,
         question_idx: int
         create_time: String,
-        status: 'o' || 'x' :String
+        selected: 'Y' || 'N' :String
       },
       categoryInfo: {
         category_idx: int,
@@ -640,7 +640,7 @@ header:
       nickname: String,
       category_name: String,
       content: String
-    }]
+    },{},{},{},{}]
 }
 
 실패 = 500
@@ -1023,7 +1023,13 @@ header => "<b>willson-token" : jwt_token</b>
     }],
     experience: [{
       experience_name: String
-    }]
+    },{
+      experience_name: String
+    },
+    {
+      experience_name: String
+    }
+    ]
   }
 }
 
@@ -1035,13 +1041,13 @@ header => "<b>willson-token" : jwt_token</b>
   data: { }
 }
 
-2501: MYPROFILE_HELPER_DOES_NOT_EXIST
-2502: GET_HELPER_MYPROFILE_ERROR_ANYWAY
+2501: "MYPROFILE_HELPER_DOES_NOT_EXIST"
+2502: "GET_HELPER_MYPROFILE_ERROR_ANYWAY"
 ```
 
 ### 매칭된 고민 상태 변경하기 => compelete
 
-url => <b>/api/mathing/:matching_idx</b>
+url => <b>/api/matching/:matching_idx</b>
 
 method => <b>GET</b>
 

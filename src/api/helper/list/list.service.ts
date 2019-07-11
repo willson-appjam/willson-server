@@ -171,7 +171,8 @@ const getListService = (req: any, res: any) => {
                     helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
                     result.push(helpers_info[indices[i]]);
                   }
-                  resolve(result);
+                  let size = result.length;
+                  resolve({result, size}); //나중에 수정!
                 }).catch((err:any)=>{
                   console.log(err);
                 })
