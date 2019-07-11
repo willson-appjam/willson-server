@@ -1030,11 +1030,9 @@ header => "<b>willson-token" : jwt_token</b>
       experience_name: String
     },{
       experience_name: String
-    },
-    {
+    },{
       experience_name: String
-    }
-    ]
+    }]
   }
 }
 
