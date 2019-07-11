@@ -1,8 +1,8 @@
 //헬퍼 등록
 const selectRegistrationCategory = (connection: any, category_name: any) => {
-  return new Promise ((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const query = `SELECT category_idx FROM category WHERE category_name = (?)`
-  
+
     connection.query(query, category_name, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
@@ -196,9 +196,9 @@ const selectProfileExperience = (connection: any, helper_idx: any) => {
     WHERE
       helper_idx = (?)`;
 
-      connection.query(query, helper_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+    connection.query(query, helper_idx, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
@@ -216,47 +216,47 @@ const selectProfilePersonality = (connection: any, helper_idx: any) => {
     WHERE
       helper_idx = (?)`;
 
-      connection.query(query, helper_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+    connection.query(query, helper_idx, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
 //헬퍼 프로필 수정
 const updateProfileHelper = (connection: any, helper: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+  return new Promise((resolve, reject) => {
+    const query = `
     UPDATE 
       helper
     SET
       category_idx = ?, categoryList_idx = ?, title = ?, content = ?
     WHERE
       user_idx = (?)`;
-  
-      connection.query(query, helper, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+
+    connection.query(query, helper, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
 const updateProfileHelper_experience = (connection: any, arr: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+  return new Promise((resolve, reject) => {
+    const query = `
     UPDATE 
       helper_experience
     SET
       experience_idx = (?)
     WHERE
       helper_experience_idx = (?)`;
-    
-      let q = connection.query(query, arr, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+
+    let q = connection.query(query, arr, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 const selectProfileHelper_experience = (connection: any, helper_idx: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+  return new Promise((resolve, reject) => {
+    const query = `
     SELECT
       helper_experience_idx
     FROM
@@ -264,13 +264,13 @@ const selectProfileHelper_experience = (connection: any, helper_idx: any) => {
     WHERE
       helper_idx = (?)`;
     connection.query(query, helper_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 const selectProfileHelper_idx = (connection: any, user_idx: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+  return new Promise((resolve, reject) => {
+    const query = `
     SELECT
       helper_idx
     FROM
@@ -278,15 +278,15 @@ const selectProfileHelper_idx = (connection: any, user_idx: any) => {
     WHERE
       user_idx = (?)`;
     connection.query(query, user_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
 //헬퍼 이야기
 const selectStoryHelper = (connection: any, category_idx: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+  return new Promise((resolve, reject) => {
+    const query = `
     SELECT
       nickname, category_name, content
     FROM
@@ -297,35 +297,74 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
       C.category_idx = (?)
     ORDER BY RAND() LIMIT 1
   `;
-    
+
     let q = connection.query(query, category_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
 //요청 보내기
 const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`SELECT question_idx from question WHERE question_idx = (?)`;
+  return new Promise((resolve, reject) => {
+    const query = `SELECT question_idx from question WHERE question_idx = (?)`;
     connection.query(query, question_idx, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+      err ? reject(err) : resolve(result)
+    })
   })
 }
-const insertSelectionSelected_question = (connection: any, arr : any) => {
-  return new Promise((resolve, reject)=> {
-    const query=`
+const insertSelectionSelected_question = (connection: any, question_idx: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
     INSERT INTO
       selected_question (helper_idx, question_idx, cr_user) VALUES (?, ?, ?)
   `;
-    
-    connection.query(query, arr, (err: any, result: any) => {
-        err ? reject(err) : resolve(result)
-      })
+
+    connection.query(query, question_idx, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
   })
 }
 
+//myprofile 
+const selectMyProfileHelper = (connection: any, helper_idx: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      category_name, categoryList_name, title, content
+    FROM
+      helper as H
+    INNER JOIN
+      category as C ON C.category_idx = H.category_idx
+    INNER JOIN
+      categoryList as CL ON CL.categoryList_idx = H.categoryList_idx
+    WHERE
+      H.user_idx = (?)`;
+
+    connection.query(query, helper_idx, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+const selectMyProfileExperience = (connection: any, user_idx: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      experience_name
+FROM
+      experience as A
+INNER JOIN 
+      helper_experience as B ON A.experience_idx = B.experience_idx
+INNER JOIN
+      helper as H ON H.helper_idx = B.helper_idx
+WHERE
+      user_idx = (?)`;
+
+    connection.query(query, user_idx, (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
 const selectHelperExist = (connection: any , { user_idx }: any) => {
   return new Promise((resolve, reject)=> {
     const query=`
@@ -345,30 +384,32 @@ const selectHelperExist = (connection: any , { user_idx }: any) => {
   })
 }
 
-  export {
-    selectRegistrationCategory,
-    insertRegistrationCategoryList,
-    insertRegistrationHelper,
-    selectRegistrationExperience,
-    insertRegistrationHelper_experience,
+export {
+  selectRegistrationCategory,
+  insertRegistrationCategoryList,
+  insertRegistrationHelper,
+  selectRegistrationExperience,
+  insertRegistrationHelper_experience,
 
-    selectProfileHelper,
-    selectProfileExperience,
-    selectProfilePersonality,
-    updateProfileHelper,
-    selectProfileHelper_idx,
-    selectProfileHelper_experience,
-    updateProfileHelper_experience,
-    selectStoryHelper,
-    insertSelectionSelected_question,
-    selectSelectionQuestion_idx,
-    
-    selectUserInfo,
-    selectUserExperience,
-    selectUserPersonality,
-    selectHelper_idx,
-    selectHelperInfo,
-    selectHelperPersonality,
+  selectProfileHelper,
+  selectProfileExperience,
+  selectProfilePersonality,
+  updateProfileHelper,
+  selectProfileHelper_idx,
+  selectProfileHelper_experience,
+  updateProfileHelper_experience,
+  selectStoryHelper,
+  insertSelectionSelected_question,
+  selectSelectionQuestion_idx,
 
-    selectHelperExist,
-  }
+  selectUserInfo,
+  selectUserExperience,
+  selectUserPersonality,
+  selectHelper_idx,
+  selectHelperInfo,
+  selectHelperPersonality,
+
+  selectMyProfileHelper,
+  selectMyProfileExperience,
+  selectHelperExist
+}
