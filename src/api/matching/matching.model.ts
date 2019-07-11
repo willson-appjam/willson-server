@@ -15,6 +15,24 @@ const updateMatchingStatus = (connection : any, { matching_idx }: any): Promise<
 	})
 }
 
+const selectMatchingHistroy = (connection : any, { user_idx }: any): Promise<{}> => {
+	return new Promise((resolve, reject) : any => {
+		const query = `
+      SELECT
+        *
+      FROM
+        matching
+      WHERE
+        status ='doing' AND helper_idx = ?
+		`
+		connection.query(query, [user_idx], (err: Error, result: {}[]) => {
+			if(err) reject(err);
+			resolve(result)
+		})
+	})
+}
+
 export{
-	updateMatchingStatus
+  updateMatchingStatus,
+  selectMatchingHistroy,
 }

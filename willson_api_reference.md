@@ -51,7 +51,7 @@ header =>
   age: int,
 	email: String,
 	password: String,
-	device_token:String
+	device_token: String
   	
 }
 ```
@@ -62,33 +62,33 @@ header =>
 성공 = 200
 {
 	code: 100,
-    message: SIGN_UP_SUCCESS,
-    data: {
-        body: { }
-    }
+  message: SIGN_UP_SUCCESS,
+  data: {
+    body: { }
+  }
 }
 
 
 실패 = 500
 {
-    code: int,
-    message: String,
-    data: {
-        body: {
-            nickname: String,
-            gender: String,
-            age: String,
-            email: String,
-            password: String,
-            device_token: String,
-            user_level: String
-        }
+  code: int,
+  message: String,
+  data: {
+    body: {
+      nickname: String,
+      gender: String,
+      age: String,
+      email: String,
+      password: String,
+      device_token: String,
+      user_level: String
     }
+  }
 }
     
- 101: SIGN_UP_DUPLICATE_DATA (중복된 email값이 존재할 때)
- 102: SIGN_UP_VALIDATION_ERROR (body에 null값이 존재할 때)
- 103: SIGN_UP_ERROR_ANYWAY
+101: SIGN_UP_DUPLICATE_DATA (중복된 email값이 존재할 때)
+102: SIGN_UP_VALIDATION_ERROR (body에 null값이 존재할 때)
+103: SIGN_UP_ERROR_ANYWAY
 ```
 
 
@@ -105,8 +105,8 @@ header =>
 
 ```java
 {
-		email: String,
-		password: String
+  email: String,
+  password: String
 }
 ```
 
@@ -115,27 +115,27 @@ header =>
 ```java
 성공 = 200
 {
-    code: 200,
-    message: SIGN_IN_SUCCESS,
-    data: {
-        Token: String
-    }
+  code: 200,
+  message: SIGN_IN_SUCCESS,
+  data: {
+    Token: String
+  }
 }
 
 
 실패 = 500
 {
-    code: int,
-    message: String,
-    data: {
-        email: String,
-        password: String
-    }
+  code: int,
+  message: String,
+  data: {
+    email: String,
+    password: String
+  }
 }
 
- 201: SIGN_IN_VALIDATION_ERROR (body에 null값 존재)
- 202: SIGN_IN_AUTHENTICATION_ERROR (없는 email이거나 비밀번호가 일치하지 않을 때)
- 203: SIGN_IN_ERROR_ANYWAY
+201: SIGN_IN_VALIDATION_ERROR (body에 null값 존재)
+202: SIGN_IN_AUTHENTICATION_ERROR (없는 email이거나 비밀번호가 일치하지 않을 때)
+203: SIGN_IN_ERROR_ANYWAY
 ```
 
 
@@ -146,7 +146,7 @@ url : <b>/api/user/profile/:question_idx</b>
 
 method : <b>GET</b>
 
-header =>  
+header => willson-token: jwt
 
 > Request
 
@@ -159,57 +159,51 @@ header =>
 ```java
 성공 = 200
 {
-    code: 300,
-    message: GET_USER_PROFILE_LIST_SUCCESS,
-    data: {
-        user: {
-            nickname: String,
-            gender: String,
-            age: String
-        },
-        user_personality: [
-            {
-                personality_name: String
-            }, {..}
-        ],
-        question: {
-            category_name: String,
-            categoryList_name: String,
-            weight: int,
-            content: String,
-            helper_gender: String,
-            advise: int,
-            emotion: int,
-            experience: int,
-            question_personality: [
-                {
-                    personality_name: String
-                }, {..}
-            ],
-            question_feeling: [
-                {
-                    feeling_name: String
-                }, {..}
-            ],
-            question_experience: [
-                {
-                    experience_name: String
-                }, {..}
-            ]
-        }
+  code: 300,
+  message: GET_USER_PROFILE_LIST_SUCCESS,
+  data: {
+    user: {
+      nickname: String,
+      gender: String,
+      age: String
+    },
+    user_personality: [
+        {
+            personality_name: String
+        }, {..}
+    ],
+    question: {
+      category_name: String,
+      categoryList_name: String,
+      weight: int,
+      content: String,
+      helper_gender: String,
+      advise: int,
+      emotion: int,
+      experience: int,
+      question_personality: [{
+        personality_name: String
+      }],
+      question_feeling: [{
+        feeling_name: String
+      }],
+      question_experience: [{
+        experience_name: String
+      }]
     }
+  }
 }
 
 
 실패 = 500
 {
-    code: int,
-    message: String,
-    data: {
-        params: {
-            question_idx: int
-        }
+  code: int,
+  message: String,
+  data: {
+    params: {
+      question_idx: int
     }
+  }
 }
 
 301: USER_PROFILE_LIST_VALIDATION_ERROR (question_idx가 없는 값일 때)
@@ -240,8 +234,8 @@ header =>  <b>willson-token : jwt_token</b>
   message: String
   data: {
     categoryList: [{
-    	categoryList_id: int,
-	    categoryList_name: String,
+    categoryList_id: int,
+    categoryList_name: String,
   }]
 }
 
@@ -272,7 +266,7 @@ header =>  <b>willson-token : jwt_token</b>
 
 > response
 
-```react
+```java
 # response
 {
 	message: String,
@@ -439,7 +433,7 @@ header:  willson-token : jwt_token
   	"category_name": String,
     "categoryList_name": String,
     "title": String,
-    "content": String
+    "content": String,
   }
   "experience": {
   	"experience_name": [String, String, String]
@@ -452,9 +446,11 @@ header:  willson-token : jwt_token
 ```java
 성공 = 200
 {
-    "code": 900,
-    "message": "HELPER_REGISTRATION_SUCCESS",
-    "data": {"helper_idx": int}
+  "code": 900,
+  "message": "HELPER_REGISTRATION_SUCCESS",
+  "data": {
+    "helper_idx": int
+  }
 }
 
 실패 = 500
@@ -463,9 +459,8 @@ header:  willson-token : jwt_token
 	code: int,
 	data: {}
 }
-    901: "HELPER_REGISTRATION_VALIDATION_ERROR" (body에 null값 존재)
-    902: "HELPER_REGISTRATION_ERROR_ANYWAY"
-
+901: "HELPER_REGISTRATION_VALIDATION_ERROR" (body에 null값 존재)
+902: "HELPER_REGISTRATION_ERROR_ANYWAY"
 ```
 
 
@@ -489,19 +484,21 @@ header:  willson-token : jwt_token
 ```java
 성공 = 200
 {
-	"code": 1000,
-    "message": "GET_HELPER_LIST_SUCCESS",
-	"data": {
-		"helper":[
-		{ "nickname": String,
-			"gender": String,
-			"age": String,
-			"category_name": String,
-			"content": String,
-			"stars": String,
-			"review_count": String } , {}, {}],
-		experience: [
-		{ experience_name: [String, String, String]}, {}, {}]
+	code: 1000,
+  message: "GET_HELPER_LIST_SUCCESS",
+	data: {
+		helper:[{
+      nickname: String,
+			gender: String,
+			age: String,
+			category_name: String,
+			content: String,
+			stars: String,
+			review_count: String
+    }],
+		experience: [{
+      experience_name: [String, String, String]
+    }]
   }
 }
 
@@ -511,9 +508,8 @@ header:  willson-token : jwt_token
 	code: int,
 	data: {}
 }
-    1001: "HELPER_LIST_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
-    1002: "GET_HELPER_LIST_ERROR_ANYWAY"
-
+1001: "HELPER_LIST_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
+1002: "GET_HELPER_LIST_ERROR_ANYWAY"
 ```
 
 
@@ -537,42 +533,24 @@ header:  willson-token : jwt_token
 ```java
 성공 = 200
 {
-	"code": 1100,
-    "message": "GET_HELPER_PROFILE_SUCCESS",
-	"data": {
-		"helper": [
-		{ 
-			"nickname": String,
-			"gender": String,
-			"age": String,
-			"category_name": String,
-			"content": String,
-			"stars": String,
-			"review_count": String
-			}
-		],
-  "experience": [
-        {
-            "experience_name": String 
-        },
-        {
-            "experience_name": String 
-        },
-        {
-            "experience_name": String 
-        }
-    ],
-    "personality": [
-        {
-            "personality_name": String 
-        },
-        {
-            "personality_name": String 
-        },
-        {
-            "personality_name": String 
-        }
-    ]
+	code: 1100,
+  message: "GET_HELPER_PROFILE_SUCCESS",
+	data: {
+		helper: [{ 
+			nickname: String,
+			gender: String,
+			age: String,
+			category_name: String,
+			content: String,
+			stars: String,
+			review_count: String
+    }],
+  experience: [{
+    experience_name: String 
+    }],
+    personality: [{
+      personality_name: String 
+    }]
   }
 }
 
@@ -582,8 +560,9 @@ header:  willson-token : jwt_token
 	code: int,
 	data: {}
 }
-    1101: "PROFILE_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
-    1102: "GET_HELPER_PROFILE_ERROR_ANYWAY"
+
+1101: "PROFILE_HELPER_DOES_NOT_EXIST" (존재하지 않는 helper_idx)
+1102: "GET_HELPER_PROFILE_ERROR_ANYWAY"
 ```
 
 
@@ -601,10 +580,10 @@ header: "willson-token" : jwt_token
 ```java
 {
   helper: {
-  	"category_name": String,
-    "categoryList_name": String,
-    "title": String,
-    "content": String
+  	category_name: String,
+    categoryList_name: String,
+    title: String,
+    content: String
   }
   experience: {
   	experience_name: [String, String, String]
@@ -617,9 +596,9 @@ header: "willson-token" : jwt_token
 ```java
 성공 = 200
 {
-    "code": 1200,
-    "message": "UPDATE_HELPER_PROFILE_SUCCESS",
-    "data": {}
+    code: 1200,
+    message: "UPDATE_HELPER_PROFILE_SUCCESS",
+    data: {}
 }
 
 실패 = 500
@@ -628,9 +607,10 @@ header: "willson-token" : jwt_token
 	code: int,
 	data: {}
 }
-    1201: "USER_IS_NOT_HELPER" (헬퍼로 등록되지 않은 유저)
-    1202: "UPDATE_HELPER_PROFILE_ERROR_ANYWAY" 
-    1203: "UPDATE_HELPER_PROFILE_VALIDATION_ERROR" (body에 null 값 존재)
+
+1201: "USER_IS_NOT_HELPER" (헬퍼로 등록되지 않은 유저)
+1202: "UPDATE_HELPER_PROFILE_ERROR_ANYWAY" 
+1203: "UPDATE_HELPER_PROFILE_VALIDATION_ERROR" (body에 null 값 존재)
 ```
 
 
@@ -654,35 +634,13 @@ header:
 ```java
 성공 = 200
 {
-    "code": 1300,
-    "message": "GET_HELPER_STORY_SUCCESS",
-    "data": [
-        {
-            "nickname": String,
-            "category_name": String,
-            "content": String
-        },
-        {
-            "nickname": String,
-            "category_name": String,
-            "content": String
-        },
-        {
-            "nickname": String,
-            "category_name": String,
-            "content": String
-        },
-        {
-            "nickname": String,
-            "category_name": String,
-            "content": String
-        },
-        {
-            "nickname": String,
-            "category_name": String,
-            "content": String
-        }
-    ]
+    code: 1300,
+    message: "GET_HELPER_STORY_SUCCESS",
+    data: [{
+      nickname: String,
+      category_name: String,
+      content: String
+    }]
 }
 
 실패 = 500
@@ -691,8 +649,9 @@ header:
 	code: int,
 	data: {}
 }
-    1301: "MISSING_HELPER_STORY" (누락된 헬퍼 스토리 존재 (5개가 아닐 때))
-    1302: "GET_HELPER_STORY_ERROR_ANYWAY"
+
+1301: "MISSING_HELPER_STORY" (누락된 헬퍼 스토리 존재 (5개가 아닐 때))
+1302: "GET_HELPER_STORY_ERROR_ANYWAY"
 ```
 
 
@@ -709,7 +668,7 @@ header: "willson-token" : jwt_token
 
 ```java
 {
-  "question_idx": int
+  question_idx: int
 }
 ```
 
@@ -718,9 +677,9 @@ header: "willson-token" : jwt_token
 ```java
 성공 = 200
 result: {
-    "code": 1400,
-    "message": "HELPER_SELECTION_SUCCESS",
-    "data": {}
+  code: 1400,
+  message: "HELPER_SELECTION_SUCCESS",
+  data: {}
 }
 
 실패 = 500
@@ -729,9 +688,11 @@ result: {
 	code: int,
 	data: {}
 }
-    1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 고민을 선택)
-    1402: "SELECTION_HELPER_DOES_NOT_EXIST" (헬퍼가 아닌 유저가 선택)
-    1403: "HELPER_SELECTION_ERROR_ANYWAY"
+
+1401: "HELPER_SELECTION_QUESTION_DOES_NOT_EXIST" (존재하지 않는 고민을 선택)
+1402: "SELECTION_HELPER_DOES_NOT_EXIST" (헬퍼가 아닌 유저가 선택)
+1403: "HELPER_SELECTION_ERROR_ANYWAY"
+1404: "HELPER_SELECTION_ALREADY_MATCHING",
 ```
 
 ### 후기 목록 보기
@@ -755,16 +716,14 @@ header =>
 {
     code: 1500,
     message: GET_REVIEW_LIST_SUCCESS,
-    data: [
-        {
-            review_idx: 1,
-            stars: String,
-            review_content: String,
-            write_date: String,
-            category_name: String,
-            nickname: String
-        }, {..}
-    ]
+    data: [{
+      review_idx: 1,
+      stars: String,
+      review_content: String,
+      write_date: String,
+      category_name: String,
+      nickname: String
+    }]
 }
 
 
@@ -773,9 +732,9 @@ header =>
     code: int,
     message: String,
     data: {
-        params: {
-            helper_idx: int
-        }
+      params: {
+        helper_idx: int
+      }
     }
 }
 
@@ -820,9 +779,9 @@ header =>  <b>willson-token : jwt_token</b>
 
 실패 = 500
 {
-    code: int,
-    message: String
-    data: {}
+  code: int,
+  message: String
+  data: {}
 }
 
 1601: REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
@@ -855,17 +814,17 @@ header => <b>willson-token : jwt_token</b>
 ```java
 성공 = 200
 {
-    code: 1700,
-    message: MODIFIED_REVIEW_SUCCESS,
-    data: {}
+  code: 1700,
+  message: MODIFIED_REVIEW_SUCCESS,
+  data: {}
 }
 
 
 실패 = 500
 {
-    code: int,
-    message: String,
-    data: {}
+  code: int,
+  message: String,
+  data: {}
 }
 
 1701: MODIFIED_REVIEW_VALIDATION_ERROR (body에 null값이 존재할 때)
@@ -897,7 +856,7 @@ header =>  <b>willson-token : jwt_token</b>
 	message: String,
 	code: int,
 	data: {
-		"personalityList": [{
+		personalityList: [{
 			personality_idx: int,
 			personality_name: String
 		}]
@@ -922,9 +881,9 @@ header: "willson-token" : jwt_token
 
 ```java
 {
-  "helper_idx" : int,
-  "question_idx" : int,
-  "status": "doing" : string,
+  helper_idx : int,
+  question_idx : int,
+  status: "doing" : string,
 }
 ```
 
@@ -933,7 +892,7 @@ header: "willson-token" : jwt_token
 ```java
 성공 = 200
 {
-  message: ""USER_SELECTION_SUCCESS"",
+  message: "USER_SELECTION_SUCCESS",
   code: 2100,
   data: {
     matching_idx: int,
@@ -941,8 +900,9 @@ header: "willson-token" : jwt_token
 }
 
 실패 = 500
-  2101: "USER_SELECTION_VALIDATION_ERROR",
-  2102: "USER_SELECTION_ERROR_ANYWAY"
+
+2101: "USER_SELECTION_VALIDATION_ERROR",
+2102: "USER_SELECTION_ERROR_ANYWAY"
 ```
 
 
@@ -958,8 +918,8 @@ header: "willson-token" : jwt_token
 
 ```java
 {
-  "question_idx" : int,
-  "status": "complete" : string,
+  question_idx : int,
+  status: "complete" : string,
 }
 ```
 
@@ -973,9 +933,10 @@ header: "willson-token" : jwt_token
     data: {}
 }
 실패 = 500
-  2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
-  2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
-  2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
+  
+2200: "UPDATE_USER_QUESTION_STATUS_SUCCESS",
+2201: "UPDATE_USER_QUESTION_VALIDATION_ERROR",
+2202: "UPDATE_USER_QUESTION_ERROR_ANYWAY",
 ```
 
 ### 메인: 질문자들의 후기
@@ -989,20 +950,18 @@ header:
 ```java
 성공 = 200
 {
-    "code": 2300,
-    "message": "GET_MAIN_REVIEW_LIST_SUCCESS",
-    "data": [
-        {
-            "category_name": String,
-            "content": String,
-            "nickname": String
-        },
-        {},{},{},{}
-        ]
+    code: 2300,
+    message: "GET_MAIN_REVIEW_LIST_SUCCESS",
+    data: [{
+      category_name: String,
+      content: String,
+      nickname: String
+    }]
 }
 
 실패 = 500
-  2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
+  
+2301: "MAIN_REVIEW_LIST_ERROR_ANYWAY"
 
 ```
 
@@ -1053,37 +1012,27 @@ header => "<b>willson-token" : jwt_token</b>
 ```java
 성공 = 200
 {
-    code: 2500,
-    message: "GET_HELPER_MYPROFILE_SUCCESS",
-    data: {
-        helper: [
-            {
-                category_name: String,
-                categoryList_name: String,
-                title: String,
-                content: String
-            }
-        ],
-        experience: [
-            {
-                experience_name: String
-            },
-            {
-                experience_name: String
-            },
-            {
-                experience_name: String
-            }
-        ]
-    }
+  code: 2500,
+  message: "GET_HELPER_MYPROFILE_SUCCESS",
+  data: {
+    helper: [{
+      category_name: String,
+      categoryList_name: String,
+      title: String,
+      content: String
+    }],
+    experience: [{
+      experience_name: String
+    }]
+  }
 }
 
 
 실패 = 500
 {
-    code: int,
-    message: String,
-    data: { }
+  code: int,
+  message: String,
+  data: { }
 }
 
 2501: MYPROFILE_HELPER_DOES_NOT_EXIST
