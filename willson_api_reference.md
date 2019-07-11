@@ -26,6 +26,7 @@ BaseUrl =>  <b>host:port/api</b>
 |      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
 |      상담 종료하기         |        /concern/question         |  PUT | X |
 |      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
+|      헬퍼의 마이프로필 보기      |        /helper/myprofile    |  GET  | X |
 
 
 
@@ -1033,7 +1034,7 @@ header =>  <b>willson-token : jwt_token</b>
 ```
 
 
-### 헬퍼 프로필 보기
+### 헬퍼의 마이프로필 보기
 
 url : <b>/api/helper/myprofile</b>
 
