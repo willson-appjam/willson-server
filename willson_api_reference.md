@@ -1023,3 +1023,61 @@ header =>  <b>willson-token : jwt_token</b>
 2400: "GET_HELPER_EXIST_CHECK_SUCCESS",
 2401: "GET_HELPER_EXIST_CHECK_ERROR_ANYWAY",
 ```
+
+
+### 헬퍼 프로필 보기
+
+url : <b>/api/helper/myprofile</b>
+
+method : <b>GET</b>
+
+header => "<b>willson-token" : jwt_token</b>
+
+> Request
+
+```
+
+```
+
+> Response
+
+```java
+성공 = 200
+{
+    code: 2500,
+    message: "GET_HELPER_MYPROFILE_SUCCESS",
+    data: {
+        helper: [
+            {
+                category_name: String,
+                categoryList_name: String,
+                title: String,
+                content: String
+            }
+        ],
+        experience: [
+            {
+                experience_name: String
+            },
+            {
+                experience_name: String
+            },
+            {
+                experience_name: String
+            }
+        ]
+    }
+}
+
+
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: { }
+}
+
+2501: MYPROFILE_HELPER_DOES_NOT_EXIST
+2502: GET_HELPER_MYPROFILE_ERROR_ANYWAY
+```
+
