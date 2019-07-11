@@ -9,22 +9,22 @@ const selectRegistrationCategory = (connection: any, category_name: any) => {
   })
 }
 
-const insertRegistrationCategoryList = (connection: any, [categoryList_name, category_idx, user ]: any) => {
+const insertRegistrationCategoryList = (connection: any, [categoryList_name, categoryList_idx, user_idx]: any) => {
   return new Promise ((resolve, reject) => {
     const query = `
     INSERT INTO 
-	    categoryList (categoryList_name, category_idx, cr_user)
+       categoryList (categoryList_name, category_idx, count, cr_user)
     VALUES 
-	    (?,?,?)
+       (?,?,1,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
   
-    const Query = connection.query(query, [categoryList_name, category_idx, user.user_idx], (err: any, result: any) => {
-      console.log(Query.sql)
+    connection.query(query, [categoryList_name, categoryList_idx, user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
 }
+
 
 const insertRegistrationHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject) => {
@@ -44,7 +44,7 @@ const selectRegistrationExperience = (connection: any, experience_name: any, use
       (?,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
-    connection.query(query, [experience_name, user.user_idx], (err: any, result: any) => {
+    connection.query(query, [experience_name, user], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
