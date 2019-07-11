@@ -13,7 +13,7 @@ export interface Question {
   title: string,
   question_idx: number,
   create_time: string,
-  status: string //'o','x'
+  selected: string //'Y','N'
 }
 
 export interface Category {
