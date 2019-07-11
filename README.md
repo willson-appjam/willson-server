@@ -4,19 +4,19 @@
 
 > ### 운영 환경
 
-nvm => v0.33.11
+  nvm => v0.33.11
 
-Node.js => v9.11
+  Node.js => v9.11
 
-Flask => v1.0.2
+  Flask => v1.0.2
 
-Mysql => v5.7
+  Mysql => v5.7
 
-webpack => 4.35.0
+  webpack => 4.35.0
 
-FastText(natural language process)
+  FastText(natural language process)
 
-
+<br />
 
 > ### 실행환경
 
@@ -37,6 +37,7 @@ $ yarn build:dev
 $ yarn start
 
 ```
+<br />
 
 > ### CI/CD 설정 및 설명
 
@@ -47,16 +48,20 @@ CD => Aws Code Deploy
 
 CI 관련 설정은 .tarvis.yml, CD 관련 설정은 appspec.yml에 명세합니다.
 
- 
+ <br />
+
 > ### 운영 아키텍쳐
 
 <img src="./readme/willson-server.png" width="500" float="left">
 
-###
-###
+> ### API REFERENCE
+
+[API_REFERENCE](./willson_api_reference.md)
+<br />
+
 
 > ### 서비스 에러 코드
- 
+
 ```java
   
   시스템 및 서비스 관련

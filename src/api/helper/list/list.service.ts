@@ -6,6 +6,7 @@ import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelp
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
+
 import { getAge } from "../../../modules/getAge";
 
 const getListService = (req: any, res: any) => {
@@ -59,12 +60,13 @@ const getListService = (req: any, res: any) => {
           //나이 알고리즘 고치기 
           let score = 10;
           let difference = 0;
-          if (user_age > 31) {
+
+          if (user_age > 31){
             difference = helpers_info[i].age - user_age - (36 - helpers_info[i].age);
-          } else {
+          }else{
             difference = helpers_info[i].age - user_age - 5;
           }
-
+          
           if (difference >= 0 && difference <= 10) {
             score = score - difference;
           }
@@ -119,7 +121,7 @@ const getListService = (req: any, res: any) => {
         for (let i = 0; i < 3; i++) {
           keyword.push(experience_name[i].experience_name);
         }
-
+        
         for (let i = 0; i < helper_num; i++) {
           const title = helpers_info[i].title;
           const text = title.concat(helpers_info[i].content);
@@ -168,7 +170,6 @@ const getListService = (req: any, res: any) => {
           }
           resolve(result);
        // })
-
       }
       else {
         resolve([helpers_info]);
