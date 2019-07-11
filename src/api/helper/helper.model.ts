@@ -307,7 +307,7 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
 //요청 보내기
 const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
-    const query = `SELECT question_idx from question WHERE question_idx = (?)`;
+    const query = `SELECT question_idx from question WHERE question_idx = ?`;
     connection.query(query, question_idx, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
