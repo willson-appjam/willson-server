@@ -23,7 +23,7 @@ const postRegistrationService = (req: any,res: any, next: any) => {
      
       //헬퍼의 경험 정보 등록
       for (let i=0; i<3; i++){
-        let experience_idx: any = await selectRegistrationExperience(connection, [experience.experience_name[i], user.user_idx]);
+        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user);
         experience_idx = experience_idx.insertId;
         await insertRegistrationHelper_experience(connection, [experience_idx, helper_idx, user.user_idx]);
       };

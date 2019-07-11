@@ -9,17 +9,18 @@ const selectRegistrationCategory = (connection: any, category_name: any) => {
   })
 }
 
-const insertRegistrationCategoryList = (connection: any, [categoryList_name, categoryList_idx, user_idx]: any) => {
+const insertRegistrationCategoryList = (connection: any, [categoryList_name, category_idx, user ]: any) => {
   return new Promise ((resolve, reject) => {
     const query = `
     INSERT INTO 
-	    categoryList (categoryList_name, category_idx, count, cr_user)
+	    categoryList (categoryList_name, category_idx, cr_user)
     VALUES 
-	    (?,?,1,?)
+	    (?,?,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
   
-    connection.query(query, [categoryList_name, categoryList_idx, user_idx], (err: any, result: any) => {
+    const Query = connection.query(query, [categoryList_name, category_idx, user.user_idx], (err: any, result: any) => {
+      console.log(Query.sql)
       err ? reject(err) : resolve(result)
     })
   })
@@ -34,16 +35,16 @@ const insertRegistrationHelper = (connection: any, helper: any) => {
   })
 }
 
-const selectRegistrationExperience = (connection: any, experience_name: any) => {
+const selectRegistrationExperience = (connection: any, experience_name: any, user: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     INSERT INTO 
-    experience (experience_name, cr_user)
-  VALUES 
-    (?,?)
-  ON DUPLICATE KEY UPDATE
-  count = count + 1`
-    connection.query(query, experience_name, (err: any, result: any) => {
+      experience (experience_name, cr_user)
+    VALUES 
+      (?,?)
+    ON DUPLICATE KEY UPDATE
+      count = count + 1`
+    connection.query(query, [experience_name, user.user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -307,7 +308,7 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
 //요청 보내기
 const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
-    const query = `SELECT question_idx from question WHERE question_idx = (?)`;
+    const query = `SELECT question_idx from question WHERE question_idx = ?`;
     connection.query(query, question_idx, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
