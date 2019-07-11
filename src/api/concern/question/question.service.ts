@@ -139,7 +139,6 @@ const putUserQuestionStatus = (req: any, res: any) => {
   })
 }
 
-
 export default {
   getUserQuestion,
   postUserQuestion,

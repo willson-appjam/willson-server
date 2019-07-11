@@ -30,6 +30,7 @@
     "http-errors": "^1.7.3",
     "is-empty": "^1.2.0",
     "jsonwebtoken": "^8.5.1",
+    "korean-text-analytics": "0.0.7",
     "lodash": "^4.17.11",
     "mecab-ya": "^0.1.1",
     "moment": "^2.24.0",

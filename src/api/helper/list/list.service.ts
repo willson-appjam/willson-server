@@ -6,7 +6,8 @@ import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelp
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
-import {getAge} from "../../../modules/getAge";
+
+import { getAge } from "../../../modules/getAge";
 
 const getListService = (req: any, res: any) => {
 
@@ -20,7 +21,7 @@ const getListService = (req: any, res: any) => {
       //유저가 원하는 헬퍼 정보
       let info: any = await selectUserInfo(connection, question_idx);
       if (!info.length) {
-        reject(new CustomError(null, 1001 , {question_idx}))
+        reject(new CustomError(null, 1001, { question_idx }))
         return
       }
       let experience_name: any = await selectUserExperience(connection, question_idx);
@@ -59,6 +60,7 @@ const getListService = (req: any, res: any) => {
           //나이 알고리즘 고치기 
           let score = 10;
           let difference = 0;
+
           if (user_age > 31){
             difference = helpers_info[i].age - user_age - (36 - helpers_info[i].age);
           }else{
@@ -119,67 +121,55 @@ const getListService = (req: any, res: any) => {
         for (let i = 0; i < 3; i++) {
           keyword.push(experience_name[i].experience_name);
         }
-        console.log(keyword);
+        
         for (let i = 0; i < helper_num; i++) {
           const title = helpers_info[i].title;
           const text = title.concat(helpers_info[i].content);
-          console.log(i, ": ", text);
-          //헬퍼의 서술형 데이터에서 명사만 뽑기
-          mecab.pos(text, function (err: any, result: any) {
-            if (err) {
-              console.log(err);
-              //에러처리 해야함
-            }
-            else {
-              text_arr.push({ "text_arr": result });
-              if (i == helper_num - 1) {
-                const body = {
-                  "user_keyword": keyword,
-                  "helper_experience": text_arr
-                }
-                //파이썬 서버랑 통신
-                const options = {
-                  method: 'POST',
-                  uri: 'http://54.180.119.69:5000/test',
-                  body: body,
-                  json: true
-                }
-
-                request(options).then(function (res: any, err: any) {
-                  for (let i=0; i<helper_num; i++){
-                    keyword_match.push(res.total[i][1])
-                  }
-                 
-                  //점수 합산
-                  let total: any = []
-                  for (let i = 0; i < helper_num; i++) {
-                    //(수정사항) 가중치 곱해주어야함! 
-                    console.log(age_match[i], personality_match[i], categoryList_match[i], keyword_match[i])
-                    const score = 3.5 * age_match[i] + 5 * personality_match[i] + 10 * categoryList_match[i] + 2 * keyword_match[i]
-                    total.push(score);
-                  }
-                  console.log(total);
-                  //점수 순대로 sort 했을 때 index 배열 구하기
-                  let indices = new Array(helper_num);
-                  for (let i = 0; i < helper_num; i++) {
-                    indices[i] = i;
-                  }
-                  indices.sort(function (a, b) { return total[a] < total[b] ? 1 : total[a] > total[b] ? 1 : 0; });
-
-                  let result = [];
-                  for (let i = 0; i < 3; i++) {
-                    helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
-                    result.push(helpers_info[indices[i]]);
-                  }
-                  resolve(result);
-                }).catch((err:any)=>{
-                  console.log(err);
-                })
-              }
-
-            }
-          })
+          text_arr.push(text);
         }
+
+        const body = {
+          "user_keyword": keyword,
+          "helper_experience": text_arr
+        }
+        console.log(body)
+
+        //파이썬 서버랑 통신
+        const options = {
+          method: 'POST',
+          uri: 'http://54.180.119.69:5000/test',
+          body: body,
+          json: true
+        }
+
+        //request(options).then(function (res: any, err: any) {
+          //for (let i = 0; i < helper_num; i++) {
+            //keyword_match.push(res.total[i][1])
+          //}
+
+          //점수 합산
+          let total: any = []
+          for (let i = 0; i < helper_num; i++) {
+            //(수정사항) 가중치 곱해주어야함! 
+            console.log(age_match[i], personality_match[i], categoryList_match[i], keyword_match[i])
+            const score = 3.5 * age_match[i] + 5 * personality_match[i] + 10 * categoryList_match[i] + 2 * keyword_match[i]
+            total.push(score);
+          }
+          console.log(total);
+          //점수 순대로 sort 했을 때 index 배열 구하기
+          let indices = new Array(helper_num);
+          for (let i = 0; i < helper_num; i++) {
+            indices[i] = i;
+          }
+          indices.sort(function (a, b) { return total[a] < total[b] ? 1 : total[a] > total[b] ? 1 : 0; });
+
+          let result = [];
+          for (let i = 0; i < 3; i++) {
+            helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
+            result.push(helpers_info[indices[i]]);
+          }
+          resolve(result);
+       // })
       }
       else {
         resolve([helpers_info]);
