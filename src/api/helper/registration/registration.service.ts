@@ -16,13 +16,13 @@ const postRegistrationService = (req: any,res: any, next: any) => {
       
       let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx, user.user_idx]);
       categorylist_idx = categorylist_idx.insertId;
-
+console.log(user.user_idx)
       let helper_idx: any = await insertRegistrationHelper(connection, [category_idx, categorylist_idx, helper.title, helper.content, user.user_idx, user.user_idx]);
       helper_idx = helper_idx.insertId;
 
       //헬퍼의 경험 정보 등록
-      for (let i=0; i<3; i++) {
-        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user);
+      for (let i=0; i<3; i++){
+        let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user.user_idx);
         experience_idx = experience_idx.insertId;
         await insertRegistrationHelper_experience(connection, [experience_idx, helper_idx, user.user_idx]);
       };
