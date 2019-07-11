@@ -1,4 +1,6 @@
-\# WillSon-Server
+# WillSon-Server
+
+고민 해결을 위한 상담 플랫폼입니다.
 
 > ### 운영 환경
 
@@ -46,12 +48,10 @@ CD => Aws Code Deploy
 CI 관련 설정은 .tarvis.yml, CD 관련 설정은 appspec.yml에 명세합니다.
 
  
-
 > ### 운영 아키텍쳐
 
 <img src="./readme/willson-server.png" width="500" float="left">
 
-  
 ###
 ###
 
