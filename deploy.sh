@@ -9,6 +9,7 @@ echo "delete willson project"
 pm2 delete willson
 
 echo "make bundle file"
+cd deploy/willson
 npm run build:dev
 
 echo "delete willson project"
