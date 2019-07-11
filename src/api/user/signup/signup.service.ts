@@ -18,7 +18,7 @@ const postSignupService = (req: any, res: any, next: any) : any => {
 
 			if(checkOverlapedEmail.length == 1) {
 				delete body.salt
-				reject(new CustomError(null, 101, { body } ))
+				reject(new CustomError(null, 101,  body ))
         return
       }
       

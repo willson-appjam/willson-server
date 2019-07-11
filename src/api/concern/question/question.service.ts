@@ -65,6 +65,7 @@ const getUserQuestion = (req: any, res: any) => {
     const connection: any = await dbConnection();
     try {
       const { user } = req
+
       const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
       
       let concernInfo: {}[] = [];

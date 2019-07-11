@@ -22,7 +22,7 @@ const postSelectionService = (req: any, res: any, next: any) => {
       await questionModel.updateQuestionStatus(connection, body, user);
       
       resolve({
-        mathing_idx: user_selection.insertId,
+        matching_idx: user_selection.insertId,
       });
       
     } catch(e){
