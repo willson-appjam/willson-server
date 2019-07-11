@@ -26,8 +26,8 @@ BaseUrl =>  <b>host:port/api</b>
 |      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
 |      상담 종료하기         |        /concern/question         |  PUT | X |
 |      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
-
-
+|      헬퍼 등록상태 확인하기       |     /helper/check           |  GET  | X |
+|     매칭된 고민 상태 변경하기     |     /matching/:matching_idx |  PUT  | params |
 
 
 ### 회원가입
@@ -931,7 +931,9 @@ header: "willson-token" : jwt_token
 {
   message: ""USER_SELECTION_SUCCESS"",
   code: 2100,
-  data: {},
+  data: {
+    matching_idx: int,
+  },
 }
 
 실패 = 500
@@ -993,7 +995,7 @@ header:
 
 ```
 
-### 사용자: 질문 등록하기
+### 헬퍼 등록 상태 확인하기
 
 url => <b>/api/helper/check</b>
 
@@ -1022,4 +1024,36 @@ header =>  <b>willson-token : jwt_token</b>
 
 2400: "GET_HELPER_EXIST_CHECK_SUCCESS",
 2401: "GET_HELPER_EXIST_CHECK_ERROR_ANYWAY",
+```
+
+### 매칭된 고민 상태 변경하기 => compelete
+
+url => <b>/api/mathing/:matching_idx</b>
+
+method => <b>GET</b>
+
+header =>  <b>willson-token : jwt_token</b>
+
+> Request
+
+```java
+# request
+
+```
+
+> Response
+
+```java
+# response
+{
+	message: String,
+	code: int,
+	data: {
+    status: boolean,
+  },
+}
+
+2600: "UPDATE_MATCHING_STATUS_SUCCESS",
+2601: "UPDATE_MATCHING_STATUS_ERROR_ANYWAY",
+2602: "UPDATE_MATCHING_STATUS_NOT_FOUND",
 ```
