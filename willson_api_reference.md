@@ -402,7 +402,8 @@ header =>  <b>willson-token : jwt_token</b>
       questionInfo: {
         title: String,
         question_idx: int
-        create_time: String
+        create_time: String,
+        status: 'o' || 'x' :String
       },
       categoryInfo: {
         category_idx: int,
@@ -983,9 +984,16 @@ header:
 ```java
 성공 = 200
 {
-    message: "GET_MAIN_REVIEW_LIST_SUCCESS",
-    code: 2300,
-    data: {},
+    "code": 2300,
+    "message": "GET_MAIN_REVIEW_LIST_SUCCESS",
+    "data": [
+        {
+            "category_name": String,
+            "content": String,
+            "nickname": String
+        },
+        {},{},{},{}
+        ]
 }
 
 실패 = 500
