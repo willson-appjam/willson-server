@@ -80,18 +80,18 @@ const getUserQuestion = (req: any, res: any) => {
         }
 
         let currentTime = moment(qList[i].create_time).add(9, 'hours').format('YYYY-MM-DD hh:mm:ss');
-        let status = 'x'
-
+        let selected = 'N'
+        
         let statusCheck: any = await questionModel.selectUserQuestionSelected(connection, qList[i].question_idx, user.user_idx);
         if (statusCheck.length){
-          status= 'o'
+          selected = 'Y'
         }
        
         const questionInfo : Question = {
           title: qList[i].content,
           question_idx: qList[i].question_idx,
           create_time: currentTime,
-          status: status
+          selected: selected
         }
 
         const categoryInfo : Category = {
