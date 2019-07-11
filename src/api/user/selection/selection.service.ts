@@ -18,10 +18,12 @@ const postSelectionService = (req: any, res: any, next: any) => {
       }
 
       const connection: any = await dbconnection()
-      const user_selection = await insertUserSelection(connection, body, user)
+      const user_selection: any = await insertUserSelection(connection, body, user)
       await questionModel.updateQuestionStatus(connection, body, user);
       
-      resolve({});
+      resolve({
+        mathing_idx: user_selection.insertId,
+      });
       
     } catch(e){
       reject(e)

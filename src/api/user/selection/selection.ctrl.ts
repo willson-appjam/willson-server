@@ -4,6 +4,7 @@ import { respondBasic, respondOnError, CustomError } from '../../../lib/middlewa
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 
 const postSelectionCtrl = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  
   await selectionService.postSelectionService(req, res, next)
     .then((result: any) => {
       respondBasic(req, res, 2100, result)
