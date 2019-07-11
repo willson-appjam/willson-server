@@ -28,6 +28,9 @@ BaseUrl =>  <b>host:port/api</b>
 |      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
 |      헬퍼 등록상태 확인하기       |     /helper/check           |  GET  | X |
 |     매칭된 고민 상태 변경하기     |     /matching/:matching_idx |  PUT  | params |
+|      헬퍼의 마이프로필 보기      |        /helper/myprofile    |  GET  | X |
+
+
 
 
 ### 회원가입
@@ -402,7 +405,8 @@ header =>  <b>willson-token : jwt_token</b>
       questionInfo: {
         title: String,
         question_idx: int
-        create_time: String
+        create_time: String,
+        status: 'o' || 'x' :String
       },
       categoryInfo: {
         category_idx: int,
@@ -985,9 +989,16 @@ header:
 ```java
 성공 = 200
 {
-    message: "GET_MAIN_REVIEW_LIST_SUCCESS",
-    code: 2300,
-    data: {},
+    "code": 2300,
+    "message": "GET_MAIN_REVIEW_LIST_SUCCESS",
+    "data": [
+        {
+            "category_name": String,
+            "content": String,
+            "nickname": String
+        },
+        {},{},{},{}
+        ]
 }
 
 실패 = 500
@@ -1026,6 +1037,59 @@ header =>  <b>willson-token : jwt_token</b>
 2401: "GET_HELPER_EXIST_CHECK_ERROR_ANYWAY",
 ```
 
+### 헬퍼의 마이프로필 보기
+
+url : <b>/api/helper/myprofile</b>
+
+method : <b>GET</b>
+
+header => "<b>willson-token" : jwt_token</b>
+
+> request 
+```java
+```
+
+> response
+```java
+성공 = 200
+{
+    code: 2500,
+    message: "GET_HELPER_MYPROFILE_SUCCESS",
+    data: {
+        helper: [
+            {
+                category_name: String,
+                categoryList_name: String,
+                title: String,
+                content: String
+            }
+        ],
+        experience: [
+            {
+                experience_name: String
+            },
+            {
+                experience_name: String
+            },
+            {
+                experience_name: String
+            }
+        ]
+    }
+}
+
+
+실패 = 500
+{
+    code: int,
+    message: String,
+    data: { }
+}
+
+2501: MYPROFILE_HELPER_DOES_NOT_EXIST
+2502: GET_HELPER_MYPROFILE_ERROR_ANYWAY
+```
+
 ### 매칭된 고민 상태 변경하기 => compelete
 
 url => <b>/api/mathing/:matching_idx</b>
@@ -1037,8 +1101,6 @@ header =>  <b>willson-token : jwt_token</b>
 > Request
 
 ```java
-# request
-
 ```
 
 > Response
@@ -1057,3 +1119,5 @@ header =>  <b>willson-token : jwt_token</b>
 2601: "UPDATE_MATCHING_STATUS_ERROR_ANYWAY",
 2602: "UPDATE_MATCHING_STATUS_NOT_FOUND",
 ```
+
+
