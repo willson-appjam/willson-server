@@ -350,7 +350,7 @@ header =>  <b>willson-token : jwt_token</b>
   }
   feeling: [feeling_idx...], // 작성자가 느낀 감정
  	personality: [ personality_idx...], // 원하는 헬퍼의 성격
- 	experience: [experience_idx...], // 원하는 헬퍼의 경험
+ 	experience: [experience_name...], // 원하는 헬퍼의 경험
 }
 ```
 
@@ -959,7 +959,7 @@ header: "willson-token" : jwt_token
 ```java
 {
   "question_idx" : int,
-  "status": "compelete" : string,
+  "status": "complete" : string,
 }
 ```
 
