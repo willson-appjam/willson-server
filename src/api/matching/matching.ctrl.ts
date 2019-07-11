@@ -15,7 +15,7 @@ const putMatchingStatus = async (req: any, res: any) => {
       respondBasic(req, res, 2600, result)
     })
     .catch((e: any) => {
-      if (e.own === 'CustomError') respondOnError(req, res, e, e.code)
+      if (e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
       else respondOnError(req, res, e, 2601, 500);
     })
 }
