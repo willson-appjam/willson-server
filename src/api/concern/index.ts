@@ -13,9 +13,9 @@ const concern = express.Router();
 concern.get('/category/:category_idx', authCheck, getCategoryList);
 concern.post('/category', authCheck, postCategoryList);
 
-concern.get('/feeling', getFeelingList);
+concern.get('/feeling', authCheck, getFeelingList);
 
-concern.get('/personality', getPersonalityList);
+concern.get('/personality', authCheck, getPersonalityList);
 
 concern.post('/question', authCheck, postUserQuestion);
 concern.put('/question', authCheck, putUserQuestion);

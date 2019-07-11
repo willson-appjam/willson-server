@@ -10,7 +10,7 @@ import authCheck from '../../lib/authCheck';
 const user = express.Router()
 user.post('/signin', postSigninCtrl);
 user.post('/signup', postSignupCtrl);
-user.get('/profile/:question_idx', getProfileCtrl);
+user.get('/profile/:question_idx', authCheck, getProfileCtrl);
 user.post('/selection', authCheck, postSelectionCtrl);
 
 export default user

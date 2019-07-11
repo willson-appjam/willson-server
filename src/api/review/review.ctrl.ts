@@ -6,6 +6,13 @@ import serviceStatusCode from '../../lib/serviceStatusCode'
 
 const postReviewCtrl = async (req: any, res: any, next: any) => {
 
+	const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
+
 	if(!isValidCheck(req)) {
 		respondOnError(req, res, new Error('validation error'), 1601, 500)
     return
@@ -22,6 +29,13 @@ const postReviewCtrl = async (req: any, res: any, next: any) => {
 }
 
 const putReviewCtrl = async (req: any, res: any, next: any) => {
+
+	const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
 
 	if(!isValidCheck(req)) {
     respondOnError(req, res, new Error('validation error'), 1701, 500)

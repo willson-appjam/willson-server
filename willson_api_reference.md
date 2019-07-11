@@ -5,11 +5,11 @@ BaseUrl =>  <b>host:port/api</b>
 |         회원가입          |          /user/signup           |  POST  |  body  |
 |          로그인           |          /user/signin           |  POST  |  body  |
 |     유저 프로필 보기      |     /user/profile/:user_idx     |  GET   | params |
-| 고민 카테고리 리스트 보기 | /concern/category/:category_idx |  GET   |  body  |
-| 고민 카테고리 리스트 추가 |        /concern/category        |  POST  |  body  |
+| 고민 카테고리 리스트 보기  | /concern/category/:category_idx |  GET   |  body  |
+| 고민 카테고리 리스트 추가  |        /concern/category        |  POST  |  body  |
 |      고민 감정 보기       |        /concern/feeling         |  GET   |   X    |
 |      고민 질문 생성       |        /concern/question        |  POST  |  body  |
-|  헬퍼가 받은 고민 리스트  |          /concern/list          |  GET   |   X    |
+|   헬퍼가 받은 고민 리스트  |          /concern/list          |  GET   |   X    |
 |      헬퍼: 등록하기       |      /helper/registration       |  POST  |  body  |
 |   승낙 헬퍼 리스트 보기   |          /helper/list           |  GET   |  body  |
 |     헬퍼 프로필 보기      |   /helper/profile/:helper_idx   |  GET   | params |
@@ -22,11 +22,11 @@ BaseUrl =>  <b>host:port/api</b>
 |         후기 수정         |       /review/:review_id        |  PUT   |  body  |
 |         후기 삭제         |       /review/:review_id        | DELETE |  body  |
 |        마이페이지         |        /mypage/:user_idx        |  GET   | params |
-|       유저의 헬퍼 결정하기  |        /user/selection         |  POST  | body |
-|      감정상태리스트 가져오기  |        /concern/personality         |  GET  | X |
+|    유저의 헬퍼 결정하기    |        /user/selection          |  POST  | body |
+|    감정상태리스트 가져오기  |        /concern/personality     |  GET  |   X   |
 |      상담 종료하기         |        /concern/question         |  PUT | X |
-|      메인: 질문자들의 후기       |        /review/story        |  GET  | X |
-|      헬퍼의 마이프로필 보기      |        /helper/myprofile    |  GET  | X |
+|   메인: 질문자들의 후기     |        /review/story             |  GET  | X |
+|   헬퍼의 마이프로필 보기    |        /helper/myprofile         |  GET  | X |
 
 
 
