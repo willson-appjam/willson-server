@@ -5,10 +5,10 @@ const insertUserQuestion = (connection: Connection, {weight, content, helper_gen
   return new Promise((resolve, reject) => {
     const query = `
       INSERT INTO
-        question (weight, content, helper_gender, emotion, advise, experience, categoryList_idx, agreement, user_idx)
-      VALUES (?,?,?,?,?,?,?,?,?)
+        question (weight, content, helper_gender, emotion, advise, experience, categoryList_idx, agreement, user_idx, cr_user)
+      VALUES (?,?,?,?,?,?,?,?,?,?)
     `
-    connection.query(query, [weight, content, helper_gender, emotion, advise , experience , categoryList_idx, agreement, user_idx], (err, result) => {
+    connection.query(query, [weight, content, helper_gender, emotion, advise , experience , categoryList_idx, agreement, user_idx, user_idx], (err, result) => {
       err ? reject(err) : resolve(result)
     })
   })
