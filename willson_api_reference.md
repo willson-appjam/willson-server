@@ -72,7 +72,6 @@ header =>
   code: int,
   message: String,
   data: {
-    body: {
       nickname: String,
       gender: String,
       age: String,
@@ -80,9 +79,9 @@ header =>
       password: String,
       device_token: String,
       user_level: String
-    }
   }
 }
+
     
 101: SIGN_UP_DUPLICATE_DATA (중복된 email값이 존재할 때)
 102: SIGN_UP_VALIDATION_ERROR (body에 null값이 존재할 때)
