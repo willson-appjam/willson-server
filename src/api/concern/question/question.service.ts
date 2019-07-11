@@ -93,7 +93,7 @@ const getUserQuestion = (req: any, res: any) => {
           create_time: currentTime,
           selected,
         }
-
+console.log(questionInfo);
         const categoryInfo : Category = {
           category_idx: qList[i].category_idx,
           category_name: qList[i].category_name

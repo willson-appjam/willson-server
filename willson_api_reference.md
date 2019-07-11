@@ -496,7 +496,8 @@ header:  willson-token : jwt_token
       category_name: String,
       content: String,
       stars: String,
-      review_count: String
+      review_count: String,
+      helper_idx : int
     }],
     experience: [{
       experience_name: [String, String, String]
