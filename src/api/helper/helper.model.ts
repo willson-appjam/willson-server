@@ -90,7 +90,7 @@ const selectUserExperience = (connection: any, question_idx: any) => {
       experience AS E ON Q.experience_idx = E.experience_idx
     WHERE
       question_idx = (?)`;
-
+    
     connection.query(query, question_idx, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
