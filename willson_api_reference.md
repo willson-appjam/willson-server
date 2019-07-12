@@ -922,11 +922,12 @@ header: "willson-token" : jwt_token
 ```java
 성공 = 200
 {
-  message: "USER_SELECTION_SUCCESS",
-  code: 2100,
-  data: {
-    matching_idx: int,
-  },
+    "code": 2100,
+    "message": "USER_SELECTION_SUCCESS",
+    "data": {
+        "matching_idx": int,
+        "helper_uid": String
+    }
 }
 
 실패 = 500
