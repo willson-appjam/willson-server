@@ -199,7 +199,7 @@ const getListService = (req: any, res: any) => {
                   })
             }
             resolve({helper_list: result, size:result.length});
-          // })
+          })
         }
         else {
           let result =[];
