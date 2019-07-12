@@ -4,6 +4,13 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 
 const getListCtrl = async(req:any, res:any) => {
   new Promise(async (resolve, reject) => {
+  const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
+
     await listService.getListService(req, res)
   .then((result: any) => {
     respondBasic(req, res, 1000, result)

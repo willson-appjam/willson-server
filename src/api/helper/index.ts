@@ -12,15 +12,15 @@ import authCheck from '../../lib/authCheck';
 const helper = express.Router();
 
 
-helper.use('/registration', registration);
-helper.use('/myprofile', myprofile);
-helper.use('/profile', profile);
+helper.use('/registration', authCheck, registration);
+helper.use('/myprofile', authCheck, myprofile);
+helper.use('/profile', authCheck, profile);
 helper.use('/story', story);
-helper.use('/selection', selection);
-helper.use('/list', list);
+helper.use('/selection', authCheck, selection);
+helper.use('/list', authCheck, list);
 
 helper.get('/check', authCheck, getHelperCheck);
-helper.get('/:helper_idx/review', getListCtrl);
+helper.get('/:helper_idx/review', authCheck, getListCtrl);
 
 
 export default helper
