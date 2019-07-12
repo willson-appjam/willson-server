@@ -3,7 +3,7 @@ import dbconnection from '../../../lib/connection';
 import token from '../../../lib/middlewares/token'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import { CustomError } from '../../../lib/middlewares/respond';
-import { insertUserSelection, selectHelperMatchingStatus,selectHelperUid } from './selection.model'
+import { insertUserSelection, selectHelperMatchingStatus} from './selection.model'
 import questionModel from '../../concern/question/question.model'
 
 const postSelectionService = (req: any, res: any, next: any) => {
@@ -27,11 +27,9 @@ const postSelectionService = (req: any, res: any, next: any) => {
         }
         const user_selection: any = await insertUserSelection(connection, body, user)
         await questionModel.updateQuestionStatus(connection, body, user);
-        const helper_uid:any = await selectHelperUid(connection, body);
 
         resolve({
           matching_idx: user_selection.insertId,
-          helper_uid: helper_uid[0].uid
         });
 
         await Promise.resolve(connection.commit())

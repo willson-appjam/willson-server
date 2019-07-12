@@ -579,7 +579,10 @@ header:  willson-token : jwt_token
     }],
     personality: [{
       personality_name: String 
-    }]
+    }],
+    helper_uid: [
+      {uid: String}
+    ]
   }
 }
 
@@ -925,8 +928,7 @@ header: "willson-token" : jwt_token
     "code": 2100,
     "message": "USER_SELECTION_SUCCESS",
     "data": {
-        "matching_idx": int,
-        "helper_uid": String
+        "matching_idx": int
     }
 }
 

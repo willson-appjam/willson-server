@@ -17,9 +17,10 @@ const getProfileService = (req: any,res: any) => {
       }
       const experience = await helperModel.selectProfileExperience(connection, helper_idx.helper_idx);
       const personality = await helperModel.selectProfilePersonality(connection, helper_idx.helper_idx);
+      const helper_uid: any = await helperModel.selectHelperUid(connection,  helper_idx.helper_idx);
 
       helper[0].age = await getAge(helper[0].age);
-      resolve({helper, experience, personality});
+      resolve({helper, experience, personality, helper_uid});
     } catch (e){
       reject(e);   
     } finally {
@@ -58,6 +59,7 @@ const putProfileService = (req: any, res: any) => {
           experience_idx = experience_idx.insertId;
           await helperModel.updateProfileHelper_experience(connection, [experience_idx, old_experience_idx[i].helper_experience_idx]);
         } 
+        
         resolve({});
         await Promise.resolve(connection.commit())
       } catch (e) {

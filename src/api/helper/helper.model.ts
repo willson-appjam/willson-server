@@ -424,6 +424,26 @@ const selectHelperRegistStatus = (connection: Connection, { user_idx }: any) => 
   })
 }
 
+const selectHelperUid = (connection: any, helper_idx: any) : Promise<{}> => {
+	return new Promise((resolve, reject) : any => {
+		const query = `
+      SELECT
+        uid
+      FROM
+				user as U
+			INNER JOIN
+				helper as H on U.user_idx = H.user_idx
+      WHERE
+        helper_idx = ? 
+		`
+		connection.query(query, helper_idx, (err: Error, result: {}[]) => {
+      console.log(err);
+			if(err) reject(err)
+			resolve(result)
+		})
+	})
+}
+
 export default {
   selectRegistrationCategory,
   insertRegistrationCategoryList,
@@ -453,5 +473,6 @@ export default {
   selectMyProfileHelper,
   selectMyProfileExperience,
   selectHelperExist,
-  selectHelperRegistStatus
+  selectHelperRegistStatus,
+  selectHelperUid
 }
