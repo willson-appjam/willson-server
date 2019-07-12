@@ -170,21 +170,34 @@ console.log(helpers_experience)
           let result = [];
           for (let i = 0; i < 3; i++) {
             helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
-            console.log("indices", indices[i])
-            result.push([helpers_info[indices[i]], helpers_experience[indices[i]*3],helpers_experience[indices[i]*3+1],helpers_experience[indices[i]*3+2]]);
+            let experience = [];
+            experience.push(helpers_experience[3*indices[i]].experience_name,helpers_experience[3*indices[i]+ 1].experience_name,helpers_experience[3*indices[i]+2].experience_name)
+            
+            result.push(
+              {
+                helper: helpers_info[indices[i]], 
+                experience: experience
+               })
           }
-          resolve(result);
+          resolve({helper_list: result, size:result.length});
        // })
       }
       else {
         let result =[];
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < helpers_idx.length; i++) {
           helpers_info[i].age = getAge(helpers_info[i].age);
-          result.push([helpers_info[i], helpers_experience[3*i],helpers_experience[3*i+1],helpers_experience[3*i+2]]);
-        }
-        resolve(result);
-      }
-
+          let experience = [];
+            experience.push(helpers_experience[3*i].experience_name,helpers_experience[3*i+1].experience_name,helpers_experience[3*i+2].experience_name)
+          
+          result.push(
+            {
+              helper: helpers_info[i], 
+              experience: experience
+             })
+          }
+        resolve({helper_list: result, size:result.length});
+      
+    }
     } catch (e) {
       reject(e);
     } finally {

@@ -132,7 +132,7 @@ const selectHelperInfo = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
+      nickname, age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
     FROM
       helper AS H
     INNER JOIN

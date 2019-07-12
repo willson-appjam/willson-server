@@ -492,23 +492,33 @@ header:  willson-token : jwt_token
 ```java
 성공 = 200
 {
-  code: 1000,
-  message: "GET_HELPER_LIST_SUCCESS",
-  data: {
-    helper:[{
-      nickname: String,
-      gender: String,
-      age: String,
-      category_name: String,
-      content: String,
-      stars: String,
-      review_count: String,
-      helper_idx : int
-    }],
-    experience: [{
-      experience_name: [String, String, String]
-    }]
-  }
+    "code": 1000,
+    "message": "GET_HELPER_LIST_SUCCESS",
+    "data": {
+        "helper_list": [
+            {
+                "helper": {
+                    "nickname": String,
+                    "age": String,
+                    "gender": String,
+                    "category_idx": int,
+                    "categoryList_idx": int,
+                    "title": String,
+                    "content": String,
+                    "stars": String,
+                    "review_count": String,
+                    "helper_idx": 1
+                },
+                "experience": [
+                    String,
+                    String,
+                    String
+                ]
+            },
+            ...
+        ],
+        "size": int
+    }
 }
 
 실패 = 500
