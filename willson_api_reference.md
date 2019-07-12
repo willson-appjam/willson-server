@@ -492,23 +492,33 @@ header:  willson-token : jwt_token
 ```java
 성공 = 200
 {
-  code: 1000,
-  message: "GET_HELPER_LIST_SUCCESS",
-  data: {
-    helper:[{
-      nickname: String,
-      gender: String,
-      age: String,
-      category_name: String,
-      content: String,
-      stars: String,
-      review_count: String,
-      helper_idx : int
-    }],
-    experience: [{
-      experience_name: [String, String, String]
-    }]
-  }
+    "code": 1000,
+    "message": "GET_HELPER_LIST_SUCCESS",
+    "data": {
+        "helper_list": [
+            {
+                "helper": {
+                    "nickname": String,
+                    "age": String,
+                    "gender": String,
+                    "category_idx": int,
+                    "categoryList_idx": int,
+                    "title": String,
+                    "content": String,
+                    "stars": String,
+                    "review_count": String,
+                    "helper_idx": 1
+                },
+                "experience": [
+                    String,
+                    String,
+                    String
+                ]
+            },
+            ...
+        ],
+        "size": int
+    }
 }
 
 실패 = 500
@@ -520,6 +530,7 @@ header:  willson-token : jwt_token
 
 1001: "HELPER_LIST_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
 1002: "GET_HELPER_LIST_ERROR_ANYWAY"
+1003: "HELPER_LIST_HELPER_DOES_NOT_EXIST"
 ```
 
 

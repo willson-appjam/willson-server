@@ -132,7 +132,7 @@ const selectHelperInfo = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
+      nickname, age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
     FROM
       helper AS H
     INNER JOIN
@@ -157,6 +157,25 @@ const selectHelperPersonality = (connection: any, helper_arr: any) => {
       user_personality AS U ON H.user_idx = U.user_idx
     WHERE
       helper_idx IN (?)`;
+
+    connection.query(query, [helper_arr], (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+
+const selectHelperExperience = (connection: any, helper_arr: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      experience_name
+    FROM
+      experience as A
+    INNER JOIN 
+      helper_experience as B ON A.experience_idx = B.experience_idx
+    WHERE
+      helper_idx IN (?)`;
+
 
     connection.query(query, [helper_arr], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
@@ -409,6 +428,7 @@ export {
   selectHelper_idx,
   selectHelperInfo,
   selectHelperPersonality,
+  selectHelperExperience,
 
   selectMyProfileHelper,
   selectMyProfileExperience,
