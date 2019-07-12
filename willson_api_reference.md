@@ -50,7 +50,9 @@ header =>
   age: int,
   email: String,
   password: String,
-  device_token: String
+  device_token: String,
+  personality_idx: [int, int, int],
+  uid: String
 }
 ```
 
@@ -78,7 +80,10 @@ header =>
       email: String,
       password: String,
       device_token: String,
-      user_level: String
+      user_level: String,
+      personality_idx: [int, int, int],
+      uid: String
+
   }
 }
 
@@ -121,7 +126,8 @@ header =>
       nickname: string,
       gender: ENUM('남성','여성'),
       age: 26,
-      device_token: string
+      device_token: string,
+      uid: String
     }
   }
 }
@@ -133,7 +139,8 @@ header =>
   message: String,
   data: {
     email: String,
-    password: String
+    password: String,
+    uid: String
   }
 }
 

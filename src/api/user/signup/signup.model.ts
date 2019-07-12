@@ -1,4 +1,4 @@
- const insertUserInfo = (connection: any, {nickname, gender, age, email, password, device_token, salt}: any) : Promise<{}> => {
+ const insertUserInfo = (connection: any, {nickname, gender, age, email, password, device_token, uid, salt}: any) : Promise<{}> => {
 	return new Promise((resolve, reject) : any => {
 		const query = `
 		INSERT INTO 
@@ -9,12 +9,13 @@
 				email,
 				password,
 				device_token,
+				uid,
 				salt
 			)
-		VALUES(?,?,?,?,?,?,?)
+		VALUES(?,?,?,?,?,?,?,?)
 		`
 
-		connection.query(query, [nickname, gender, age, email, password, device_token, salt], (err: Error, result: {}[]) => {
+		connection.query(query, [nickname, gender, age, email, password, device_token, uid, salt], (err: Error, result: {}[]) => {
 			if(err) reject(err)
 			resolve(result)
 		})

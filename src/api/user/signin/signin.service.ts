@@ -35,6 +35,7 @@ const postSigninService = (req: express.Request, res: express.Response, next: ex
           gender: userInfo.gender,
           age: userInfo.age,
           device_token: userInfo.device_token,
+          uid: userInfo.uid
         }
   
         const Token = await token.encode(key , userInfo)
