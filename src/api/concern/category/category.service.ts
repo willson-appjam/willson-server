@@ -8,7 +8,7 @@ import { Connection } from 'mysql';
 
 const getCategoryListService = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
-    const connection: any = dbConnection();
+    const connection: any = await dbConnection();
     try {
       const { category_idx } = req.params;
       const categoryList: any = await categoryModel.selectCategoryListWithId(connection, category_idx);
