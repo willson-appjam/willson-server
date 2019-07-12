@@ -139,8 +139,7 @@ header =>
   message: String,
   data: {
     email: String,
-    password: String,
-    uid: String
+    password: String
   }
 }
 
