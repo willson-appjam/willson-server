@@ -15,7 +15,9 @@ const postRegistrationService = (req: any,res: any, next: any) => {
         const { category_idx, categoryList_idx } = helper
     
         const uResult = await helperModel.selectHelperRegistStatus(connection, user);
-
+        if(uResult) {
+          throw new CustomError(null, 903, user)
+        }
         //헬퍼 기본 정보 등록
         let helper_idx: any = await helperModel.insertRegistrationHelper(connection, [category_idx, categoryList_idx, helper.title, helper.content, user.user_idx, user.user_idx]);
         helper_idx = helper_idx.insertId;
