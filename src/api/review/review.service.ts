@@ -21,8 +21,6 @@ const postReviewService = (req: any, res: any, next: any) => {
 			const avgStars : any = await selectAvgStars(connection, body)
 			const modifiedAvgStars = await updateAvgStars(connection, avgStars[0], body)
 
-			console.log('!!!!', user.user_idx)
-
 			resolve({})
 		}catch(e){
 			console.log(e)
