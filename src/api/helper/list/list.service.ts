@@ -1,8 +1,8 @@
-var mecab = require('mecab-ya');
 var request = require('request-promise-native');
-
+import mecab from 'mecab-ffi';
+import _ from 'lodash'
 import dbConnection from "../../../lib/connection";
-import { selectHelperExperience, selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
+import helperModel from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
@@ -21,16 +21,16 @@ const getListService = (req: any, res: any) => {
       try { 
         const question_idx = req.params.question_idx;
         //유저가 원하는 헬퍼 정보
-        let info: any = await selectUserInfo(connection, question_idx);
+        let info: any = await helperModel.selectUserInfo(connection, question_idx);
         if (!info.length) {
           reject(new CustomError(null, 1001, { question_idx }))
           return
         }
-        let experience_name: any = await selectUserExperience(connection, question_idx);
-        let personality_idx: any = await selectUserPersonality(connection, question_idx);
+        let experience_name: any = await helperModel.selectUserExperience(connection, question_idx);
+        let personality_idx: any = await helperModel.selectUserPersonality(connection, question_idx);
 
         //유저 고민을 선택한 헬퍼들의 정보
-        let helpers_idx: any = await selectHelper_idx(connection, question_idx);
+        let helpers_idx: any = await helperModel.selectHelper_idx(connection, question_idx);
         if (!helpers_idx.length) {
           reject(new CustomError(null, 1003, { question_idx }))
           return
@@ -42,9 +42,9 @@ const getListService = (req: any, res: any) => {
           helpers_arr.push(helpers_idx[i].helper_idx);
         }
         
-        let helpers_info: any = await selectHelperInfo(connection, helpers_arr);
-        let helpers_personality: any = await selectHelperPersonality(connection, helpers_arr);
-        let helpers_experience: any = await selectHelperExperience(connection, helpers_arr);
+        let helpers_info: any = await helperModel.selectHelperInfo(connection, helpers_arr);
+        let helpers_personality: any = await helperModel.selectHelperPersonality(connection, helpers_arr);
+        let helpers_experience: any = await helperModel.selectHelperExperience(connection, helpers_arr);
         
         //헬퍼 후기 만족도 기준치 이상만 남김
         for (let i = 0; i < helper_num; i++) {
@@ -129,11 +129,25 @@ const getListService = (req: any, res: any) => {
           for (let i = 0; i < 3; i++) {
             keyword.push(experience_name[i].experience_name);
           }
+
           
+        
+         
+
+
           for (let i = 0; i < helper_num; i++) {
             const title = helpers_info[i].title;
-            const text = title.concat(helpers_info[i].content);
-            text_arr.push(text);
+            // const text = title.concat(helpers_info[i].content);
+            // text_arr.push(text);
+            mecab.parseSync(helpers_info[i].content, function (err: Error, result: [][]) {
+              const setFormat: any = []
+              const t = _.map(result, (value) => {
+                setFormat.push([value[0],value[1]])
+                text_arr.push({
+                  text_arr: setFormat
+                })
+              })
+            })
           }
 
           const body = {
@@ -150,10 +164,10 @@ const getListService = (req: any, res: any) => {
             json: true
           }
 
-          //request(options).then(function (res: any, err: any) {
-            //for (let i = 0; i < helper_num; i++) {
-              //keyword_match.push(res.total[i][1])
-            //}
+          request(options).then(function (res: any, err: any) {
+            for (let i = 0; i < helper_num; i++) {
+              keyword_match.push(res.total[i][1])
+            }
 
             //점수 합산
             let total: any = []
@@ -172,7 +186,6 @@ const getListService = (req: any, res: any) => {
             }
             indices.sort(function (a, b) { return total[a] < total[b] ? 1 : total[a] > total[b] ? -1 : 0; });
 
-            console.log(helpers_experience)
             let result = [];
             for (let i = 0; i < 3; i++) {
               helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
@@ -186,7 +199,7 @@ const getListService = (req: any, res: any) => {
                   })
             }
             resolve({helper_list: result, size:result.length});
-          // })
+          })
         }
         else {
           let result =[];
@@ -195,13 +208,12 @@ const getListService = (req: any, res: any) => {
             let experience = [];
               experience.push(helpers_experience[3*i].experience_name,helpers_experience[3*i+1].experience_name,helpers_experience[3*i+2].experience_name)
             
-            result.push(
-              {
+              result.push({
                 helper: helpers_info[i], 
                 experience: experience
-                })
+              })
             }
-        resolve({helper_list: result, size:result.length});    
+        resolve({helper_list: result, size:result.length});
         }
         await Promise.resolve(connection.commit())
       } catch (e) {

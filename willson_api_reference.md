@@ -425,7 +425,7 @@ header =>  <b>willson-token : jwt_token</b>
 
 ### 
 
-### 헬퍼 등록
+### 헬퍼 등록하기
 
 url : **/helper/registration**
 
@@ -438,8 +438,8 @@ header:  willson-token : jwt_token
 ```java
 {
   helper: {
-    category_name: String,
-    categoryList_name: String,
+    category_idx: String,
+    categoryList_idx: String,
     title: String,
     content: String,
   }
@@ -467,8 +467,9 @@ header:  willson-token : jwt_token
   code: int,
   data: {}
 }
-901: "HELPER_REGISTRATION_VALIDATION_ERROR" (body에 null값 존재)
-902: "HELPER_REGISTRATION_ERROR_ANYWAY"
+901: "HELPER_REGISTRATION_VALIDATION_ERROR", (body에 null값 존재)
+902: "HELPER_REGISTRATION_ERROR_ANYWAY",
+903: "HELPER_REGISTRATION_ALREADY_DONE",
 ```
 
 

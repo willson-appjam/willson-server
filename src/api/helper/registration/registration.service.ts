@@ -1,5 +1,5 @@
 import dbConnection from "../../../lib/connection";
-import { selectRegistrationCategory, insertRegistrationCategoryList, insertRegistrationHelper, selectRegistrationExperience, insertRegistrationHelper_experience, } from '../helper.model'
+import helperModel from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from "../../../lib/middlewares/respond";
 
@@ -11,23 +11,24 @@ const postRegistrationService = (req: any,res: any, next: any) => {
       
       try { 
         const { helper, experience } = req.body;
-        const { user } = req;
+        const { user } = req
+        const { category_idx, categoryList_idx } = helper
     
+        const uResult: any = await helperModel.selectHelperRegistStatus(connection, user);
+        console.log(uResult)
+        if(!uResult.length) {
+          reject(new CustomError(null, 903, user))
+          return 
+        }
         //헬퍼 기본 정보 등록
-        let category_idx: any = await selectRegistrationCategory(connection, helper.category_name);
-        category_idx = category_idx[0].category_idx;
-        
-        let categorylist_idx: any = await insertRegistrationCategoryList(connection, [helper.categoryList_name, category_idx, user.user_idx]);
-        categorylist_idx = categorylist_idx.insertId;
-  
-        let helper_idx: any = await insertRegistrationHelper(connection, [category_idx, categorylist_idx, helper.title, helper.content, user.user_idx, user.user_idx]);
+        let helper_idx: any = await helperModel.insertRegistrationHelper(connection, [category_idx, categoryList_idx, helper.title, helper.content, user.user_idx, user.user_idx]);
         helper_idx = helper_idx.insertId;
   
         //헬퍼의 경험 정보 등록
         for (let i=0; i<3; i++){
-          let experience_idx: any = await selectRegistrationExperience(connection, experience.experience_name[i], user.user_idx);
+          let experience_idx: any = await helperModel.selectRegistrationExperience(connection, experience.experience_name[i], user.user_idx);
           experience_idx = experience_idx.insertId;
-          await insertRegistrationHelper_experience(connection, [experience_idx, helper_idx, user.user_idx]);
+          await helperModel.insertRegistrationHelper_experience(connection, [experience_idx, helper_idx, user.user_idx]);
         };
   
         resolve({helper_idx});
