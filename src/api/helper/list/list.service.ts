@@ -46,6 +46,7 @@ const getListService = (req: any, res: any) => {
         let helpers_personality: any = await helperModel.selectHelperPersonality(connection, helpers_arr);
         let helpers_experience: any = await helperModel.selectHelperExperience(connection, helpers_arr);
         
+        console.log(helpers_info.length,  ' ' , helper_num)
         //헬퍼 후기 만족도 기준치 이상만 남김
         for (let i = 0; i < helper_num; i++) {
           if (parseInt(helpers_info[i].review_count) > 3 && parseFloat(helpers_info[i].stars) <= 2.5) {

@@ -20,8 +20,8 @@ const postSelectionService = (req: any,res: any) => {
   
         // 진행중인 상담이 있는경우 오류 발생
         const mResult: any = await selectMatchingHistroy(connection, user);
-        
-        if(mResult.length) {
+        console.log(mResult)
+        if(mResult.length !== 0) {
           reject(new CustomError(null, 1404, {}))
         }
   

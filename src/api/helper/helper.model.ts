@@ -413,11 +413,11 @@ const selectHelperRegistStatus = (connection: Connection, { user_idx }: any) => 
         *
       FROM
         user u
-      LEFT JOIN
+      INNER JOIN
         helper p on u.user_idx = p.user_idx
       WHERE
         u.user_idx = ?
-  `;
+    `;
     connection.query(query, [user_idx], (err: any, result: any) => {
         err ? reject(err) : resolve(result)
     })

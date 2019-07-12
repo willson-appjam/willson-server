@@ -15,8 +15,8 @@ const postRegistrationService = (req: any,res: any, next: any) => {
         const { category_idx, categoryList_idx } = helper
     
         const uResult: any = await helperModel.selectHelperRegistStatus(connection, user);
-
-        if(uResult.length) {
+        
+        if(uResult.length >= 1) {
           reject(new CustomError(null, 903, user))
           return 
         }
