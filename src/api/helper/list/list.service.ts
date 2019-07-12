@@ -2,7 +2,7 @@ var mecab = require('mecab-ya');
 var request = require('request-promise-native');
 
 import dbConnection from "../../../lib/connection";
-import { selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
+import { selectHelperExperience, selectUserInfo, selectUserExperience, selectUserPersonality, selectHelper_idx, selectHelperInfo, selectHelperPersonality } from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
@@ -35,19 +35,21 @@ const getListService = (req: any, res: any) => {
       for (let i = 0; i < helper_num; i++) {
         helpers_arr.push(helpers_idx[i].helper_idx);
       }
-
+      
       let helpers_info: any = await selectHelperInfo(connection, helpers_arr);
       let helpers_personality: any = await selectHelperPersonality(connection, helpers_arr);
-
+      let helpers_experience: any = await selectHelperExperience(connection, helpers_arr);
+console.log(helpers_experience)
       //헬퍼 후기 만족도 기준치 이상만 남김
       for (let i = 0; i < helper_num; i++) {
         if (parseInt(helpers_info[i].review_count) > 3 && parseFloat(helpers_info[i].stars) <= 2.5) {
           helpers_idx.splice(i, 1);
           helpers_info.splice(i, 1);
+          helpers_experience.splice(3* i, 3);
           helpers_personality.splice(3 * i, 3);
         }
       }
-
+      
       helper_num = helpers_idx.length;
 
       //받은 헬퍼 요청이 3명 초과면 매칭 알고리즘 수행
@@ -152,7 +154,8 @@ const getListService = (req: any, res: any) => {
           for (let i = 0; i < helper_num; i++) {
             //(수정사항) 가중치 곱해주어야함! 
             console.log(age_match[i], personality_match[i], categoryList_match[i], keyword_match[i])
-            const score = 3.5 * age_match[i] + 5 * personality_match[i] + 10 * categoryList_match[i] + 2 * keyword_match[i]
+            const score = 3.5 * age_match[i] + 5 * personality_match[i] + 10 * categoryList_match[i] 
+            // 2 * keyword_match[i]
             total.push(score);
           }
           console.log(total);
@@ -161,18 +164,25 @@ const getListService = (req: any, res: any) => {
           for (let i = 0; i < helper_num; i++) {
             indices[i] = i;
           }
-          indices.sort(function (a, b) { return total[a] < total[b] ? 1 : total[a] > total[b] ? 1 : 0; });
+          indices.sort(function (a, b) { return total[a] < total[b] ? 1 : total[a] > total[b] ? -1 : 0; });
 
+          console.log(helpers_experience)
           let result = [];
           for (let i = 0; i < 3; i++) {
             helpers_info[indices[i]].age = getAge(helpers_info[indices[i]].age);
-            result.push(helpers_info[indices[i]]);
+            console.log("indices", indices[i])
+            result.push([helpers_info[indices[i]], helpers_experience[indices[i]*3],helpers_experience[indices[i]*3+1],helpers_experience[indices[i]*3+2]]);
           }
           resolve(result);
        // })
       }
       else {
-        resolve([helpers_info]);
+        let result =[];
+        for (let i = 0; i < 3; i++) {
+          helpers_info[i].age = getAge(helpers_info[i].age);
+          result.push([helpers_info[i], helpers_experience[3*i],helpers_experience[3*i+1],helpers_experience[3*i+2]]);
+        }
+        resolve(result);
       }
 
     } catch (e) {
@@ -184,5 +194,5 @@ const getListService = (req: any, res: any) => {
 }
 
 export default {
-  getListService
+  getListService,
 }

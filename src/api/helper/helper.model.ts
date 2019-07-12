@@ -164,6 +164,25 @@ const selectHelperPersonality = (connection: any, helper_arr: any) => {
   })
 }
 
+const selectHelperExperience = (connection: any, helper_arr: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      experience_name
+    FROM
+      experience as A
+    INNER JOIN 
+      helper_experience as B ON A.experience_idx = B.experience_idx
+    WHERE
+      helper_idx IN (?)`;
+
+
+    connection.query(query, [helper_arr], (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+
 //헬퍼 프로필 보기
 const selectProfileHelper = (connection: any, helper_idx: any) => {
   return new Promise((resolve, reject) => {
@@ -409,6 +428,7 @@ export {
   selectHelper_idx,
   selectHelperInfo,
   selectHelperPersonality,
+  selectHelperExperience,
 
   selectMyProfileHelper,
   selectMyProfileExperience,
