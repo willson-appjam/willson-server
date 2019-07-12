@@ -115,7 +115,14 @@ header =>
   code: 200,
   message: SIGN_IN_SUCCESS,
   data: {
-    Token: String
+    Token: String,
+    userInfo: {
+      user_idx: int,
+      nickname: string,
+      gender: ENUM('남성','여성'),
+      age: 26,
+      device_token: string
+    }
   }
 }
 
