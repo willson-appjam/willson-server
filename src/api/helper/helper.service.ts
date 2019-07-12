@@ -1,5 +1,5 @@
 import dbConnection from "../../lib/connection";
-import {selectStoryHelper, selectHelperExist} from './helper.model';
+import helperModel from './helper.model';
 import { CustomError } from '../../lib/middlewares/respond';
 import serviceStatusCode from '../../lib/serviceStatusCode';
 import _ from 'lodash'
@@ -13,7 +13,7 @@ const getHelperExist = (req: any,res: any) => {
       if (err) throw new CustomError(null, 0, {})
       
       try { 
-        const [check]: any = await selectHelperExist(connection, user);
+        const [check]: any = await helperModel.selectHelperExist(connection, user);
       
         resolve({
           status: check.status,

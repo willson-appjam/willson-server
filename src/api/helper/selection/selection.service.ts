@@ -2,7 +2,7 @@ import dbConnection from "../../../lib/connection";
 import serviceStatusCode from "../../../lib/serviceStatusCode"
 import { CustomError } from '../../../lib/middlewares/respond';
 
-import { insertSelectionSelected_question, selectProfileHelper_idx,selectSelectionQuestion_idx } from '../helper.model';
+import helperModel from '../helper.model';
 import { selectMatchingHistroy } from '../../matching/matching.model';
 
 import helper from "../index";
@@ -25,16 +25,16 @@ const postSelectionService = (req: any,res: any) => {
           reject(new CustomError(null, 1404, {}))
         }
   
-        let helper_idx: any = await selectProfileHelper_idx(connection, user.user_idx)
+        let helper_idx: any = await helperModel.selectProfileHelper_idx(connection, user.user_idx)
         if (!helper_idx.length){
           reject(new CustomError(null, 1401, {}))
         }
-        let question: any = await selectSelectionQuestion_idx(connection, body.question_idx)
+        let question: any = await helperModel.selectSelectionQuestion_idx(connection, body.question_idx)
         if (!question.length){
           reject(new CustomError(null, 1402, body))
           
         }
-        await insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx, user.user_idx]);
+        await helperModel.insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx, user.user_idx]);
       
         resolve({});
         await Promise.resolve(connection.commit())
