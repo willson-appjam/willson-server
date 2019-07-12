@@ -29,6 +29,10 @@ const getListService = (req: any, res: any) => {
 
       //유저 고민을 선택한 헬퍼들의 정보
       let helpers_idx: any = await selectHelper_idx(connection, question_idx);
+      if (!helpers_idx.length) {
+        reject(new CustomError(null, 1003, { question_idx }))
+        return
+      }
       console.log(helpers_idx);
       let helpers_arr: any = [];
       let helper_num = helpers_idx.length;

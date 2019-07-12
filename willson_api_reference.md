@@ -530,6 +530,7 @@ header:  willson-token : jwt_token
 
 1001: "HELPER_LIST_QUESTION_DOES_NOT_EXIST" (존재하지 않는 question_idx)
 1002: "GET_HELPER_LIST_ERROR_ANYWAY"
+1003: "HELPER_LIST_HELPER_DOES_NOT_EXIST"
 ```
 
 
