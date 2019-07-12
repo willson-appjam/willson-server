@@ -1,5 +1,5 @@
 var request = require('request-promise-native');
-import mecab from 'mecab-ffi';
+// import mecab from 'mecab-ffi';
 import _ from 'lodash'
 import dbConnection from "../../../lib/connection";
 import helperModel from '../helper.model'
@@ -131,23 +131,19 @@ const getListService = (req: any, res: any) => {
           }
 
           
-        
-         
-
-
           for (let i = 0; i < helper_num; i++) {
             const title = helpers_info[i].title;
-            // const text = title.concat(helpers_info[i].content);
-            // text_arr.push(text);
-            mecab.parseSync(helpers_info[i].content, function (err: Error, result: [][]) {
-              const setFormat: any = []
-              const t = _.map(result, (value) => {
-                setFormat.push([value[0],value[1]])
-                text_arr.push({
-                  text_arr: setFormat
-                })
-              })
-            })
+            const text = title.concat(helpers_info[i].content);
+            text_arr.push(text);
+            // mecab.parseSync(helpers_info[i].content, function (err: Error, result: any) {
+            //   const setFormat: any = []
+            //   const t = _.map(result, (value: any) => {
+            //     setFormat.push([value[0],value[1]])
+            //     text_arr.push({
+            //       text_arr: setFormat
+            //     })
+            //   })
+            // })
           }
 
           const body = {
@@ -164,10 +160,10 @@ const getListService = (req: any, res: any) => {
             json: true
           }
 
-          request(options).then(function (res: any, err: any) {
-            for (let i = 0; i < helper_num; i++) {
-              keyword_match.push(res.total[i][1])
-            }
+          // request(options).then(function (res: any, err: any) {
+          //   for (let i = 0; i < helper_num; i++) {
+          //     keyword_match.push(res.total[i][1])
+          //   }
 
             //점수 합산
             let total: any = []
@@ -199,7 +195,7 @@ const getListService = (req: any, res: any) => {
                   })
             }
             resolve({helper_list: result, size:result.length});
-          })
+          // })
         }
         else {
           let result =[];
