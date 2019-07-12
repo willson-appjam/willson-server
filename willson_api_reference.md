@@ -398,8 +398,8 @@ header =>  <b>willson-token : jwt_token</b>
   message: String,
   data: {
     concernInfo: [{
-      user: {
-        user_idx: String,
+      userInfo: {
+        user_idx: int,
         nickname: String,
         gender: String,
         age: String,

@@ -3,7 +3,7 @@ import dbconnection from '../../../lib/connection';
 import token from '../../../lib/middlewares/token'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 import { CustomError } from '../../../lib/middlewares/respond';
-import { insertUserSelection } from './user_selection.model'
+import { insertUserSelection, selectHelperMatchingStatus } from './user_selection.model'
 import questionModel from '../../concern/question/question.model'
 
 const postSelectionService = (req: any, res: any, next: any) => {
@@ -18,6 +18,11 @@ const postSelectionService = (req: any, res: any, next: any) => {
       }
 
       const connection: any = await dbconnection()
+
+      const hResult : any = await selectHelperMatchingStatus(connection, body)
+      if(hResult.length) {
+        reject(new CustomError(null, 2103, body))
+      }
       const user_selection: any = await insertUserSelection(connection, body, user)
       await questionModel.updateQuestionStatus(connection, body, user);
       
