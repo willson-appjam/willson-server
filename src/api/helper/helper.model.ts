@@ -35,7 +35,7 @@ const insertRegistrationHelper = (connection: any, helper: any) => {
   })
 }
 
-const selectRegistrationExperience = (connection: any, experience_name: any, user: any) => {
+const selectRegistrationExperience = (connection: any, experience_name: any, user_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     INSERT INTO 
@@ -44,7 +44,7 @@ const selectRegistrationExperience = (connection: any, experience_name: any, use
       (?,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
-    connection.query(query, [experience_name, user.user_idx], (err: any, result: any) => {
+    connection.query(query, [experience_name, user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
