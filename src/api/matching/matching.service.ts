@@ -8,20 +8,24 @@ const putMatchingStatus = (req: any,res: any) => {
   return new Promise(async (resolve, reject) => {
     const { user, params } = req
     const connection: any = await dbConnection();
-
-    try {
-      const mResult: any = await updateMatchingStatus(connection, params);
-      if(mResult.affectedRows === 0) {
-        reject(new CustomError({}, 2602, params))
+    await connection.beginTransaction(async (err: Error) => {
+      if (err) throw new CustomError(null, 0, {})
+      
+      try { 
+        const mResult: any = await updateMatchingStatus(connection, params);
+        if(mResult.affectedRows === 0) {
+          reject(new CustomError({}, 2602, params))
+        }
+  
+        resolve();
+        await Promise.resolve(connection.commit())
+      } catch (e) {
+        await Promise.resolve(connection.rollback())
+        reject(e)
+      } finally {
+        connection.release();
       }
-
-      resolve();
-
-    } catch (e){
-      reject(e);
-    } finally {
-      connection.release();
-    }
+    })
   })
 }
 

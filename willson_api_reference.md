@@ -5,11 +5,11 @@ BaseUrl =>  <b>host:port/api</b>
 |         회원가입          |          /user/signup           |  POST  |  body  |
 |          로그인           |          /user/signin           |  POST  |  body  |
 |     유저 프로필 보기      |     /user/profile/:user_idx     |  GET   | params |
-| 고민 카테고리 리스트 보기 | /concern/category/:category_idx |  GET   |  body  |
-| 고민 카테고리 리스트 추가 |        /concern/category        |  POST  |  body  |
+| 고민 카테고리 리스트 보기  | /concern/category/:category_idx |  GET   |  body  |
+| 고민 카테고리 리스트 추가  |        /concern/category        |  POST  |  body  |
 |      고민 감정 보기       |        /concern/feeling         |  GET   |   X    |
 |      고민 질문 생성       |        /concern/question        |  POST  |  body  |
-|  헬퍼가 받은 고민 리스트  |          /concern/list          |  GET   |   X    |
+|   헬퍼가 받은 고민 리스트  |          /concern/list          |  GET   |   X    |
 |      헬퍼: 등록하기       |      /helper/registration       |  POST  |  body  |
 |   승낙 헬퍼 리스트 보기   |          /helper/list           |  GET   |  body  |
 |     헬퍼 프로필 보기      |   /helper/profile/:helper_idx   |  GET   | params |
@@ -33,7 +33,7 @@ BaseUrl =>  <b>host:port/api</b>
 
 
 
-### 회원가입
+### 회원가입s
 
 url : <b>/api/user/signup</b>
 
@@ -398,8 +398,8 @@ header =>  <b>willson-token : jwt_token</b>
   message: String,
   data: {
     concernInfo: [{
-      user: {
-        user_idx: String,
+      userInfo: {
+        user_idx: int,
         nickname: String,
         gender: String,
         age: String,
@@ -425,7 +425,7 @@ header =>  <b>willson-token : jwt_token</b>
 
 ### 
 
-### 헬퍼 등록
+### 헬퍼 등록하기
 
 url : **/helper/registration**
 
@@ -438,8 +438,8 @@ header:  willson-token : jwt_token
 ```java
 {
   helper: {
-    category_name: String,
-    categoryList_name: String,
+    category_idx: String,
+    categoryList_idx: String,
     title: String,
     content: String,
   }
@@ -467,8 +467,9 @@ header:  willson-token : jwt_token
   code: int,
   data: {}
 }
-901: "HELPER_REGISTRATION_VALIDATION_ERROR" (body에 null값 존재)
-902: "HELPER_REGISTRATION_ERROR_ANYWAY"
+901: "HELPER_REGISTRATION_VALIDATION_ERROR", (body에 null값 존재)
+902: "HELPER_REGISTRATION_ERROR_ANYWAY",
+903: "HELPER_REGISTRATION_ALREADY_DONE",
 ```
 
 

@@ -7,6 +7,13 @@ import{ respondBasic, respondOnError, CustomError } from '../../../lib/middlewar
 
 const getFeelingList = async (req: any, res: any) => {
 
+  const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
+
   await feelingService.getfeelingService(req, res)
   .then((result: any) => {
     respondBasic(req, res, 600, result)

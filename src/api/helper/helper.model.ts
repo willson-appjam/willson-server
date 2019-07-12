@@ -1,3 +1,5 @@
+import { Connection } from "mysql";
+
 //헬퍼 등록
 const selectRegistrationCategory = (connection: any, category_name: any) => {
   return new Promise((resolve, reject) => {
@@ -404,7 +406,25 @@ const selectHelperExist = (connection: any , { user_idx }: any) => {
   })
 }
 
-export {
+const selectHelperRegistStatus = (connection: Connection, { user_idx }: any) => {
+  return new Promise((resolve, reject)=> {
+    const query=`
+      SELECT
+        *
+      FROM
+        user u
+      LEFT JOIN
+        helper p on u.user_idx = p.user_idx
+      WHERE
+        u.user_idx = ?
+  `;
+    connection.query(query, [user_idx], (err: any, result: any) => {
+        err ? reject(err) : resolve(result)
+    })
+  })
+}
+
+export default {
   selectRegistrationCategory,
   insertRegistrationCategoryList,
   insertRegistrationHelper,
@@ -432,5 +452,6 @@ export {
 
   selectMyProfileHelper,
   selectMyProfileExperience,
-  selectHelperExist
+  selectHelperExist,
+  selectHelperRegistStatus
 }

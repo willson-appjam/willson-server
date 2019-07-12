@@ -21,6 +21,20 @@
 	})
 }
 
+const insertUserPersonality = (connection: any, user_personality: any, user_idx: any, cr_user: any) : Promise<{}> => {
+	return new Promise((resolve, reject) : any => {
+		const query = `
+		INSERT INTO 
+			user_personality(personality_idx, user_idx, cr_user)
+		VALUES(?,?,?)
+		`
+		connection.query(query, [user_personality, user_idx, cr_user], (err: Error, result: {}[]) => {
+			if(err) reject(err)
+			resolve(result)
+		})
+	})
+}
+
 const selectCheckEmail = (connection : any, {email} : any) : Promise<{}> => 
 {
 	return new Promise((resolve, reject) : any => {
@@ -40,5 +54,6 @@ const selectCheckEmail = (connection : any, {email} : any) : Promise<{}> =>
 
 export {
 	insertUserInfo,
-	selectCheckEmail
+	selectCheckEmail,
+	insertUserPersonality
 }
