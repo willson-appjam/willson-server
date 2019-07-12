@@ -17,46 +17,52 @@ const postUserQuestion = (req: any, res: any) => {
   return new Promise(async (resolve, reject) => {
     
     const connection: any = await dbConnection();
-    
-    try {
+    await connection.beginTransaction(async (err: Error) => {
+      if (err) throw new CustomError(null, 0, {})
       
-      const { question, feeling, personality, experience } = req.body
-      const { user } = req
-      
-      const qResult: any = await questionModel.insertUserQuestion(connection, question, user);
-      
-      if(qResult.affectedRows == 0) {
-        reject(new CustomError(null, 703, req.body))
-      }
-      
-      const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling, user);
-      const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality, user);
-      
-      // 해당 이름을 갖는 ID 들을 찾아서 
-      let experienceList = null;
-      let categoryList = null;
-      for(let i=0; i< experience.length; ++i) {
-        const experienceCheck = await experienceModel.selectQuestionExperience(connection, experience[i]);
-
-        if(experienceCheck.length === 0) {
-          categoryList = await experienceModel.insertExperienceList(connection, experience[i]);
-
-        } else {
-          categoryList = await experienceModel.updateCategoryListCount(connection, experience[i])
+      try { 
+        const { question, feeling, personality, experience } = req.body
+        const { user } = req
+        
+        const qResult: any = await questionModel.insertUserQuestion(connection, question, user);
+        
+        if(qResult.affectedRows == 0) {
+          reject(new CustomError(null, 703, req.body))
+          return
         }
+        
+        const fResult = await feelingModel.insertQuestionFeeling(connection, qResult, feeling, user);
+        const pResult = await personalityModel.insertQuestionPersonality(connection, qResult, personality, user);
+        
+        // 해당 이름을 갖는 ID 들을 찾아서 
+        let experienceList = null;
+        let categoryList = null;
+        
+        for(let i=0; i< experience.length; ++i) {
+          const experienceCheck = await experienceModel.selectQuestionExperience(connection, experience[i]);
+  
+          if(experienceCheck.length === 0) {
+            categoryList = await experienceModel.insertExperienceList(connection, experience[i]);
+  
+          } else {
+            categoryList = await experienceModel.updateCategoryListCount(connection, experience[i])
+          }
+        }
+        
+        const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience, user)
+        
+        resolve({
+          question_idx: qResult.insertId,
+        })
+
+        await Promise.resolve(connection.commit())
+      } catch (e) {
+        await Promise.resolve(connection.rollback())
+        reject(e)
+      } finally {
+        connection.release();
       }
-      
-      const eResult: any = await experienceModel.insertQuestionExperience(connection, qResult, experience, user)
-      resolve({
-        question_idx: qResult.insertId,
-      })
-      
-    } catch (e) {
-      console.log(e);
-      reject(e)
-    } finally {
-      connection.release();
-    }
+    })
   })
 }
 
@@ -65,6 +71,7 @@ const getUserQuestion = (req: any, res: any) => {
     const connection: any = await dbConnection();
     try {
       const { user } = req
+
       const qList : qList = await questionModel.selectUserQuestionWithStatus(connection, user);
       
       let concernInfo: {}[] = [];
@@ -80,18 +87,18 @@ const getUserQuestion = (req: any, res: any) => {
         }
 
         let currentTime = moment(qList[i].create_time).add(9, 'hours').format('YYYY-MM-DD hh:mm:ss');
-        let status = 'x'
-
+        let selected = 'N'
+        
         let statusCheck: any = await questionModel.selectUserQuestionSelected(connection, qList[i].question_idx, user.user_idx);
         if (statusCheck.length){
-          status= 'o'
+          selected = 'Y'
         }
        
         const questionInfo : Question = {
           title: qList[i].content,
           question_idx: qList[i].question_idx,
           create_time: currentTime,
-          status: status
+          selected,
         }
 
         const categoryInfo : Category = {
@@ -122,23 +129,27 @@ const putUserQuestionStatus = (req: any, res: any) => {
     
     const { body, user } = req
     const connection: any = await dbConnection();
-    try {
 
-      const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
-      if(statusResult.affectedRows == 0) {
-        reject(new CustomError(null, 2203, body ))
-      }
-      resolve({})
+    await connection.beginTransaction(async (err: Error) => {
+      if (err) throw new CustomError(null, 0, {})
       
-    } catch (e) {
-      console.log(e);
-      reject(e)
-    } finally {
-      connection.release();
-    }
+      try { 
+        const statusResult: any = await questionModel.updateQuestionStatus(connection, body, user)
+        if(statusResult.affectedRows == 0) {
+          reject(new CustomError(null, 2203, body ))
+        }
+        resolve({})
+
+        await Promise.resolve(connection.commit())
+      } catch (e) {
+        await Promise.resolve(connection.rollback())
+        reject(e)
+      } finally {
+        connection.release();
+      }
+    })
   })
 }
-
 
 export default {
   getUserQuestion,

@@ -47,7 +47,7 @@ const postCategoryList = async (req: any, res: any) => {
     respondBasic(req, res, 500, result)
   })
   .catch((e: any) => {
-    if(e.own === 'CustomError') respondOnError(req, res, e.code, e.data)
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
     else respondOnError(req, res, e, 502);
   })
 }

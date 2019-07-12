@@ -1,7 +1,7 @@
 import express from 'express'
 import { CustomError } from '../../../lib/middlewares/respond'
 import dbconnection from '../../../lib/connection'
-import { insertUserInfo, selectCheckEmail } from './signup.model'
+import { insertUserInfo, selectCheckEmail, insertUserPersonality } from './signup.model'
 import { cryptoPassword } from '../../../modules/cryptoPassword'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 
@@ -22,10 +22,15 @@ const postSignupService = (req: any, res: any, next: any) : any => {
         return
       }
       
-      const userInfo = await insertUserInfo(connection, body)
-      
-      resolve({})
+			const userInfo: any = await insertUserInfo(connection, body)
+			const userIdx = userInfo.insertId
 
+			for (let i=0; i < body.personality_idx.length; i++){
+				await insertUserPersonality(connection, body.personality_idx[i], userIdx, userIdx)
+			}
+      
+			resolve({})
+			
 		} catch(e) {
 			reject(e)
 		} finally{

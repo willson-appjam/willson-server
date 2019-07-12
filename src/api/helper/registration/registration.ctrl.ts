@@ -22,7 +22,7 @@ const postRegistrationCtrl = async (req: any, res: any, next: any) => {
     respondBasic(req, res, 900, result)
   })
   .catch((e: any) => {
-    if (e.own === 'CustomError') respondOnError(req, res, e, e.code)
+    if (e.own === 'CustomError') respondOnError(req, res, e, e.code, 200)
 		else respondOnError(req, res, e, 902, 500);
   })
 }

@@ -13,9 +13,9 @@ const insertRegistrationCategoryList = (connection: any, [categoryList_name, cat
   return new Promise ((resolve, reject) => {
     const query = `
     INSERT INTO 
-	    categoryList (categoryList_name, category_idx, count, cr_user)
+       categoryList (categoryList_name, category_idx, count, cr_user)
     VALUES 
-	    (?,?,1,?)
+       (?,?,1,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
   
@@ -24,6 +24,7 @@ const insertRegistrationCategoryList = (connection: any, [categoryList_name, cat
     })
   })
 }
+
 
 const insertRegistrationHelper = (connection: any, helper: any) => {
   return new Promise((resolve, reject) => {
@@ -34,16 +35,16 @@ const insertRegistrationHelper = (connection: any, helper: any) => {
   })
 }
 
-const selectRegistrationExperience = (connection: any, experience_name: any) => {
+const selectRegistrationExperience = (connection: any, experience_name: any, user_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     INSERT INTO 
-    experience (experience_name, cr_user)
-  VALUES 
-    (?,?)
-  ON DUPLICATE KEY UPDATE
-  count = count + 1`
-    connection.query(query, experience_name, (err: any, result: any) => {
+      experience (experience_name, cr_user)
+    VALUES 
+      (?,?)
+    ON DUPLICATE KEY UPDATE
+      count = count + 1`
+    connection.query(query, [experience_name, user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -89,7 +90,7 @@ const selectUserExperience = (connection: any, question_idx: any) => {
       experience AS E ON Q.experience_idx = E.experience_idx
     WHERE
       question_idx = (?)`;
-
+    
     connection.query(query, question_idx, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
@@ -131,7 +132,7 @@ const selectHelperInfo = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      age, gender, category_idx, categoryList_idx, title, content, stars, review_count 
+      nickname, age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
     FROM
       helper AS H
     INNER JOIN
@@ -156,6 +157,25 @@ const selectHelperPersonality = (connection: any, helper_arr: any) => {
       user_personality AS U ON H.user_idx = U.user_idx
     WHERE
       helper_idx IN (?)`;
+
+    connection.query(query, [helper_arr], (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+
+const selectHelperExperience = (connection: any, helper_arr: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      experience_name
+    FROM
+      experience as A
+    INNER JOIN 
+      helper_experience as B ON A.experience_idx = B.experience_idx
+    WHERE
+      helper_idx IN (?)`;
+
 
     connection.query(query, [helper_arr], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
@@ -307,7 +327,7 @@ const selectStoryHelper = (connection: any, category_idx: any) => {
 //요청 보내기
 const selectSelectionQuestion_idx = (connection: any, question_idx: any) => {
   return new Promise((resolve, reject) => {
-    const query = `SELECT question_idx from question WHERE question_idx = (?)`;
+    const query = `SELECT question_idx from question WHERE question_idx = ?`;
     connection.query(query, question_idx, (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
@@ -408,6 +428,7 @@ export {
   selectHelper_idx,
   selectHelperInfo,
   selectHelperPersonality,
+  selectHelperExperience,
 
   selectMyProfileHelper,
   selectMyProfileExperience,

@@ -1,24 +1,23 @@
 import dbConnection from "../../lib/connection";
-import {selectStoryHelper, selectHelperExist} from './helper.model';
+import { updateMatchingStatus } from './matching.model';
 import { CustomError } from '../../lib/middlewares/respond';
 import serviceStatusCode from '../../lib/serviceStatusCode';
 import _ from 'lodash'
 
-const getHelperExist = (req: any,res: any) => {
+const putMatchingStatus = (req: any,res: any) => {
   return new Promise(async (resolve, reject) => {
-    const { user } = req
-
+    const { user, params } = req
     const connection: any = await dbConnection();
     await connection.beginTransaction(async (err: Error) => {
       if (err) throw new CustomError(null, 0, {})
       
       try { 
-        const [check]: any = await selectHelperExist(connection, user);
-      
-        resolve({
-          status: check.status,
-        });
-
+        const mResult: any = await updateMatchingStatus(connection, params);
+        if(mResult.affectedRows === 0) {
+          reject(new CustomError({}, 2602, params))
+        }
+  
+        resolve();
         await Promise.resolve(connection.commit())
       } catch (e) {
         await Promise.resolve(connection.rollback())
@@ -30,6 +29,6 @@ const getHelperExist = (req: any,res: any) => {
   })
 }
 
-export default{
-  getHelperExist
+export default {
+  putMatchingStatus,
 }

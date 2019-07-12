@@ -19,6 +19,25 @@ const insertUserSelection = (connection: any, {helper_idx, question_idx}: any, {
 	})
 }
 
+const selectHelperMatchingStatus = (connection: any, {helper_idx }: any) : Promise<{}> => {
+	return new Promise((resolve, reject) : any => {
+		const query = `
+      SELECT
+        *
+      FROM
+        matching
+      WHERE
+        helper_idx = ? AND status = 'doing'
+		`
+		connection.query(query, [helper_idx], (err: Error, result: {}[]) => {
+      console.log(err);
+			if(err) reject(err)
+			resolve(result)
+		})
+	})
+}
+
 export {
-  insertUserSelection
+  insertUserSelection,
+  selectHelperMatchingStatus,
 }
