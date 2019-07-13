@@ -31,7 +31,7 @@ const getListService = (req: any, res: any) => {
 
         //유저 고민을 선택한 헬퍼들의 정보
         let helpers_idx: any = await helperModel.selectHelper_idx(connection, question_idx);
-        if (!helpers_idx.length) {
+        if (helpers_idx.length == 0) {
           reject(new CustomError(null, 1003, { question_idx }))
           return
         }

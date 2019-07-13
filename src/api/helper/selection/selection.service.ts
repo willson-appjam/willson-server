@@ -26,13 +26,15 @@ const postSelectionService = (req: any,res: any) => {
         }
   
         let helper_idx: any = await helperModel.selectProfileHelper_idx(connection, user.user_idx)
+        console.log(helper_idx)
         if (!helper_idx.length){
           reject(new CustomError(null, 1401, {}))
+          return;
         }
         let question: any = await helperModel.selectSelectionQuestion_idx(connection, body.question_idx)
         if (!question.length){
           reject(new CustomError(null, 1402, body))
-          
+          return;
         }
         await helperModel.insertSelectionSelected_question(connection, [helper_idx[0].helper_idx, body.question_idx, user.user_idx]);
       
