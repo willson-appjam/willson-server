@@ -26,23 +26,23 @@ const respondBasic = (req: any, res: any, code: number, data: object) => {
   })
 }
 
-const respondOnError = (req: any, res: any, err: any, code: any, status: number = 500, result?: object) => {
+const respondOnError = (req: any, res: any, e: any, code: any, status: number = 500, result?: object) => {
 
   const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
   const time = Date.now() - req.start;  
 
   console.log('')
   console.log('[Req] =>',  moment().format('YYYY-MM-DD HH:mm:ss'), req.method, fullUrl, status, JSON.stringify(req.body), '-', time +'ms');
-  console.log('code => ', code)
-  console.log('message => ', serviceStatusCode[`${code}`])
+  console.log('code => ', e.code)
+  console.log('message => ', serviceStatusCode[`${e.code}`])
   console.log('data => ', result)
-  console.error('ERROR STACK => ', err)
+  console.error('ERROR STACK => ', e)
   console.log('')
 
   res.status(status).send({
     code,
     message: serviceStatusCode[`${code}`],
-    data: err.data || {},
+    data: e.data || {},
   })
 }
 

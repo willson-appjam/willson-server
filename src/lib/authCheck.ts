@@ -13,7 +13,7 @@ export default async (req: any, res: any, next: NextFunction) => {
   
   try {
 
-    if (empty(webToken)) req.user = { user_id: 0 }
+    if (empty(webToken)) req.user = { user_idx: 0 }
     else req.user = await token.decode(webToken, key)
     console.log('USER_SESSION=> ', req.user)
     await next()

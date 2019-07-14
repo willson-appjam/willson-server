@@ -7,39 +7,52 @@ import token from '../../../lib/middlewares/token'
 import {key} from '../../../../secret/aesKey'
 import serviceStatusCode from '../../../lib/serviceStatusCode'
 
-
 const postSigninService = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   return new Promise(async (resolve, reject) => {
-    const connection: any  = await dbconnection()
-    try {
-      const {body} = req
-      let userToken = null
+    const connection: any  = await dbconnection();
 
-      const [userInfo] : any = await selectUserInformation(connection, body)
-      if(!userInfo){
-        reject(new CustomError(null, 202, body))
-      } else if(userInfo.email) {
-
-        body.password = await cryptoPassword.hashedPassword(userInfo.salt, body.password)
-        const [userInfoPassword] : any = await selectUserPassword(connection, body)
+    await connection.beginTransaction(async (err: Error) => {
+      if (err) throw new CustomError(null, 0, {})
+      
+      try {
+        const { body } = req
+        let [userInfo] : any = await selectUserInformation(connection, body)
         
-        if(!userInfoPassword){
+        if(!userInfo){
           reject(new CustomError(null, 202, body))
+          return;
         }
+  
+        const checkPassword = await cryptoPassword.hashedPassword(userInfo.salt, body.password)
+        
+        if(checkPassword !== userInfo.password) {
+          reject(new CustomError(null, 202, body))  
+        }
+  
+          userInfo = {
+          user_idx: userInfo.user_idx,
+          nickname: userInfo.nickname,
+          gender: userInfo.gender,
+          age: userInfo.age,
+          device_token: userInfo.device_token,
+          uid: userInfo.uid
+        }
+  
+        const Token = await token.encode(key , userInfo)
+        
+        resolve({
+          Token,
+          userInfo,
+        })
 
-        userToken = await token.encode(key , userInfo)
+        await Promise.resolve(connection.commit())
+      } catch (e) {
+        await Promise.resolve(connection.rollback())
+        reject(e)
+      } finally {
+        connection.release();
       }
-
-      resolve({
-        Token: userToken
-      })
-
-    } catch(e){
-      console.log(e)
-      reject(e)
-    }finally{
-      connection.release()
-    }
+    })
   })
 }
 

@@ -6,7 +6,13 @@ import { isValidCheck } from '../../../lib/isValidation';
 
 const getCategoryList = async (req: any, res: any) => {
   
-  const { category_idx } = req.params;
+  const { category_idx } = req.params
+  const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
 
   if(!category_idx) {
     respondOnError(req, res, new Error('validation error'), 401, 500);
@@ -25,6 +31,12 @@ const getCategoryList = async (req: any, res: any) => {
 const postCategoryList = async (req: any, res: any) => {
 
   const { body } = req
+  const { user } = req
+
+  if(user.user_idx == 0) {
+    respondOnError(req, res, new Error('NOT AUTHENTICATION USER'), 2, 500)
+    return;
+  }
 
   if(!isValidCheck(req)) {
     respondOnError(req, res, new Error('validation error'), 501);
@@ -35,7 +47,7 @@ const postCategoryList = async (req: any, res: any) => {
     respondBasic(req, res, 500, result)
   })
   .catch((e: any) => {
-    if(e.own === 'CustomError') respondOnError(req, res, e.code, e.data)
+    if(e.own === 'CustomError') respondOnError(req, res, e, e.code)
     else respondOnError(req, res, e, 502);
   })
 }

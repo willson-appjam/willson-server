@@ -54,6 +54,7 @@ CD => Aws Code Deploy
 
 CI 관련 설정은 .tarvis.yml, CD 관련 설정은 appspec.yml에 명세합니다.
 
+
 develop branch에 push 실행시 서버 deploy가 진행됩니다.
 
  <br />
@@ -63,6 +64,7 @@ develop branch에 push 실행시 서버 deploy가 진행됩니다.
 <img src="./readme/willson-server.png" width="500" float="left">
 
 > ### API REFERENCE
+
 [API 문서 바로보기](./willson_api_reference.md)<br />
 
 

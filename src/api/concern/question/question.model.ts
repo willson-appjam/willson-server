@@ -18,17 +18,21 @@ const selectUserQuestionWithStatus = (connection: Connection, { gender, user_idx
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-    	*
+      *
     FROM
-	    question as Q
+      question as Q
     INNER JOIN
-	    user as U on Q.user_idx = U.user_idx
+      user as U on Q.user_idx = U.user_idx
     INNER JOIN
-	    categoryList as CL on CL.categoryList_idx = Q.categoryList_idx
+      categoryList as CL on CL.categoryList_idx = Q.categoryList_idx
     INNER JOIN
-	    category as C on C.category_idx = CL.category_idx
+      category as C on C.category_idx = CL.category_idx
     WHERE
-	    Q.helper_gender = ? AND Q.status = 'wait' AND C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ? ) 
+      Q.status = 'wait' AND
+      (Q.helper_gender = ? OR Q.helper_gender = '모두') AND
+      C.category_idx = (SELECT category_idx FROM helper WHERE user_idx = ?)
+    ORDER BY Q.cr_date desc
+    LIMIT 0, 20;
       `
     const Query = connection.query(query, [gender, user_idx],(err, result) => {
       console.log(Query.sql)

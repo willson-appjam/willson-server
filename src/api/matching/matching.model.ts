@@ -27,7 +27,7 @@ const selectMatchingHistroy = (connection : any, { user_idx }: any): Promise<{}>
 		`
 		connection.query(query, [user_idx], (err: Error, result: {}[]) => {
 			if(err) reject(err);
-			resolve(result)
+			else resolve(result)
 		})
 	})
 }

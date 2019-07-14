@@ -1,5 +1,5 @@
 import dbConnection from "../../lib/connection";
-import {selectStoryHelper, selectHelperExist} from './helper.model';
+import helperModel from './helper.model';
 import { CustomError } from '../../lib/middlewares/respond';
 import serviceStatusCode from '../../lib/serviceStatusCode';
 import _ from 'lodash'
@@ -9,19 +9,24 @@ const getHelperExist = (req: any,res: any) => {
     const { user } = req
 
     const connection: any = await dbConnection();
-
-    try {
-      const [check]: any = await selectHelperExist(connection, user);
+    await connection.beginTransaction(async (err: Error) => {
+      if (err) throw new CustomError(null, 0, {})
       
-      resolve({
-        status: check.status,
-      });
+      try { 
+        const [check]: any = await helperModel.selectHelperExist(connection, user);
+      
+        resolve({
+          status: check.status,
+        });
 
-    } catch (e){
-      reject(e);
-    } finally {
-      connection.release();
-    }
+        await Promise.resolve(connection.commit())
+      } catch (e) {
+        await Promise.resolve(connection.rollback())
+        reject(e)
+      } finally {
+        connection.release();
+      }
+    })
   })
 }
 

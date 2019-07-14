@@ -1,3 +1,5 @@
+import { Connection } from "mysql";
+
 //헬퍼 등록
 const selectRegistrationCategory = (connection: any, category_name: any) => {
   return new Promise((resolve, reject) => {
@@ -35,7 +37,7 @@ const insertRegistrationHelper = (connection: any, helper: any) => {
   })
 }
 
-const selectRegistrationExperience = (connection: any, experience_name: any, user: any) => {
+const selectRegistrationExperience = (connection: any, experience_name: any, user_idx: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     INSERT INTO 
@@ -44,7 +46,7 @@ const selectRegistrationExperience = (connection: any, experience_name: any, use
       (?,?)
     ON DUPLICATE KEY UPDATE
       count = count + 1`
-    connection.query(query, [experience_name, user.user_idx], (err: any, result: any) => {
+    connection.query(query, [experience_name, user_idx], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
     })
   })
@@ -132,7 +134,7 @@ const selectHelperInfo = (connection: any, helper_arr: any) => {
   return new Promise((resolve, reject) => {
     const query = `
     SELECT
-      age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
+      nickname, age, gender, category_idx, categoryList_idx, title, content, stars, review_count, helper_idx
     FROM
       helper AS H
     INNER JOIN
@@ -157,6 +159,25 @@ const selectHelperPersonality = (connection: any, helper_arr: any) => {
       user_personality AS U ON H.user_idx = U.user_idx
     WHERE
       helper_idx IN (?)`;
+
+    connection.query(query, [helper_arr], (err: any, result: any) => {
+      err ? reject(err) : resolve(result)
+    })
+  })
+}
+
+const selectHelperExperience = (connection: any, helper_arr: any) => {
+  return new Promise((resolve, reject) => {
+    const query = `
+    SELECT
+      experience_name
+    FROM
+      experience as A
+    INNER JOIN 
+      helper_experience as B ON A.experience_idx = B.experience_idx
+    WHERE
+      helper_idx IN (?)`;
+
 
     connection.query(query, [helper_arr], (err: any, result: any) => {
       err ? reject(err) : resolve(result)
@@ -385,7 +406,45 @@ const selectHelperExist = (connection: any , { user_idx }: any) => {
   })
 }
 
-export {
+const selectHelperRegistStatus = (connection: Connection, { user_idx }: any) => {
+  return new Promise((resolve, reject)=> {
+    const query=`
+      SELECT
+        *
+      FROM
+        user u
+      INNER JOIN
+        helper p on u.user_idx = p.user_idx
+      WHERE
+        u.user_idx = ?
+    `;
+    connection.query(query, [user_idx], (err: any, result: any) => {
+        err ? reject(err) : resolve(result)
+    })
+  })
+}
+
+const selectHelperUid = (connection: any, helper_idx: any) : Promise<{}> => {
+	return new Promise((resolve, reject) : any => {
+		const query = `
+      SELECT
+        uid
+      FROM
+				user as U
+			INNER JOIN
+				helper as H on U.user_idx = H.user_idx
+      WHERE
+        helper_idx = ? 
+		`
+		connection.query(query, helper_idx, (err: Error, result: {}[]) => {
+      console.log(err);
+			if(err) reject(err)
+			resolve(result)
+		})
+	})
+}
+
+export default {
   selectRegistrationCategory,
   insertRegistrationCategoryList,
   insertRegistrationHelper,
@@ -409,8 +468,11 @@ export {
   selectHelper_idx,
   selectHelperInfo,
   selectHelperPersonality,
+  selectHelperExperience,
 
   selectMyProfileHelper,
   selectMyProfileExperience,
-  selectHelperExist
+  selectHelperExist,
+  selectHelperRegistStatus,
+  selectHelperUid
 }
