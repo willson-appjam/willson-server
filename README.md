@@ -1,6 +1,12 @@
-# WillSon-Server
+> ## <b>WillSon-Server</b>
+<br/>
 
-고민 해결을 위한 상담 플랫폼입니다.
+고민 해결을 위한 상담 플랫폼입니다.<br/>
+자세한 내용은 아래를 참고해 주세요<br/>
+WillSon에 대해 궁금하다면? <br/>
+[여기를 들려주세요](http://willson.co.kr)
+
+<br/>
 
 > ### 운영 환경
 
@@ -48,6 +54,8 @@ CD => Aws Code Deploy
 
 CI 관련 설정은 .tarvis.yml, CD 관련 설정은 appspec.yml에 명세합니다.
 
+develop branch에 push 실행시 서버 deploy가 진행됩니다.
+
  <br />
 
 > ### 운영 아키텍쳐
@@ -55,9 +63,7 @@ CI 관련 설정은 .tarvis.yml, CD 관련 설정은 appspec.yml에 명세합니
 <img src="./readme/willson-server.png" width="500" float="left">
 
 > ### API REFERENCE
-
-[API_REFERENCE](./willson_api_reference.md)
-<br />
+[API 문서 바로보기](./willson_api_reference.md)<br />
 
 
 > ### 서비스 에러 코드
