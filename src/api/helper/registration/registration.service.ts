@@ -13,7 +13,6 @@ const postRegistrationService = (req: any,res: any, next: any) => {
         const { helper, experience } = req.body;
         const { user } = req
         const { category_idx, categoryList_idx } = helper
-    
         const uResult: any = await helperModel.selectHelperRegistStatus(connection, user);
         
         if(uResult.length >= 1) {
@@ -33,7 +32,6 @@ const postRegistrationService = (req: any,res: any, next: any) => {
   
         resolve({helper_idx});
         await Promise.resolve(connection.commit())
-
       } catch (e) {
         await Promise.resolve(connection.rollback())
         reject(e)

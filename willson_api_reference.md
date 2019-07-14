@@ -526,6 +526,24 @@ header:  willson-token : jwt_token
         ],
         "size": int
     }
+=======
+  code: 1000,
+  message: "GET_HELPER_LIST_SUCCESS",
+  data: {
+    helper:[{
+      nickname: String,
+      gender: String,
+      age: String,
+      category_name: String,
+      content: String,
+      stars: String,
+      review_count: String,
+      helper_idx : int
+    }],
+    experience: [{
+      experience_name: [String, String, String]
+    }]
+  }
 }
 
 실패 = 500
