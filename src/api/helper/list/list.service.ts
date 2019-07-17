@@ -20,16 +20,16 @@ const getListService = (req: any, res: any) => {
 
 
       //유저가 원하는 헬퍼 정보
-      let info: any = await selectUserInfo(connection, question_idx);
+      let info: any = await helperModel.selectUserInfo(connection, question_idx);
       if (!info.length) {
         reject(new CustomError(null, 1001, { question_idx }))
         return
       }
-      let experience_name: any = await selectUserExperience(connection, question_idx);
-      let personality_idx: any = await selectUserPersonality(connection, question_idx);
+      let experience_name: any = await helperModel.selectUserExperience(connection, question_idx);
+      let personality_idx: any = await helperModel.selectUserPersonality(connection, question_idx);
 
       //유저 고민을 선택한 헬퍼들의 정보
-      let helpers_idx: any = await selectHelper_idx(connection, question_idx);
+      let helpers_idx: any = await helperModel.selectHelper_idx(connection, question_idx);
       console.log(helpers_idx);
       let helpers_arr: any = [];
       let helper_num = helpers_idx.length;
