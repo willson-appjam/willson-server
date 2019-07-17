@@ -6,7 +6,6 @@ import helperModel from '../helper.model'
 import serviceStatusCode from '../../../lib/serviceStatusCode';
 import { CustomError } from '../../../lib/middlewares/respond';
 import helper from "../index";
-
 import { getAge } from "../../../modules/getAge";
 
 const getListService = (req: any, res: any) => {
@@ -16,6 +15,26 @@ const getListService = (req: any, res: any) => {
       if (err) {
         reject(new CustomError(null, 0, {}))
         return;
+    try {
+      const question_idx = req.params.question_idx;
+
+
+      //유저가 원하는 헬퍼 정보
+      let info: any = await selectUserInfo(connection, question_idx);
+      if (!info.length) {
+        reject(new CustomError(null, 1001, { question_idx }))
+        return
+      }
+      let experience_name: any = await selectUserExperience(connection, question_idx);
+      let personality_idx: any = await selectUserPersonality(connection, question_idx);
+
+      //유저 고민을 선택한 헬퍼들의 정보
+      let helpers_idx: any = await selectHelper_idx(connection, question_idx);
+      console.log(helpers_idx);
+      let helpers_arr: any = [];
+      let helper_num = helpers_idx.length;
+      for (let i = 0; i < helper_num; i++) {
+        helpers_arr.push(helpers_idx[i].helper_idx);
       }
 
       try { 
@@ -39,6 +58,7 @@ const getListService = (req: any, res: any) => {
         let helpers_arr: any = [];
         let helper_num = helpers_idx.length;
         for (let i = 0; i < helper_num; i++) {
+
           helpers_arr.push(helpers_idx[i].helper_idx);
         }
         
