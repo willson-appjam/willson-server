@@ -16,7 +16,7 @@ script:
   
 before_deploy:
   - rm -rf node_modules
-  - zip -r willson-deploy ./*
+  - zip -r willson-deploy-test ./*
   - mkdir -p deploy
   - mv willson-deploy.zip deploy/willson-deploy.zip
 
@@ -24,7 +24,7 @@ deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
     secret_access_key: $AWS_SECRET_KEY
-    bucket: willson-deploy-test
+    bucket: willson-deploy
     region: ap-northeast-2
     skip_cleanup: true
     local_dir: deploy
