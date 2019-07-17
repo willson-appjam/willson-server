@@ -18,7 +18,7 @@ before_deploy:
   - rm -rf node_modules
   - zip -r willson-deploy-test ./*
   - mkdir -p deploy
-  - mv willson-deploy.zip deploy/willson-deploy.zip
+  - mv willson-deploy-test.zip deploy/willson-deploy-test.zip
 
 deploy:
   - provider: s3
